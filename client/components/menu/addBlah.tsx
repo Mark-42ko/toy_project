@@ -13,6 +13,7 @@ export default function AddBlah (props: Props) {
     const ctx = useContext(GlobalContext);
     const [ friendData, setFriendeData ] = useState<any>();
     const [ selectFriend, setSelectFriend ] = useState<any>([]);
+    const [ accessCheck, setAccessCheck ] = useState<boolean>(false);
 
     useEffect(()=>{
         !async function () {
@@ -30,7 +31,53 @@ export default function AddBlah (props: Props) {
     },[]);
 
     const addHandle = async () => {
-        console.log(selectFriend)
+        const result = await fetch(`${SERVER_URI}/blah/findOne`, {
+            method: "POST",
+            body: JSON.stringify({
+                user: [...selectFriend, { email: ctx?.userData?.userId, name: ctx?.userData?.username, phoneNumber: ctx?.userData?.userPhoneNumber}],
+                blah: []
+            }),
+            headers: {
+                "Authorization": `bearer ${ctx?.accessToken}`,
+                "Content-type": "application/json",
+                "Access-Control-Allow-Origin": "http://localhost:3000"
+            }
+        });
+        const jsons = await result.json();
+        console.log(jsons.data);
+        const data = jsons.data.duplicationData.find((one: string | null) => one === null);
+        console.log(data);
+        console.log(jsons.data.duplicationData.length);
+        if( data === null) {
+            console.log('생성완료');
+        } else {
+            if( selectFriend.length +1 === jsons.data.counts ){
+                console.log('새로만드실?');
+            } else {
+                if ( jsons.data.duplicationData.length === 1) {
+                    console.log('혼자서는 생성할 수 없습니다.');
+                } else{
+                    console.log('생성완료');
+                }
+            }
+        }
+        // if(jsons) {
+
+        // }
+        // const reponse = await fetch(`${SERVER_URI}/blah/create`, {
+        //     method: "POST",
+        //     body: JSON.stringify({
+        //         user: [...selectFriend, { email: ctx?.userData?.userId, name: ctx?.userData?.username, phoneNumber: ctx?.userData?.userPhoneNumber}],
+        //         blah: []
+        //     }),
+        //     headers: {
+        //         "Authorization": `bearer ${ctx?.accessToken}`,
+        //         "Content-type": "application/json",
+        //         "Access-Control-Allow-Origin": "http://localhost:3000"
+        //     }
+        // });
+        // const json = await reponse.json();
+        // props.setOpen(!open);
     };
 
     return (

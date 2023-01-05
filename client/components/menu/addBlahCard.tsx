@@ -16,15 +16,9 @@ export default function AddBlahCard (props: Props) {
 
     const clickHandle = () => {
         setSelect(!select);
-        if(select === true) {
+        if(select === false) {
             props.setSelectFriend([...props.selectFriend, props.friendData]);
         } else {
-            // for(var i = 0; i < props.selectFriend.length; i++){ 
-            //     if (props.selectFriend[i] === props.friendData) { 
-            //       props.selectFriend.splice(i, 1); 
-            //       i--; 
-            //     }
-            // }
             const data = [...props.selectFriend].filter((one) => one !== props.friendData);
             props.setSelectFriend(data);
         }

@@ -50,7 +50,6 @@ export class PeopleService {
 
   async findOne(email: string): Promise<People> {
     const result = this.PeopleModel.findOne({ email: email }).exec();
-    console.log(result);
     if (!result) {
       return Object.assign({
         statusCode: 418,

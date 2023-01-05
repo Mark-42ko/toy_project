@@ -6,6 +6,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
 import { PeopleModule } from './people/people.module';
+import { BlahModule } from './blah/blah.module';
 
 // const MONGO_URI = process.env.MONGO_URI;
 
@@ -23,6 +24,7 @@ import { PeopleModule } from './people/people.module';
     }),
     AuthModule,
     PeopleModule,
+    BlahModule,
   ],
   controllers: [AppController],
   providers: [AppService],

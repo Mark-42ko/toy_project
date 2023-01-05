@@ -26,7 +26,6 @@ export default function ConnectionList (props: Props) {
                 }
             });
             const json = await reponse.json();
-            console.log(json);
             setPeopleData(json);
         }();
     },[props.open]);
