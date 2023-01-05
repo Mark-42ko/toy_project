@@ -16,12 +16,18 @@ export class PeopleService {
     }).exec();
     if (result) {
       if (
-        !result.friend.find((one) => one.email === addPeopleDto.friend.email)
+        result.friend.find((one) => one.email === addPeopleDto.friend.email) ===
+        undefined
       ) {
-        console.log('no data');
         await this.PeopleModel.findOneAndUpdate({
           email: addPeopleDto.user,
-          $push: { peopleEmail: addPeopleDto.friend.email },
+          $push: {
+            friend: {
+              email: addPeopleDto.friend.email,
+              name: addPeopleDto.friend.name,
+              phoneNumber: addPeopleDto.friend.phoneNumber,
+            },
+          },
         }).exec();
         return Object.assign({
           statusCode: 200,
@@ -44,6 +50,12 @@ export class PeopleService {
 
   async findOne(email: string): Promise<People> {
     const result = this.PeopleModel.findOne({ email: email }).exec();
+    console.log(result);
+    if (!result) {
+      return Object.assign({
+        statusCode: 418,
+      });
+    }
     return result;
   }
 }

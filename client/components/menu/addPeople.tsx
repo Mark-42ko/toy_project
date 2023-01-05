@@ -35,8 +35,11 @@ export default function AddPeople (props: Props) {
                         method: "POST",
                         body: JSON.stringify({
                             user: ctx?.userData?.username,
-                            peopleEmail: email,
-                            name: json.data.name
+                            friend: {
+                                email: email,
+                                name: json.data.name,
+                                phoneNumber: json.data.phoneNumber
+                            },
                         }),
                         headers: {
                             "Authorization": `bearer ${ctx?.accessToken}`,

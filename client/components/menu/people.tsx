@@ -21,7 +21,7 @@ export default function People () {
                     <ModalBackdrop><AddPeople setOpen={setOpen} open={open}/></ModalBackdrop> : null
                 }
             <InnerContainer>
-                { connection.map((one) => <ConnectionList key={one.status} tag={one.status} />)}
+                { connection.map((one) => <ConnectionList key={one.status} tag={one.status} open={open}/>)}
             </InnerContainer>
         </Container>
     )

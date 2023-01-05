@@ -6,6 +6,7 @@ import { GlobalContext } from 'pages/_app';
 
 type Props = {
     tag: string;
+    open: boolean;
 }
 
 export default function ConnectionList (props: Props) {
@@ -25,16 +26,16 @@ export default function ConnectionList (props: Props) {
                 }
             });
             const json = await reponse.json();
+            console.log(json);
             setPeopleData(json);
         }();
-        console.log(peopleData)
-    },[]);
+    },[props.open]);
 
     return (
         <ListButton onClick={ () => setCheck(!check) }>
             { check ? <DownArrowAlt style={{width:20, height:20}}/> : <RightArrowAlt style={{width:20, height:20}} />}
-            { props.tag === "온라인" && peopleData && <ListTag>{props.tag} (0/{peopleData[0].peopleEmail.length})</ListTag> }
-            { props.tag === "오프라인" && peopleData && <ListTag>{props.tag} (0/{peopleData[0].peopleEmail.length})</ListTag> }
+            { props.tag === "온라인" && peopleData && <ListTag>{props.tag} (0/{peopleData[0] ? peopleData[0].friend.length : 0})</ListTag> }
+            { props.tag === "오프라인" && peopleData && <ListTag>{props.tag} (0/{peopleData[0] ?  peopleData[0].friend.length : 0})</ListTag> }
             { props.tag === "보낸요청" && peopleData && <ListTag>{props.tag} (0/0)</ListTag> }
             { props.tag === "받은요청" && peopleData && <ListTag>{props.tag} (0/0)</ListTag> }
         </ListButton>

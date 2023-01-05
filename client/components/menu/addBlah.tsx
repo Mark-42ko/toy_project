@@ -11,7 +11,8 @@ type Props = {
 export default function AddBlah (props: Props) {
     const SERVER_URI = process.env.NEXT_PUBLIC_SERVER_URI;
     const ctx = useContext(GlobalContext);
-    const [ peopleData, setPeopleData ] = useState<any>();
+    const [ friendData, setFriendeData ] = useState<any>();
+    const [ selectFriend, setSelectFriend ] = useState<any>([]);
 
     useEffect(()=>{
         !async function () {
@@ -24,19 +25,19 @@ export default function AddBlah (props: Props) {
                 }
             });
             const json = await reponse.json();
-            setPeopleData(json);
+            setFriendeData(json);
         }();
     },[]);
 
     const addHandle = async () => {
-
+        console.log(selectFriend)
     };
 
     return (
         <Container>
             <CloseButton onClick={() => props.setOpen(!props.open)}>x</CloseButton>
             <Title>대화상대를 선택해주세요.</Title>
-            {/* { peopleData && peopleData.map((one) => <AddBlahCard key={one._id}/>)} */}
+            { friendData && friendData[0].friend.map((one: any) => <AddBlahCard key={one.email} friendData={one} setSelectFriend={setSelectFriend} selectFriend={selectFriend} />)}
             <AddButton onClick={addHandle}><b>대화하기</b></AddButton>
         </Container>
     );

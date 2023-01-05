@@ -1,14 +1,40 @@
 import styled from 'styled-components';
 import { useState } from 'react';
 
-export default function AddBlahCard () {
+type Props = {
+    friendData: {
+        email: string;
+        name: string;
+        phoneNumber: string;
+    };
+    setSelectFriend: Function;
+    selectFriend: any;
+};
+
+export default function AddBlahCard (props: Props) {
     const [ select, setSelect ] = useState<boolean>(false);
-    
+
+    const clickHandle = () => {
+        setSelect(!select);
+        if(select === true) {
+            props.setSelectFriend([...props.selectFriend, props.friendData]);
+        } else {
+            // for(var i = 0; i < props.selectFriend.length; i++){ 
+            //     if (props.selectFriend[i] === props.friendData) { 
+            //       props.selectFriend.splice(i, 1); 
+            //       i--; 
+            //     }
+            // }
+            const data = [...props.selectFriend].filter((one) => one !== props.friendData);
+            props.setSelectFriend(data);
+        }
+    };
+
     return(
-        <Container choose={select} onClick={()=>setSelect(!select)}>
+        <Container choose={select} onClick={clickHandle}>
             <ProfileContainer>
                 <ProfileImg />
-                <NameTag><b>홍길동</b></NameTag>
+                <NameTag><b>{props.friendData.name}</b></NameTag>
             </ProfileContainer>
         </Container>
     );
