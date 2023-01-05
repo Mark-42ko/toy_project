@@ -8,11 +8,14 @@ export class People {
   @Prop({ required: true })
   user: string;
 
-  @Prop({ required: true })
-  peopleEmail: string;
-
-  @Prop({ required: true })
-  name: string;
+  @Prop({ required: true, unique: true })
+  friend: [
+    {
+      email: string;
+      name: string;
+      phoneNumber: string;
+    },
+  ];
 }
 
 export const PeopleSchema = SchemaFactory.createForClass(People);
