@@ -1,27 +1,60 @@
 import styled from 'styled-components';
 import { Send } from '@styled-icons/ionicons-sharp/Send';
-import { useState } from 'react';
-import { GetServerSidePropsContext } from 'next';
+import { useContext, useEffect, useState } from 'react';
 import ChatBox from './chatBox';
+import { GlobalContext } from 'pages/_app';
 
 type Props = {
-    blahData: any;
+    roomData: any;
 };
 
 export default function Blah (props: Props) {
     const [ inputData, setInputData ] = useState<string>("");
     const [ chatData, setChatData ] = useState<string>("");
+    const [ updateData, setUpdateData ] = useState<any>();
+    const [ updateHandle, setUpdateHandle ] = useState<boolean>(false);
 
-    const inputButtonHandle = () => {
-        console.log(inputData);
+    const SERVER_URI = process.env.NEXT_PUBLIC_SERVER_URI;
+    const ctx = useContext(GlobalContext);
+
+    useEffect(()=>{
+    },[updateData]);
+
+    const inputButtonHandle = async () => {
         setChatData(inputData);
+        const result = await fetch(`${SERVER_URI}/blah/chatAdd`, {
+            method: "Post",
+            body: JSON.stringify({
+                _id: props.roomData._id,
+                blah: {
+                    name: ctx?.userData?.username,
+                    comments: chatData,
+                    date: new Date()
+                }
+            }),
+            headers: {
+                "Authorization": `bearer ${ctx?.accessToken}`,
+                "Content-type": "application/json",
+                "Access-Control-Allow-Origin": "http://localhost:3000"
+            }
+        });
+        const json = await result.json();
+        console.log(json.data);
+        setUpdateData(json.data);
         setInputData("");
+        setUpdateHandle(!updateHandle);
     };
-
+ 
     return (
         <Container>
             <BlahContainer>
-                <ChatBox chatData={chatData}/>
+                { updateData ? 
+                    updateData.blah.map((one: any) => <ChatBox chatData={one} key={one.date} updateHandle={updateHandle}/>)
+                    :
+                    props.roomData[0].blah[0] ? props.roomData[0].blah.map((one: any) => <ChatBox chatData={one} key={one.date} updateHandle={updateHandle}/>)
+                    :
+                    <></>
+                }
             </BlahContainer>
             <InputContainer>
                 <InputBox onChange={(evt) => setInputData(evt.currentTarget.value)} value={inputData}/>
@@ -30,27 +63,6 @@ export default function Blah (props: Props) {
         </Container>
     );
 }
-
-// export async function getServerSideProps(props: GetServerSidePropsContext){
-//     const reponse = await fetch("/", {
-//         method: "POST",
-//         body: JSON.stringify({
-//             user: "userEmail",
-//             admin: "adminEmail"
-//         }),
-//         headers: {
-//             "Content-type": "application/json",
-//             "Access-Control-Allow-Origin": "http://localhost:3000"
-//         }
-//     });
-//     const json = await reponse.json();
-
-//     return {
-//         props : {
-//             data: json
-//         }
-//     }
-// }
 
 const Container = styled.div`
     display: flex;
@@ -69,7 +81,9 @@ const BlahContainer = styled.div`
     height: 80vh;
     border: none;
     border-radius: 1rem;
-    align-items: end;
+    align-items: start;
+    justify-content: flex-end;
+    flex-direction: column;
 `;
 
 const InputBox = styled.input`

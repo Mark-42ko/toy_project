@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import TabBar from './tabBar';
-import { useState, useContext } from 'react';
+import { useState, useContext, useEffect } from 'react';
 import MailList from './mailList';
 import BlahBar from './blahBar';
 import Blah from './blah';
@@ -9,19 +9,31 @@ import { ChatNew } from '@styled-icons/remix-line/ChatNew';
 import { GlobalContext } from 'pages/_app';
 import AddBlah from './addBlah';
 
-type Props = {
-    blahData: any;
-    setBlahData: Function;
-};
-
-export default function People (props: Props) {
+export default function People () {
     const [ tabHandle, setTabHandle ] = useState<string>("진행중");
     const [ open, setOpen ] = useState<boolean>(false);
     const ctx = useContext(GlobalContext);
+    const SERVER_URI = process.env.NEXT_PUBLIC_SERVER_URI;
+    const [ roomData, setRoomData ] = useState<any>();
+    const [ choose, setChoose ] = useState<boolean>(false);
+
+    useEffect(() => {
+        !async function () {
+            const result = await fetch(`${SERVER_URI}/blah?email=${ctx?.userData?.userId}`, {
+                method: "GET",
+                headers: {
+                    "Authorization": `bearer ${ctx?.accessToken}`,
+                    "Content-type": "application/json",
+                    "Access-Control-Allow-Origin": "http://localhost:3000"
+                }
+            });
+            const json = await result.json();
+            setRoomData(json.data);
+        }()
+    },[]);
 
     const newChatButtonHandle = () => {
         setOpen(!open);
-        console.log("click!");
     };
 
     return(
@@ -35,14 +47,19 @@ export default function People (props: Props) {
                     }
                 </NameContainer>
                 <TabBar tabHandle={tabHandle} setTabHandle={setTabHandle}/>
-                <MailList tabHandle={tabHandle} blahData={props.blahData} setBlahData={props.setBlahData}/>
+                { roomData ?
+                    roomData.map((one: any) => <MailList key={one._id} tabHandle={tabHandle} roomData={roomData} choose={choose} setChoose={setChoose}/>)
+                    :
+                    <ErrMsg>친구를 추가해주세요.</ErrMsg>
+                }
+                
             </ListContainer>
-            { props.blahData &&
+            { (roomData && choose) &&
                 <InfoContainer>
-                    <BlahBar blahData={props.blahData}/>
+                    <BlahBar roomData={roomData}/>
                     <InnerContainer>
-                        <Blah blahData={props.blahData}/>
-                        <UserInfo blahData={props.blahData}/>
+                        <Blah roomData={roomData}/>
+                        <UserInfo roomData={roomData}/>
                     </InnerContainer>
                 </InfoContainer>
             }
@@ -106,4 +123,9 @@ const ModalBackdrop = styled.div`
   justify-content: center;
   align-items: center;
   background: rgba(0, 0, 0, 0.5);
+`;
+
+const ErrMsg = styled.span`
+    font-size: 1rem;
+    color: #FF0000;
 `;

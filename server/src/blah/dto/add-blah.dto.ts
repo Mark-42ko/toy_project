@@ -10,6 +10,7 @@ export class AddBlah {
     {
       name: string;
       comments: string;
+      date: Date;
     },
   ];
 }

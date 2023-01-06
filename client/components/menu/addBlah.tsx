@@ -2,6 +2,7 @@ import { GlobalContext } from 'pages/_app';
 import { useState, useContext, useEffect } from 'react';
 import styled from 'styled-components';
 import AddBlahCard from './addBlahCard';
+import NewBlahCheck from './newBlahCheck';
 
 type Props = {
     open: boolean;
@@ -13,7 +14,8 @@ export default function AddBlah (props: Props) {
     const ctx = useContext(GlobalContext);
     const [ friendData, setFriendeData ] = useState<any>();
     const [ selectFriend, setSelectFriend ] = useState<any>([]);
-    const [ accessCheck, setAccessCheck ] = useState<boolean>(false);
+    const [ errMsg, setErrMsg ] = useState<string | undefined>();
+    const [ newBlahCheck, setNewBlahCheck ] = useState<boolean>(false);
 
     useEffect(()=>{
         !async function () {
@@ -27,6 +29,7 @@ export default function AddBlah (props: Props) {
             });
             const json = await reponse.json();
             setFriendeData(json);
+            setSelectFriend([...selectFriend, { email: ctx?.userData?.userId, name: ctx?.userData?.username, phoneNumber: ctx?.userData?.userPhoneNumber}]);
         }();
     },[]);
 
@@ -34,7 +37,7 @@ export default function AddBlah (props: Props) {
         const result = await fetch(`${SERVER_URI}/blah/findOne`, {
             method: "POST",
             body: JSON.stringify({
-                user: [...selectFriend, { email: ctx?.userData?.userId, name: ctx?.userData?.username, phoneNumber: ctx?.userData?.userPhoneNumber}],
+                user: selectFriend,
                 blah: []
             }),
             headers: {
@@ -43,49 +46,45 @@ export default function AddBlah (props: Props) {
                 "Access-Control-Allow-Origin": "http://localhost:3000"
             }
         });
+
         const jsons = await result.json();
-        console.log(jsons.data);
-        const data = jsons.data.duplicationData.find((one: string | null) => one === null);
-        console.log(data);
-        console.log(jsons.data.duplicationData.length);
-        if( data === null) {
-            console.log('생성완료');
+        if(selectFriend.length === 1){
+            setErrMsg('혼자서는 생성할 수 없습니다.');
         } else {
-            if( selectFriend.length +1 === jsons.data.counts ){
-                console.log('새로만드실?');
+            if( jsons.data === true) {
+                setErrMsg(undefined);
+                setNewBlahCheck(true);
             } else {
-                if ( jsons.data.duplicationData.length === 1) {
-                    console.log('혼자서는 생성할 수 없습니다.');
-                } else{
-                    console.log('생성완료');
-                }
+                await fetch(`${SERVER_URI}/blah/create`, {
+                    method: "POST",
+                    body: JSON.stringify({
+                        user: selectFriend,
+                        blah: []
+                    }),
+                    headers: {
+                        "Authorization": `bearer ${ctx?.accessToken}`,
+                        "Content-type": "application/json",
+                        "Access-Control-Allow-Origin": "http://localhost:3000"
+                    }
+                });
+                alert('생성완료');
+                props.setOpen(!props.open);
             }
         }
-        // if(jsons) {
-
-        // }
-        // const reponse = await fetch(`${SERVER_URI}/blah/create`, {
-        //     method: "POST",
-        //     body: JSON.stringify({
-        //         user: [...selectFriend, { email: ctx?.userData?.userId, name: ctx?.userData?.username, phoneNumber: ctx?.userData?.userPhoneNumber}],
-        //         blah: []
-        //     }),
-        //     headers: {
-        //         "Authorization": `bearer ${ctx?.accessToken}`,
-        //         "Content-type": "application/json",
-        //         "Access-Control-Allow-Origin": "http://localhost:3000"
-        //     }
-        // });
-        // const json = await reponse.json();
-        // props.setOpen(!open);
     };
 
     return (
         <Container>
             <CloseButton onClick={() => props.setOpen(!props.open)}>x</CloseButton>
             <Title>대화상대를 선택해주세요.</Title>
-            { friendData && friendData[0].friend.map((one: any) => <AddBlahCard key={one.email} friendData={one} setSelectFriend={setSelectFriend} selectFriend={selectFriend} />)}
-            <AddButton onClick={addHandle}><b>대화하기</b></AddButton>
+            { errMsg && <ErrMsg>{errMsg}</ErrMsg> }
+            <InnerContainer>
+                { friendData ? friendData[0].friend.map((one: any) => <AddBlahCard key={one.email} friendData={one} setSelectFriend={setSelectFriend} selectFriend={selectFriend} />) : <ErrMsg>친구가 없습니다. 추가해주세요.</ErrMsg> }
+            </InnerContainer>
+            { newBlahCheck ? 
+                <NewBlahCheck setNewBlahCheck={setNewBlahCheck} newBlahCheck={newBlahCheck} selectFriend={selectFriend} setOpen={props.setOpen} open={props.open}/> :
+                <AddButton onClick={addHandle}><b>대화하기</b></AddButton>    
+            }
         </Container>
     );
 }
@@ -103,6 +102,31 @@ const Container = styled.div`
     min-width: 400px;
     padding: 1rem;
     position: sticky;
+    height: 55%
+`;
+
+const InnerContainer = styled.div`
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    background-color: #FFFFFF;
+    min-width: 400px;
+    gap: 1rem;
+    height: 60%;
+    scrollabar-width: none;
+    padding:1rem;
+    overflow: auto;
+    &::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+        border-radius: 6px;
+        background: rgba(255, 255, 255, 0.4);
+    }
+    &::-webkit-scrollbar-thumb {
+        background-color: rgba(0, 0, 0, 0.3);
+        border-radius: 6px;
+    }
 `;
 
 const CloseButton = styled.button`
@@ -126,4 +150,9 @@ const AddButton = styled.button`
     border-radius: 1rem;
     font-size: 1.3rem;
     color: #FFFFFF
+`;
+
+const ErrMsg = styled.span`
+    color: #FF0000;
+    font-size: 1.5rem;
 `;

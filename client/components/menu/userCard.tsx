@@ -1,24 +1,31 @@
 import styled from 'styled-components';
 import { PhoneIphone } from '@styled-icons/material/PhoneIphone';
 import { EmailOutline } from '@styled-icons/evaicons-outline/EmailOutline';
+import { useContext } from 'react';
+import { GlobalContext } from 'pages/_app';
 
-export default function UserCard () {
+type Props = {
+    userData: any;
+};
+
+export default function UserCard (props: Props) {
+    const ctx = useContext(GlobalContext);
+
     return(
         <Container>
             <ProfileContainer>
                 <ProfileImg />
-                <NameTag><b>홍길동</b></NameTag>
+                <NameTag><b>{
+                    props.userData.name === ctx?.userData?.username ? "나" : props.userData.name
+                }</b></NameTag>
             </ProfileContainer>
             <InfoContainer>
                 <PhoneIphone style={{width: "30px", height: "30px"}}/>
-                <InfoText>010-0000-0000</InfoText>
+                <InfoText>{props.userData.phoneNumber}</InfoText>
             </InfoContainer>
             <InfoContainer>
                 <EmailOutline style={{width: "30px", height: "30px"}}/>
-                <InfoText>example@google.com</InfoText>
-            </InfoContainer>
-            <InfoContainer>
-                <InfoText>추가정보...</InfoText>
+                <InfoText>{props.userData.email}</InfoText>
             </InfoContainer>
         </Container>
     );
@@ -34,7 +41,6 @@ const Container = styled.div`
     border: 1px solid;
     border-radius: 1rem;
     border-color: #D8D8D8;
-    width: 100%;
 `;
 
 const ProfileContainer = styled.div`

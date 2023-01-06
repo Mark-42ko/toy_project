@@ -19,6 +19,7 @@ export class Blah {
     {
       name: string;
       comments: string;
+      date: Date;
     },
   ];
 }

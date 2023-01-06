@@ -3,7 +3,7 @@ import { Search } from '@styled-icons/evaicons-solid/Search';
 import { ThreeDotsVertical } from '@styled-icons/bootstrap/ThreeDotsVertical';
 
 type Props = {
-    blahData: any;
+    roomData: any;
 };
 
 export default function BlahBar (props: Props) {
@@ -17,7 +17,7 @@ export default function BlahBar (props: Props) {
 
     return(
         <Container>
-            <NameTag><b>{props.blahData}</b></NameTag>
+            <NameTag><b>{props.roomData[0].user[0].name}</b></NameTag>
             <div>
                 <Button onClick={searchHandle}><Search style={{color:"#A4A4A4"}}/></Button>
                 <Button onClick={menuHandle}><ThreeDotsVertical style={{color:"#A4A4A4"}}/></Button>

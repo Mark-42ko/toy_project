@@ -18,7 +18,7 @@ export const GlobalContext = createContext<GlobalContext | null>({});
 export default function App({ Component, pageProps }: AppProps) {
   const [ accessToken, setAccessToken ] = useState();
   const [ userData, setUserData ] = useState();
-  console.log(userData);
+
   const value = {
     accessToken,
     setAccessToken,

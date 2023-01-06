@@ -3,31 +3,23 @@ import { useState, useEffect } from 'react';
 
 type Props = {
     tabHandle: string;
-    blahData: any;
-    setBlahData: Function;
+    roomData: any;
+    choose: boolean;
+    setChoose: Function;
 };
 
 export default function MailList (props: Props) {
-    const [ choose, setChoose ] = useState<boolean>(false);
-
-    useEffect(()=>{
-        !async function () {
-
-        }()
-    },[]);
-
+    const nameTag = props.roomData[0].user.length === 2 ? props.roomData[0].user[1].name : props.roomData[0].user[1].name + ' 외' + (props.roomData[0].user.length-1) + ' 명';
     const clickHandle = () => {
-        // props.setTabHandle(props.title);
-        props.setBlahData("이순신");
-        setChoose(true);
+        props.setChoose(true);
     };
 
     return (
-        <ButtonContainer choose={choose} onClick={clickHandle}>
+        <ButtonContainer choose={props.choose} onClick={clickHandle}>
             <ImgDiv />
             <SmallContainer>
                 <div>
-                    <NameTag><b>이순신</b></NameTag>
+                    <NameTag><b>{nameTag}</b></NameTag>
                 </div>
                 <LastOrder>안녕하세요</LastOrder>
             </SmallContainer>

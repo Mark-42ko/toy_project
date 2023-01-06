@@ -1,7 +1,9 @@
 import styled from 'styled-components';
+import { useEffect } from 'react';
 
 type Props = {
-    chatData: string;
+    chatData: any;
+    updateHandle: boolean
 };
 
 export default function ChatBox(props: Props) {
@@ -9,12 +11,15 @@ export default function ChatBox(props: Props) {
         console.log("profile")
     };
 
+    useEffect(()=> {
+    },[props.updateHandle]);
+
     return(
         <Container>
             <ProfileButton onClick={profileButtonHandle}/>
             <InnerContainer>
-                <NameTag><b>홍길동</b></NameTag>
-                <TextBox>{props.chatData}</TextBox>
+                <NameTag><b>{props.chatData.name}</b></NameTag>
+                <TextBox>{props.chatData.comments}</TextBox>
             </InnerContainer>
             <MinInfoContainer>
                 <CountCheck>1</CountCheck>

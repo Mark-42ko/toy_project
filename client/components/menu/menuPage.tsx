@@ -1,6 +1,5 @@
 import styled from 'styled-components';
 import Mail from './mail';
-import { useState } from 'react';
 import People from './people';
 
 type Props = {
@@ -8,8 +7,6 @@ type Props = {
 }
 
 export default function MenuPage(props: Props) {
-    const [blahData, setBlahData] = useState<any>(null);
-
     return (
         <>
             <MenuContainer>
@@ -17,7 +14,7 @@ export default function MenuPage(props: Props) {
                     <People />
                 }
                 { props.navController === "mailInBox" && 
-                    <Mail blahData={blahData} setBlahData={setBlahData} /> 
+                    <Mail /> 
                 }
                 { props.navController === "ListUl" && null }
                 { props.navController === "Award" && null }
