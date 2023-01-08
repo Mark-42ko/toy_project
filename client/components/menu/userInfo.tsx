@@ -25,7 +25,7 @@ const InnerContainer = styled.div`
     padding-left: 1rem;
     width: 100%;
     height: 80%;
-    scrollabar-width: none;
+    scrollbar-width: none;
     overflow: auto;
     &::-webkit-scrollbar {
         width: 8px;

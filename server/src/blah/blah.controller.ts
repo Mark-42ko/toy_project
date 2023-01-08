@@ -30,7 +30,17 @@ export class BlahController {
   @UseGuards(JwtAuthGuard)
   @Get()
   async findAll(@Query('email') email: string): Promise<Blah[]> {
-    const foundBlahRoom = await this.blahService.findAll(email);
+    const foundBlahRooms = await this.blahService.findAll(email);
+    return Object.assign({
+      data: foundBlahRooms,
+      statusCode: 200,
+    });
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('room')
+  async findById(@Query('id') id: string): Promise<Blah[]> {
+    const foundBlahRoom = await this.blahService.findById(id);
     return Object.assign({
       data: foundBlahRoom,
       statusCode: 200,

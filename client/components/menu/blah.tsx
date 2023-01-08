@@ -3,57 +3,87 @@ import { Send } from '@styled-icons/ionicons-sharp/Send';
 import { useContext, useEffect, useState } from 'react';
 import ChatBox from './chatBox';
 import { GlobalContext } from 'pages/_app';
+import { io } from 'socket.io-client';
 
 type Props = {
     roomData: any;
 };
 
+interface IChat {
+    username: string;
+    message: string;
+};
+
+const SERVER_URI = process.env.NEXT_PUBLIC_SERVER_URI;
+const socket = io(`${SERVER_URI}/chat`);
+
 export default function Blah (props: Props) {
     const [ inputData, setInputData ] = useState<string>("");
-    const [ chatData, setChatData ] = useState<string>("");
     const [ updateData, setUpdateData ] = useState<any>();
-    const [ updateHandle, setUpdateHandle ] = useState<boolean>(false);
+    const [chats, setChats] = useState<IChat>();
 
-    const SERVER_URI = process.env.NEXT_PUBLIC_SERVER_URI;
     const ctx = useContext(GlobalContext);
 
     useEffect(()=>{
-    },[updateData]);
+        const messageHandler = (chat: IChat) => 
+        setChats(chat);
+        socket.on('message', messageHandler);
+        return () => {
+            socket.off('message', messageHandler);
+        };
+    },[])
+
+    useEffect(()=>{
+        !async function () {
+            const result = await fetch(`${SERVER_URI}/blah/room?id=${props.roomData[0]._id}`, {
+                method: "GET",
+                headers: {
+                    "Authorization": `bearer ${ctx?.accessToken}`,
+                    "Content-type": "application/json",
+                    "Access-Control-Allow-Origin": "http://localhost:3000"
+                }
+            })
+            const json = await result.json();
+            setUpdateData([json.data])
+        }()
+    },[chats]);
 
     const inputButtonHandle = async () => {
-        setChatData(inputData);
-        const result = await fetch(`${SERVER_URI}/blah/chatAdd`, {
-            method: "Post",
-            body: JSON.stringify({
-                _id: props.roomData._id,
-                blah: {
-                    name: ctx?.userData?.username,
-                    comments: chatData,
-                    date: new Date()
+        if( inputData === "" ) {
+            alert("메시지를 입력해주세요.");
+        } else {
+            await fetch(`${SERVER_URI}/blah/chatAdd`, {
+                method: "Post",
+                body: JSON.stringify({
+                    _id: props.roomData._id,
+                    blah: {
+                        name: ctx?.userData?.username,
+                        comments: inputData,
+                        date: new Date()
+                    }
+                }),
+                headers: {
+                    "Authorization": `bearer ${ctx?.accessToken}`,
+                    "Content-type": "application/json",
+                    "Access-Control-Allow-Origin": "http://localhost:3000"
                 }
-            }),
-            headers: {
-                "Authorization": `bearer ${ctx?.accessToken}`,
-                "Content-type": "application/json",
-                "Access-Control-Allow-Origin": "http://localhost:3000"
+            });
+            const data = {
+                _id: props.roomData[0]._id,
+                username: ctx?.userData?.username
             }
-        });
-        const json = await result.json();
-        console.log(json.data);
-        setUpdateData(json.data);
-        setInputData("");
-        setUpdateHandle(!updateHandle);
+            socket.emit('message', data, (chat: IChat) => {
+                setUpdateData([chat]);
+                setInputData("");    
+            });
+        }
     };
  
     return (
         <Container>
-            <BlahContainer>
-                { updateData ? 
-                    updateData.blah.map((one: any) => <ChatBox chatData={one} key={one.date} updateHandle={updateHandle}/>)
-                    :
-                    props.roomData[0].blah[0] ? props.roomData[0].blah.map((one: any) => <ChatBox chatData={one} key={one.date} updateHandle={updateHandle}/>)
-                    :
-                    <></>
+            <BlahContainer style={{}}>
+                { updateData &&
+                    updateData[0].blah.map((one: any) => <ChatBox chatData={one} key={one.date} />)
                 }
             </BlahContainer>
             <InputContainer>
@@ -77,13 +107,27 @@ const BlahContainer = styled.div`
     display: flex;
     background-color: #E6E0F8;
     width: 100%;
-    min-width: 450px;
     height: 80vh;
     border: none;
     border-radius: 1rem;
-    align-items: start;
-    justify-content: flex-end;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.5rem;
+    padding-right: 1.5rem;
     flex-direction: column;
+    scrollbar-width: none;
+    scroll-top: scroll-height;
+    overflow: auto;
+    &::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+        border-radius: 6px;
+        background: rgba(255, 255, 255, 0.4);
+    }
+    &::-webkit-scrollbar-thumb {
+        background-color: rgba(0, 0, 0, 0.3);
+        border-radius: 6px;
+    }
 `;
 
 const InputBox = styled.input`

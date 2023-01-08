@@ -18,22 +18,25 @@ export class BlahService {
   }
 
   async add(addChatDto: AddChat): Promise<Blah> {
-    const result = await this.BlahModel.findOneAndUpdate({
-      id: addChatDto._id,
-      $push: { blah: addChatDto.blah },
-    }).exec();
+    const result = await this.BlahModel.findOneAndUpdate(
+      {id: addChatDto._id},
+      {$push: { blah: addChatDto.blah }},
+      {new: true}).exec();
     return result;
   }
 
   async findAll(email: string): Promise<Blah[]> {
-    const data = [];
     const result = await this.BlahModel.find({
       user: {
         $elemMatch: { email: email },
       },
     }).exec();
-    data.push(...result);
-    return data;
+    return result;
+  }
+
+  async findById(id: string): Promise<Blah> {
+    const result = await this.BlahModel.findOne({ _id: id}).exec();
+    return result;
   }
 
   async findOne(addBlahDto: AddBlah): Promise<any> {
