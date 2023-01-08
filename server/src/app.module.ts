@@ -7,7 +7,6 @@ import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
 import { PeopleModule } from './people/people.module';
 import { BlahModule } from './blah/blah.module';
-
 // const MONGO_URI = process.env.MONGO_URI;
 
 @Module({

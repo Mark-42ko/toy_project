@@ -1,9 +1,9 @@
+import { GlobalContext } from 'pages/_app';
+import { useContext } from 'react';
 import styled from 'styled-components';
-import { useEffect } from 'react';
 
 type Props = {
     chatData: any;
-    updateHandle: boolean
 };
 
 export default function ChatBox(props: Props) {
@@ -11,30 +11,52 @@ export default function ChatBox(props: Props) {
         console.log("profile")
     };
 
-    useEffect(()=> {
-    },[props.updateHandle]);
-
+    const ctx = useContext(GlobalContext);
+    const check = props.chatData.name === ctx?.userData?.username ? true : false;
     return(
-        <Container>
-            <ProfileButton onClick={profileButtonHandle}/>
-            <InnerContainer>
-                <NameTag><b>{props.chatData.name}</b></NameTag>
-                <TextBox>{props.chatData.comments}</TextBox>
-            </InnerContainer>
-            <MinInfoContainer>
-                <CountCheck>1</CountCheck>
-                <TimeLine>오후 12:00</TimeLine>
-            </MinInfoContainer>
+        <Container check={check}>
+            { check ?
+                <ProfileContainer>
+                    <MinInfoContainer check={check}>
+                        <CountCheck>1</CountCheck>
+                        <TimeLine>오후 12:00</TimeLine>
+                    </MinInfoContainer>
+                    <InnerContainer>
+                        <TextBox check={check}>{props.chatData.comments}</TextBox>
+                    </InnerContainer>
+                </ProfileContainer>
+            :
+                <ProfileContainer>
+                    <ProfileButton onClick={profileButtonHandle}/>
+                    <InnerContainer>
+                        <NameTag><b>{props.chatData.name}</b></NameTag>
+                        <TextBox check={check}>{props.chatData.comments}</TextBox>
+                    </InnerContainer>
+                    <MinInfoContainer check={check}>
+                        <CountCheck>1</CountCheck>
+                        <TimeLine>오후 12:00</TimeLine>
+                    </MinInfoContainer>
+                </ProfileContainer>
+            }
         </Container>
     )
 }
 
-const Container = styled.div`\
-    width: 50%;
+type CheckProps = {
+    check: boolean;
+};
+
+const Container = styled.div`
+    width: 90%;
     display: felx;
-    gap: 1rem;
-    padding: 1rem;
     position: sticky;
+    justify-content: ${(props: CheckProps) => props.check === true ? "end" : "start"};
+`;
+
+const ProfileContainer = styled.div`
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
 `;
 
 const ProfileButton = styled.button`
@@ -61,7 +83,7 @@ const TextBox = styled.label`
     font-size: 1.4rem;
     display: flex;
     align-items: center;
-    background-color: #FFFFFF;
+    background-color: ${(props:CheckProps) => props.check === true ? "#F4FA58" : "#FFFFFF"};
     border: none;
     border-radius: 1rem;
     padding: 1rem;
@@ -72,6 +94,7 @@ const MinInfoContainer = styled.div`
     display: flex;
     flex-direction: column;
     justify-content: end;
+    align-items: ${(props: CheckProps) => props.check === true ? "end" : "start"};
     margin-left: 1rem;
 `;
 
