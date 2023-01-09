@@ -1,6 +1,6 @@
-import { SessionProvider } from 'next-auth/react'
-import type { AppProps } from 'next/app'
-import { createContext, useState } from 'react';
+import { SessionProvider } from "next-auth/react";
+import type { AppProps } from "next/app";
+import { createContext, useState } from "react";
 
 interface GlobalContext {
   accessToken?: string;
@@ -16,14 +16,14 @@ interface GlobalContext {
 export const GlobalContext = createContext<GlobalContext | null>({});
 
 export default function App({ Component, pageProps }: AppProps) {
-  const [ accessToken, setAccessToken ] = useState();
-  const [ userData, setUserData ] = useState();
+  const [accessToken, setAccessToken] = useState();
+  const [userData, setUserData] = useState();
 
   const value = {
     accessToken,
     setAccessToken,
     userData,
-    setUserData
+    setUserData,
   };
 
   return (
@@ -32,5 +32,5 @@ export default function App({ Component, pageProps }: AppProps) {
         <Component {...pageProps} />
       </SessionProvider>
     </GlobalContext.Provider>
-  )
+  );
 }

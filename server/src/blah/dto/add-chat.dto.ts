@@ -5,5 +5,6 @@ export class AddChat {
     name: string;
     comments: string;
     date: Date;
+    counts: [string];
   };
 }

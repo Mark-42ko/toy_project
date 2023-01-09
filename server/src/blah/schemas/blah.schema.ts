@@ -1,5 +1,5 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
+import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
+import { HydratedDocument } from "mongoose";
 
 export type BlahDocument = HydratedDocument<Blah>;
 
@@ -20,6 +20,7 @@ export class Blah {
       name: string;
       comments: string;
       date: Date;
+      counts: [string];
     },
   ];
 }

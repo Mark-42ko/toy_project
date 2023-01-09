@@ -1,24 +1,19 @@
-import { Injectable } from '@nestjs/common';
-import { AddPeople } from './dto/add-people.dto';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
-import { People, PeopleDocument } from './schemas/people.schema';
+import { Injectable } from "@nestjs/common";
+import { AddPeople } from "./dto/add-people.dto";
+import { InjectModel } from "@nestjs/mongoose";
+import { Model } from "mongoose";
+import { People, PeopleDocument } from "./schemas/people.schema";
 
 @Injectable()
 export class PeopleService {
-  constructor(
-    @InjectModel(People.name) private PeopleModel: Model<PeopleDocument>,
-  ) {}
+  constructor(@InjectModel(People.name) private PeopleModel: Model<PeopleDocument>) {}
 
   async add(addPeopleDto: AddPeople): Promise<People> {
     const result = await this.PeopleModel.findOne({
       email: addPeopleDto.user,
     }).exec();
     if (result) {
-      if (
-        result.friend.find((one) => one.email === addPeopleDto.friend.email) ===
-        undefined
-      ) {
+      if (result.friend.find((one) => one.email === addPeopleDto.friend.email) === undefined) {
         await this.PeopleModel.findOneAndUpdate({
           email: addPeopleDto.user,
           $push: {
@@ -33,7 +28,7 @@ export class PeopleService {
           statusCode: 200,
         });
       } else {
-        console.log('yes data');
+        console.log("yes data");
         return Object.assign({
           statusCode: 401,
         });

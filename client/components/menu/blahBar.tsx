@@ -1,48 +1,54 @@
-import styled from 'styled-components';
-import { Search } from '@styled-icons/evaicons-solid/Search';
-import { ThreeDotsVertical } from '@styled-icons/bootstrap/ThreeDotsVertical';
+import styled from "styled-components";
+import { Search } from "@styled-icons/evaicons-solid/Search";
+import { ThreeDotsVertical } from "@styled-icons/bootstrap/ThreeDotsVertical";
+import { useContext } from "react";
+import { GlobalContext } from "pages/_app";
 
 type Props = {
-    roomData: any;
+  roomData: any;
 };
 
-export default function BlahBar (props: Props) {
-    const searchHandle = () => {
+export default function BlahBar(props: Props) {
+  const ctx = useContext(GlobalContext);
 
-    };
+  const searchHandle = () => {};
 
-    const menuHandle = () => {
+  const menuHandle = () => {};
 
-    };
-
-    return(
-        <Container>
-            <NameTag><b>{props.roomData[0].user[0].name}</b></NameTag>
-            <div>
-                <Button onClick={searchHandle}><Search style={{color:"#A4A4A4"}}/></Button>
-                <Button onClick={menuHandle}><ThreeDotsVertical style={{color:"#A4A4A4"}}/></Button>
-            </div>
-        </Container>
-    );
+  return (
+    <Container>
+      <NameTag>
+        <b>{ctx?.userData?.username}</b>
+      </NameTag>
+      <div>
+        <Button onClick={searchHandle}>
+          <Search style={{ color: "#A4A4A4" }} />
+        </Button>
+        <Button onClick={menuHandle}>
+          <ThreeDotsVertical style={{ color: "#A4A4A4" }} />
+        </Button>
+      </div>
+    </Container>
+  );
 }
 
 const Container = styled.div`
-    width: 100%;
-    height: 7vh;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
+  width: 100%;
+  height: 7vh;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
 `;
 
 const NameTag = styled.h1`
-    font-size: 1.5rem;
-    padding-left: 20px;
+  font-size: 1.5rem;
+  padding-left: 20px;
 `;
 
 const Button = styled.button`
-    width: 50px;
-    height: 50px;
-    border: none;
-    background: #FFFFFF;
+  width: 50px;
+  height: 50px;
+  border: none;
+  background: #ffffff;
 `;

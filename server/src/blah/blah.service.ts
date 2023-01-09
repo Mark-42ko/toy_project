@@ -1,9 +1,10 @@
-import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
-import { Blah, BlahDocument } from './schemas/blah.schema';
-import { AddBlah } from './dto/add-blah.dto';
-import { AddChat } from './dto/add-chat.dto';
+import { Injectable } from "@nestjs/common";
+import { InjectModel } from "@nestjs/mongoose";
+import { Model } from "mongoose";
+import { Blah, BlahDocument } from "./schemas/blah.schema";
+import { AddBlah } from "./dto/add-blah.dto";
+import { AddChat } from "./dto/add-chat.dto";
+import { CountUpdate } from "./dto/update-count.dto";
 
 @Injectable()
 export class BlahService {
@@ -19,9 +20,10 @@ export class BlahService {
 
   async add(addChatDto: AddChat): Promise<Blah> {
     const result = await this.BlahModel.findOneAndUpdate(
-      {id: addChatDto._id},
-      {$push: { blah: addChatDto.blah }},
-      {new: true}).exec();
+      { _id: addChatDto._id },
+      { $push: { blah: addChatDto.blah } },
+      { new: true },
+    ).exec();
     return result;
   }
 
@@ -35,7 +37,17 @@ export class BlahService {
   }
 
   async findById(id: string): Promise<Blah> {
-    const result = await this.BlahModel.findOne({ _id: id}).exec();
+    const result = await this.BlahModel.findOne({ _id: id }).exec();
+    return result;
+  }
+
+  async countUpdate(data: CountUpdate): Promise<Blah> {
+    console.log(data.email);
+    const result = await this.BlahModel.findOneAndUpdate(
+      { _id: data._id },
+      { $pull: { [`blah.${data.idx}.counts`]: { $in: [data.email] } } },
+      { new: true },
+    ).exec();
     return result;
   }
 

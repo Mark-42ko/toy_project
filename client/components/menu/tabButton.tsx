@@ -1,39 +1,41 @@
-import styled from 'styled-components';
-import { useState, useEffect } from 'react';
+import styled from "styled-components";
+import { useState, useEffect } from "react";
 
 type Props = {
-    title: string;
-    tabHandle: string;
-    setTabHandle: Function;
+  title: string;
+  tabHandle: string;
+  setTabHandle: Function;
 };
 
 export default function TabButton(props: Props) {
-    const [ choose, setChoose ] = useState<boolean>(false);
+  const [choose, setChoose] = useState<boolean>(false);
 
-    useEffect(()=>{
-        props.title === "진행중" && setChoose(true);
-        props.tabHandle !== props.title && setChoose(false);
-    },[props.tabHandle]);
+  useEffect(() => {
+    props.title === "진행중" && setChoose(true);
+    props.tabHandle !== props.title && setChoose(false);
+  }, [props.tabHandle]);
 
-    const clickHandle = () => {
-        props.setTabHandle(props.title);
-        setChoose(true)
-    };
+  const clickHandle = () => {
+    props.setTabHandle(props.title);
+    setChoose(true);
+  };
 
-    return(
-        <Button choose={choose} onClick={clickHandle} ><b>{props.title}</b></Button>
-    );
+  return (
+    <Button choose={choose} onClick={clickHandle}>
+      <b>{props.title}</b>
+    </Button>
+  );
 }
 
 type ButtonProps = {
-    choose:boolean;
+  choose: boolean;
 };
 
 const Button = styled.button`
-    padding: 1em 1em;
-    border: none;
-    border-radius: 10px;
-    width: 32%;
-    alignItems: center;
-    background: ${(props:ButtonProps) => props.choose === true ? "#FFFFFF" : "#F2F2F2"};
+  padding: 1em 1em;
+  border: none;
+  border-radius: 10px;
+  width: 32%;
+  alignitems: center;
+  background: ${(props: ButtonProps) => (props.choose === true ? "#FFFFFF" : "#F2F2F2")};
 `;

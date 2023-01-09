@@ -2,7 +2,7 @@
   "arrowParens": "always",
   "bracketSameLine": false,
   "bracketSpacing": true,
-  "endOfLine": "lf",
+  "endOfLine": "crlf",
   "embeddedLanguageFormatting": "auto",
   "jsxSingleQuote": false,
   "quoteProps": "as-needed",
@@ -14,4 +14,3 @@
   "printWidth": 100,
   "requirePragma": false
 }
-
