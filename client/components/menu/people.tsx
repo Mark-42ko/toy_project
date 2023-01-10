@@ -2,7 +2,6 @@ import styled from "styled-components";
 import ConnectionList from "./connectionList";
 import { useState, useEffect, useContext } from "react";
 import AddPeople from "./addPeople";
-import { GlobalContext } from "pages/_app";
 
 const connection = [
   { status: "온라인" },

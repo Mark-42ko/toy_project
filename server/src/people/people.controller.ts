@@ -23,9 +23,9 @@ export class PeopleController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Get("emailCheck")
-  async findOne(@Query("email") email: string): Promise<People> {
-    const foundEmail = await this.peopleService.findOne(email);
+  @Get("readPeople")
+  async findOne(@Query("username") username: string): Promise<People> {
+    const foundEmail = await this.peopleService.findOne(username);
     return Object.assign({
       data: foundEmail,
       statusCode: 200,

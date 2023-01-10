@@ -7,6 +7,8 @@ import { JwtModule } from "@nestjs/jwt";
 import { JwtStrategy } from "src/auth/jwt.strategy";
 import { jwtConstants } from "src/auth/constants";
 import { BlahGateway } from "./blah.gateway";
+import { MulterModule } from "@nestjs/platform-express";
+import { multerOptionsFactory } from "src/common/utils/multer.options.factory";
 
 @Module({
   imports: [
@@ -16,6 +18,9 @@ import { BlahGateway } from "./blah.gateway";
       signOptions: { expiresIn: "6000s" },
     }),
     BlahModule,
+    MulterModule.registerAsync({
+      useFactory: multerOptionsFactory,
+    }),
   ],
   providers: [BlahService, JwtStrategy, BlahGateway],
   controllers: [BlahController],

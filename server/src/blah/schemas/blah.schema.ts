@@ -21,6 +21,7 @@ export class Blah {
       comments: string;
       date: Date;
       counts: [string];
+      filePath: string;
     },
   ];
 }

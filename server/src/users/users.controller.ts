@@ -19,8 +19,8 @@ export class UsersController {
   }
 
   @Get("emailCheck")
-  async findOne(@Query("email") username: string): Promise<Users> {
-    const foundEmail = await this.usersService.findOne(username);
+  async findOne(@Query("email") email: string): Promise<Users> {
+    const foundEmail = await this.usersService.findOne(email);
     return Object.assign({
       data: foundEmail,
       statusCode: 200,

@@ -17,16 +17,19 @@ export default function ConnectionList(props: Props) {
 
   useEffect(() => {
     !(async function () {
-      const reponse = await fetch(`${SERVER_URI}/people?email=${ctx?.userData?.userId}`, {
-        method: "GET",
-        headers: {
-          Authorization: `bearer ${ctx?.accessToken}`,
-          "Content-type": "application/json",
-          "Access-Control-Allow-Origin": "http://localhost:3000",
+      const reponse = await fetch(
+        `${SERVER_URI}/people/readPeople?username=${ctx?.userData?.username}`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `bearer ${ctx?.accessToken}`,
+            "Content-type": "application/json",
+            "Access-Control-Allow-Origin": "http://localhost:3000",
+          },
         },
-      });
+      );
       const json = await reponse.json();
-      setPeopleData(json);
+      setPeopleData(json.data);
     })();
   }, [props.open]);
 
@@ -37,18 +40,18 @@ export default function ConnectionList(props: Props) {
       ) : (
         <RightArrowAlt style={{ width: 20, height: 20 }} />
       )}
-      {props.tag === "온라인" && peopleData && (
+      {props.tag === "온라인" && (
         <ListTag>
-          {props.tag} (0/{peopleData[0] ? peopleData[0].friend.length : 0})
+          {props.tag} (0/{peopleData ? peopleData.friend.length : 0})
         </ListTag>
       )}
-      {props.tag === "오프라인" && peopleData && (
+      {props.tag === "오프라인" && (
         <ListTag>
-          {props.tag} (0/{peopleData[0] ? peopleData[0].friend.length : 0})
+          {props.tag} (0/{peopleData ? peopleData.friend.length : 0})
         </ListTag>
       )}
-      {props.tag === "보낸요청" && peopleData && <ListTag>{props.tag} (0/0)</ListTag>}
-      {props.tag === "받은요청" && peopleData && <ListTag>{props.tag} (0/0)</ListTag>}
+      {props.tag === "보낸요청" && <ListTag>{props.tag} (0/0)</ListTag>}
+      {props.tag === "받은요청" && <ListTag>{props.tag} (0/0)</ListTag>}
     </ListButton>
   );
 }

@@ -19,16 +19,19 @@ export default function AddBlah(props: Props) {
 
   useEffect(() => {
     !(async function () {
-      const reponse = await fetch(`${SERVER_URI}/people?email=${ctx?.userData?.userId}`, {
-        method: "GET",
-        headers: {
-          Authorization: `bearer ${ctx?.accessToken}`,
-          "Content-type": "application/json",
-          "Access-Control-Allow-Origin": "http://localhost:3000",
+      const reponse = await fetch(
+        `${SERVER_URI}/people/readPeople?username=${ctx?.userData?.username}`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `bearer ${ctx?.accessToken}`,
+            "Content-type": "application/json",
+            "Access-Control-Allow-Origin": "http://localhost:3000",
+          },
         },
-      });
+      );
       const json = await reponse.json();
-      setFriendeData(json);
+      setFriendeData(json.data);
       setSelectFriend([
         ...selectFriend,
         {
@@ -87,7 +90,7 @@ export default function AddBlah(props: Props) {
       {errMsg && <ErrMsg>{errMsg}</ErrMsg>}
       <InnerContainer>
         {friendData ? (
-          friendData[0].friend.map((one: any) => (
+          friendData.friend.map((one: any) => (
             <AddBlahCard
               key={one.email}
               friendData={one}

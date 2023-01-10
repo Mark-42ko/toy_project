@@ -2,6 +2,7 @@ import { GlobalContext } from "pages/_app";
 import { useContext, useEffect, useState } from "react";
 import { io } from "socket.io-client";
 import styled from "styled-components";
+import { FileEarmarkArrowDown } from "@styled-icons/bootstrap/FileEarmarkArrowDown";
 
 type Props = {
   chatData: any;
@@ -47,7 +48,6 @@ export default function ChatBox(props: Props) {
   }, [props.roomData]);
 
   useEffect(() => {
-    console.log(props._id);
     !(async function () {
       await fetch(`${SERVER_URI}/blah/updateCount`, {
         method: "POST",
@@ -80,7 +80,9 @@ export default function ChatBox(props: Props) {
     })();
   }, [chats, props.roomData]);
 
-  const profileButtonHandle = () => {};
+  const downloadHandle = () => {
+    console.log(props.chatData.filePath);
+  };
 
   return (
     <Container check={check}>
@@ -90,13 +92,20 @@ export default function ChatBox(props: Props) {
             {counting !== 0 && <CountCheck>{counting}</CountCheck>}
             <TimeLine>{timeStamp}</TimeLine>
           </MinInfoContainer>
-          <InnerContainer>
-            <TextBox check={check}>{props.chatData.comments}</TextBox>
-          </InnerContainer>
+          {props.chatData.filePath ? (
+            <FileButton onClick={downloadHandle}>
+              <FileEarmarkArrowDown style={{ width: 50, height: 40 }} />
+              <FileInfoText>{props.chatData.comments}</FileInfoText>
+            </FileButton>
+          ) : (
+            <InnerContainer>
+              <TextBox check={check}>{props.chatData.comments}</TextBox>
+            </InnerContainer>
+          )}
         </ProfileContainer>
       ) : (
         <ProfileContainer>
-          <ProfileButton onClick={profileButtonHandle} />
+          <ProfileDiv />
           <InnerContainer>
             <NameTag>
               <b>{props.chatData.name}</b>
@@ -119,7 +128,7 @@ type CheckProps = {
 
 const Container = styled.div`
   width: 90%;
-  display: felx;
+  display: flex;
   justify-content: ${(props: CheckProps) => (props.check === true ? "end" : "start")};
 `;
 
@@ -129,7 +138,7 @@ const ProfileContainer = styled.div`
   gap: 1rem;
 `;
 
-const ProfileButton = styled.button`
+const ProfileDiv = styled.div`
   background-image: url("/images/defaultGuest.jpg");
   background-size: cover;
   width: 65px;
@@ -173,5 +182,26 @@ const CountCheck = styled.label`
 `;
 
 const TimeLine = styled.label``;
-// justify-content: center;
-//     flex-direction: column;
+
+const FileButton = styled.button`
+  display: flex;
+  flex-direction: row;
+  border: none;
+  background: #ffffff;
+  border-radius: 1rem;
+  align-items: center;
+  width: 100%;
+  padding: 1rem;
+`;
+
+const FileInfoText = styled.span`
+  width: 95%;
+  font-size: 1.4rem;
+  display: flex;
+  align-items: center;
+  background-color: #ffffff;
+  border: none;
+  border-radius: 1rem;
+  padding: 1rem;
+  word-break: break-all;
+`;

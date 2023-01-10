@@ -10,31 +10,43 @@ export class PeopleService {
 
   async add(addPeopleDto: AddPeople): Promise<People> {
     const result = await this.PeopleModel.findOne({
-      email: addPeopleDto.user,
+      user: addPeopleDto.user,
     }).exec();
-    if (result) {
+    if (result !== null) {
       if (result.friend.find((one) => one.email === addPeopleDto.friend.email) === undefined) {
-        await this.PeopleModel.findOneAndUpdate({
-          email: addPeopleDto.user,
-          $push: {
-            friend: {
-              email: addPeopleDto.friend.email,
-              name: addPeopleDto.friend.name,
-              phoneNumber: addPeopleDto.friend.phoneNumber,
+        await this.PeopleModel.findOneAndUpdate(
+          {
+            user: addPeopleDto.user,
+          },
+          {
+            $push: {
+              friend: {
+                email: addPeopleDto.friend.email,
+                name: addPeopleDto.friend.name,
+                phoneNumber: addPeopleDto.friend.phoneNumber,
+              },
             },
           },
-        }).exec();
+        ).exec();
         return Object.assign({
           statusCode: 200,
         });
       } else {
-        console.log("yes data");
         return Object.assign({
           statusCode: 401,
         });
       }
     } else {
-      const peopleAccount = new this.PeopleModel(addPeopleDto);
+      const peopleAccount = await this.PeopleModel.create({
+        user: addPeopleDto.user,
+        friend: [
+          {
+            email: addPeopleDto.friend.email,
+            name: addPeopleDto.friend.name,
+            phoneNumber: addPeopleDto.friend.phoneNumber,
+          },
+        ],
+      });
       return peopleAccount.save();
     }
   }
@@ -43,8 +55,8 @@ export class PeopleService {
     return this.PeopleModel.find().exec();
   }
 
-  async findOne(email: string): Promise<People> {
-    const result = this.PeopleModel.findOne({ email: email }).exec();
+  async findOne(username: string): Promise<People> {
+    const result = this.PeopleModel.findOne({ user: username }).exec();
     if (!result) {
       return Object.assign({
         statusCode: 418,

@@ -21,6 +21,7 @@ export default function UserInfo(props: Props) {
 const Container = styled.div`
   padding-left: 1rem;
   width: 25%;
+  height: 80vh;
 `;
 
 const InnerContainer = styled.div`
@@ -43,4 +44,5 @@ const InnerContainer = styled.div`
 
 const TitleText = styled.span`
   font-size: 1.5rem;
+  padding-left: 1rem;
 `;

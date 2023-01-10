@@ -84,12 +84,13 @@ const Container = styled.div`
   display: flex;
   flex-direction: row;
   width: 100%;
+  gap: 1rem;
 `;
 
 const ListContainer = styled.div`
   display: flex;
   flex-direction: column;
-  width: 300px;
+  width: 20%;
   min-width: 300px;
 `;
 
@@ -105,10 +106,10 @@ const NameTag = styled.h1`
 `;
 
 const InfoContainer = styled.div`
-    width: 100%;
-    height: 100%
-    display: flex;
-    flex-direction: column;  
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 `;
 
 const InnerContainer = styled.div`

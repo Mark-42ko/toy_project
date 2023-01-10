@@ -1,9 +1,10 @@
 import styled from "styled-components";
 import { Send } from "@styled-icons/ionicons-sharp/Send";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState, useRef } from "react";
 import ChatBox from "./chatBox";
 import { GlobalContext } from "pages/_app";
 import { io } from "socket.io-client";
+import { PlusCircle } from "@styled-icons/bootstrap/PlusCircle";
 
 type Props = {
   roomData: any;
@@ -22,6 +23,9 @@ export default function Blah(props: Props) {
   const [updateData, setUpdateData] = useState<any>();
   const [chats, setChats] = useState<IChat>();
   const [check, setCheck] = useState<number>(0);
+  const [files, setFiles] = useState<File[]>([]);
+  const ref = useRef<HTMLInputElement>(null);
+
   const ctx = useContext(GlobalContext);
 
   const chatUser: string[] = [];
@@ -41,6 +45,12 @@ export default function Blah(props: Props) {
   }, []);
 
   useEffect(() => {
+    // scrollRef.current?.scrollIntoView({ behavior: "auto", block: "end" });
+    const blah = document.getElementById("blah");
+    blah?.scrollIntoView({ behavior: "auto", block: "end", inline: "end" });
+  }, [updateData]);
+
+  useEffect(() => {
     !(async function () {
       const result = await fetch(`${SERVER_URI}/blah/room?id=${props.roomData._id}`, {
         method: "GET",
@@ -56,42 +66,97 @@ export default function Blah(props: Props) {
   }, [chats, props.roomData]);
 
   const inputButtonHandle = async () => {
+    console.log(files);
     if (inputData === "") {
       alert("메시지를 입력해주세요.");
     } else {
-      console.log(chatUser);
-      await fetch(`${SERVER_URI}/blah/chatAdd`, {
-        method: "Post",
-        body: JSON.stringify({
-          _id: props.roomData._id,
-          blah: {
-            name: ctx?.userData?.username,
-            comments: inputData,
-            date: new Date(),
-            counts: chatUser,
+      if (files.length !== 0) {
+        const formData = new FormData();
+        files.forEach((one) => {
+          formData.append("file", one);
+        });
+        const response = await fetch(`${SERVER_URI}/blah/upload`, {
+          method: "POST",
+          body: formData,
+          headers: {
+            Authorization: `bearer ${ctx?.accessToken}`,
+            "Access-Control-Allow-Origin": "http://localhost:3000",
           },
-        }),
-        headers: {
-          Authorization: `bearer ${ctx?.accessToken}`,
-          "Content-type": "application/json",
-          "Access-Control-Allow-Origin": "http://localhost:3000",
-        },
-      });
-      const data = {
-        _id: props.roomData._id,
-        username: ctx?.userData?.username,
-      };
-      socket.emit("message", data, (chat: any) => {
-        setUpdateData(chat);
-        setInputData("");
-        setCheck(chat.blah.length);
-      });
+        });
+        const json = await response.json();
+
+        await fetch(`${SERVER_URI}/blah/chatAdd`, {
+          method: "Post",
+          body: JSON.stringify({
+            _id: props.roomData._id,
+            blah: {
+              name: ctx?.userData?.username,
+              comments: json.fileOriginName,
+              date: new Date(),
+              counts: chatUser,
+              filePath: json.filePath,
+            },
+          }),
+          headers: {
+            Authorization: `bearer ${ctx?.accessToken}`,
+            "Content-type": "application/json",
+            "Access-Control-Allow-Origin": "http://localhost:3000",
+          },
+        });
+        const data = {
+          _id: props.roomData._id,
+          username: ctx?.userData?.username,
+        };
+        socket.emit("message", data, (chat: any) => {
+          setUpdateData(chat);
+          setInputData("");
+          setCheck(chat.blah.length);
+          setFiles([]);
+        });
+      } else {
+        await fetch(`${SERVER_URI}/blah/chatAdd`, {
+          method: "Post",
+          body: JSON.stringify({
+            _id: props.roomData._id,
+            blah: {
+              name: ctx?.userData?.username,
+              comments: inputData,
+              date: new Date(),
+              counts: chatUser,
+            },
+          }),
+          headers: {
+            Authorization: `bearer ${ctx?.accessToken}`,
+            "Content-type": "application/json",
+            "Access-Control-Allow-Origin": "http://localhost:3000",
+          },
+        });
+        const data = {
+          _id: props.roomData._id,
+          username: ctx?.userData?.username,
+        };
+        socket.emit("message", data, (chat: any) => {
+          setUpdateData(chat);
+          setInputData("");
+          setCheck(chat.blah.length);
+        });
+      }
+    }
+  };
+
+  const fileAddButtonHandle: React.ChangeEventHandler<HTMLInputElement> = (evt) => {
+    if (evt.target.files) {
+      const t = Array.from(evt.target.files!);
+      setFiles([...files, ...t]);
+      if (t[0]) {
+        setInputData(`${t[0].name}를 보내시겠습니까?`);
+      }
     }
   };
 
   return (
     <Container>
-      <BlahContainer style={{}}>
+      <BlahContainer>
         {updateData &&
           updateData.blah.map((one: any, idx: number) => (
             <ChatBox
@@ -104,9 +169,20 @@ export default function Blah(props: Props) {
               roomData={props.roomData}
             />
           ))}
+        <div id="blah"></div>
       </BlahContainer>
       <InputContainer>
         <InputBox onChange={(evt) => setInputData(evt.currentTarget.value)} value={inputData} />
+        <FileAddButton onClick={() => ref.current?.click()}>
+          <PlusCircle />
+        </FileAddButton>
+        <FileInput
+          type="file"
+          ref={ref}
+          style={{ display: "none" }}
+          multiple
+          onChange={fileAddButtonHandle}
+        />
         <SendButton type="button" onClick={inputButtonHandle}>
           <Send />
         </SendButton>
@@ -151,7 +227,7 @@ const BlahContainer = styled.div`
 `;
 
 const InputBox = styled.input`
-  width: 90%;
+  width: 80%;
   height: 3vh;
   border-radius: 3rem;
   padding: 1rem;
@@ -166,6 +242,9 @@ const SendButton = styled.button`
   padding: 0.6rem;
   background: #0000ff;
   color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;
 
 const InputContainer = styled.div`
@@ -175,5 +254,19 @@ const InputContainer = styled.div`
   align-items: center;
   flex-direction: row;
   justify-content: center;
-  gap: 1rem;
+  gap: 0.5rem;
 `;
+
+const FileAddButton = styled.button`
+  width: 4rem;
+  height: 4rem;
+  border: none;
+  border-radius: 50px;
+  background: #0000ff;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+const FileInput = styled.input``;

@@ -12,6 +12,7 @@ export class AddBlah {
       comments: string;
       date: Date;
       counts: [string];
+      filePath: string;
     },
   ];
 }

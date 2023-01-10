@@ -6,5 +6,6 @@ export class AddChat {
     comments: string;
     date: Date;
     counts: [string];
+    filePath: string;
   };
 }

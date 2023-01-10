@@ -1,4 +1,13 @@
-import { Body, Controller, Get, HttpCode, Post } from "@nestjs/common";
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  Post,
+  UploadedFile,
+  UseInterceptors,
+} from "@nestjs/common";
+import { FileInterceptor } from "@nestjs/platform-express";
 import { Query, UseGuards } from "@nestjs/common/decorators";
 import { JwtAuthGuard } from "src/auth/jwt.guard";
 import { BlahService } from "./blah.service";
@@ -6,6 +15,7 @@ import { Blah } from "./schemas/blah.schema";
 import { AddBlah } from "./dto/add-blah.dto";
 import { AddChat } from "./dto/add-chat.dto";
 import { CountUpdate } from "./dto/update-count.dto";
+import { Response } from "@nestjs/common/decorators/http/route-params.decorator";
 
 @Controller("blah")
 export class BlahController {
@@ -66,5 +76,19 @@ export class BlahController {
       data: datas,
       statusCode: 200,
     });
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post("upload")
+  @UseInterceptors(FileInterceptor("file"))
+  uploadFile(@UploadedFile() file: Express.Multer.File) {
+    console.log(file);
+    return this.blahService.uploadFile(file);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get("download")
+  downloadFile(@Response() res) {
+    return this.blahService.downloadFile(res);
   }
 }
