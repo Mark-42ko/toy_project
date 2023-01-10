@@ -7,5 +7,7 @@ export class AddChat {
     date: Date;
     counts: [string];
     filePath: string;
+    filename: string;
+    filesize: number;
   };
 }

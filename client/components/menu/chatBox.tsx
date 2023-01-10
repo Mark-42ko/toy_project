@@ -20,11 +20,18 @@ export default function ChatBox(props: Props) {
   const [counting, setCounting] = useState<number | undefined>();
   const dataDate = new Date(props.chatData.date).toLocaleString("ko-kr").split(" ");
   const dataTime = dataDate[4].split(":");
-  const timeStamp = `${dataDate[3]} ${dataTime[0]}:${dataTime[1]}`;
   const [chats, setChats] = useState<any>();
+  const [imageFileUrl, setImageFileUrl] = useState<string>();
+
+  const timeStamp = `${dataDate[3]} ${dataTime[0]}:${dataTime[1]}`;
 
   const ctx = useContext(GlobalContext);
   const check = props.chatData.name === ctx?.userData?.username ? true : false;
+
+  let extension;
+  if (props.chatData.filename) {
+    extension = props.chatData.filename.split(".")[props.chatData.filename.split(".").length - 1];
+  }
   const data = {
     _id: props._id,
     idx: props.idx,
@@ -77,11 +84,55 @@ export default function ChatBox(props: Props) {
       });
       const json = await result.json();
       json.data.blah[props.idx] && setCounting(await json.data.blah[props.idx].counts.length);
+      if (props.chatData.filename) {
+        const extension =
+          props.chatData.filename.split(".")[props.chatData.filename.split(".").length - 1];
+        if (
+          extension === "jpg" ||
+          extension === "jpeg" ||
+          extension === "png" ||
+          extension === "gif"
+        ) {
+          const result = await fetch(
+            `${SERVER_URI}/blah/download?filename=${props.chatData.filename}`,
+            {
+              method: "GET",
+              headers: {
+                Authorization: `bearer ${ctx?.accessToken}`,
+                "Content-type": "application/json",
+                "Access-Control-Allow-Origin": "http://localhost:3000",
+              },
+            },
+          );
+          const file = await result.blob();
+          const downloadUrl = window.URL.createObjectURL(file);
+          setImageFileUrl(downloadUrl);
+        }
+      }
     })();
   }, [chats, props.roomData]);
 
-  const downloadHandle = () => {
-    console.log(props.chatData.filePath);
+  const downloadHandle = async () => {
+    const result = await fetch(`${SERVER_URI}/blah/download?filename=${props.chatData.filename}`, {
+      method: "GET",
+      headers: {
+        Authorization: `bearer ${ctx?.accessToken}`,
+        "Content-type": "application/json",
+        "Access-Control-Allow-Origin": "http://localhost:3000",
+      },
+    });
+    const file = await result.blob();
+    const downloadUrl = window.URL.createObjectURL(file);
+
+    const anchorElement = document.createElement("a");
+    document.body.appendChild(anchorElement);
+    anchorElement.download = props.chatData.filename;
+    anchorElement.href = downloadUrl;
+
+    anchorElement.click();
+
+    document.body.removeChild(anchorElement);
+    window.URL.revokeObjectURL(downloadUrl);
   };
 
   return (
@@ -92,10 +143,21 @@ export default function ChatBox(props: Props) {
             {counting !== 0 && <CountCheck>{counting}</CountCheck>}
             <TimeLine>{timeStamp}</TimeLine>
           </MinInfoContainer>
-          {props.chatData.filePath ? (
-            <FileButton onClick={downloadHandle}>
-              <FileEarmarkArrowDown style={{ width: 50, height: 40 }} />
-              <FileInfoText>{props.chatData.comments}</FileInfoText>
+          {props.chatData.filename ? (
+            <FileButton onClick={downloadHandle} type={"submit"}>
+              {(extension === "jpg" ||
+                extension === "jpeg" ||
+                extension === "png" ||
+                extension === "gif") &&
+                (imageFileUrl ? (
+                  <img src={imageFileUrl} width={200} height={200} />
+                ) : (
+                  <ImgLoading></ImgLoading>
+                ))}
+              <ImgInfoDiv>
+                <FileEarmarkArrowDown height={50} width={40} />
+                <FileInfoText>{props.chatData.comments}</FileInfoText>
+              </ImgInfoDiv>
             </FileButton>
           ) : (
             <InnerContainer>
@@ -110,7 +172,27 @@ export default function ChatBox(props: Props) {
             <NameTag>
               <b>{props.chatData.name}</b>
             </NameTag>
-            <TextBox check={check}>{props.chatData.comments}</TextBox>
+            {props.chatData.filename ? (
+              <FileButton onClick={downloadHandle} type={"submit"}>
+                {(extension === "jpg" ||
+                  extension === "jpeg" ||
+                  extension === "png" ||
+                  extension === "gif") &&
+                  (imageFileUrl ? (
+                    <img src={imageFileUrl} width={200} height={200} />
+                  ) : (
+                    <ImgLoading></ImgLoading>
+                  ))}
+                <ImgInfoDiv>
+                  <FileEarmarkArrowDown height={50} width={40} />
+                  <FileInfoText>{props.chatData.comments}</FileInfoText>
+                </ImgInfoDiv>
+              </FileButton>
+            ) : (
+              <InnerContainer>
+                <TextBox check={check}>{props.chatData.comments}</TextBox>
+              </InnerContainer>
+            )}
           </InnerContainer>
           <MinInfoContainer check={check}>
             {counting !== 0 && <CountCheck>{counting}</CountCheck>}
@@ -157,8 +239,8 @@ const NameTag = styled.span`
   font-size: 1.3rem;
 `;
 
-const TextBox = styled.label`
-  width: 95%;
+const TextBox = styled.span`
+  display: flex;
   font-size: 1.4rem;
   display: flex;
   align-items: center;
@@ -185,17 +267,24 @@ const TimeLine = styled.label``;
 
 const FileButton = styled.button`
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   border: none;
   background: #ffffff;
   border-radius: 1rem;
   align-items: center;
-  width: 100%;
   padding: 1rem;
+  gap: 1rem;
+`;
+
+const ImgInfoDiv = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: row;
+  width: 100%;
 `;
 
 const FileInfoText = styled.span`
-  width: 95%;
   font-size: 1.4rem;
   display: flex;
   align-items: center;
@@ -204,4 +293,10 @@ const FileInfoText = styled.span`
   border-radius: 1rem;
   padding: 1rem;
   word-break: break-all;
+`;
+
+const ImgLoading = styled.div`
+  width: 200px;
+  height: 200px;
+  background-color: #ffffff;
 `;

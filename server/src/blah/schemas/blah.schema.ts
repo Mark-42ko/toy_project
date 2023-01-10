@@ -22,6 +22,8 @@ export class Blah {
       date: Date;
       counts: [string];
       filePath: string;
+      filename: string;
+      filesize: number;
     },
   ];
 }

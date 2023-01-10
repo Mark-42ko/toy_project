@@ -84,7 +84,7 @@ export default function Blah(props: Props) {
           },
         });
         const json = await response.json();
-
+        console.log(json);
         await fetch(`${SERVER_URI}/blah/chatAdd`, {
           method: "Post",
           body: JSON.stringify({
@@ -95,6 +95,8 @@ export default function Blah(props: Props) {
               date: new Date(),
               counts: chatUser,
               filePath: json.filePath,
+              filename: json.filename,
+              filesize: json.filesize,
             },
           }),
           headers: {
@@ -180,8 +182,10 @@ export default function Blah(props: Props) {
           type="file"
           ref={ref}
           style={{ display: "none" }}
-          multiple
-          onChange={fileAddButtonHandle}
+          onChange={(e) => {
+            fileAddButtonHandle(e);
+            e.target.value = "";
+          }}
         />
         <SendButton type="button" onClick={inputButtonHandle}>
           <Send />

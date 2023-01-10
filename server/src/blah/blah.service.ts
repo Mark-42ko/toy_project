@@ -5,8 +5,9 @@ import { Blah, BlahDocument } from "./schemas/blah.schema";
 import { AddBlah } from "./dto/add-blah.dto";
 import { AddChat } from "./dto/add-chat.dto";
 import { CountUpdate } from "./dto/update-count.dto";
+import * as path from "path";
+import { Response } from "express";
 import { createReadStream } from "fs";
-import path from "path";
 
 @Injectable()
 export class BlahService {
@@ -104,11 +105,21 @@ export class BlahService {
     if (!file) {
       throw new BadRequestException("파일이 존재하지 않습니다.");
     }
-    return { filePath: file.path, fileOriginName: file.originalname };
+    return {
+      filePath: file.path,
+      fileOriginName: file.originalname,
+      filename: file.filename,
+      filesize: file.size,
+    };
   }
 
-  downloadFile(res: Response) {
-    const stream = createReadStream(path.join(process.cwd(), "uploads/test.txt"));
+  async downloadFile(res: Response, filename) {
+    const name = `${filename.split("_")[0]}.${filename.split(".")[1]}`;
+    res.set({
+      "Content-Type": "application/json",
+      "Content-Disposition": `attachment; filename=${name}`,
+    });
+    const stream = createReadStream(path.join(process.cwd(), `uploads/${filename}`));
     stream.pipe(res);
   }
 }

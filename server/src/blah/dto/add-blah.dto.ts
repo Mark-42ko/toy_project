@@ -13,6 +13,8 @@ export class AddBlah {
       date: Date;
       counts: [string];
       filePath: string;
+      filename: string;
+      filesize: number;
     },
   ];
 }
