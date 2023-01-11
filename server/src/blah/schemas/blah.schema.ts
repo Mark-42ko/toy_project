@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { HydratedDocument } from "mongoose";
+import { HydratedDocument, PromiseProvider } from "mongoose";
 
 export type BlahDocument = HydratedDocument<Blah>;
 
@@ -26,6 +26,8 @@ export class Blah {
       filesize: number;
     },
   ];
+  @Prop({ required: true })
+  status: string;
 }
 
 export const BlahSchema = SchemaFactory.createForClass(Blah);

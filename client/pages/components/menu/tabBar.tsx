@@ -33,7 +33,7 @@ const TabContainer = styled.div`
   border-radius: 10px;
   display: flex;
   flex-direction: row;
-  alignitems: center;
+  align-items: center;
   justify-content: space-around;
   padding: 0.2em;
 `;

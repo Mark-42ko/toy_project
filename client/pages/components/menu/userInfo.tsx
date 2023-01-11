@@ -19,22 +19,30 @@ export default function UserInfo(props: Props) {
 }
 
 const Container = styled.div`
-  padding-left: 1rem;
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
   width: 25%;
-  height: 80vh;
+  height: 78.5vh;
+  gap: 1rem;
+  background-color: #575757;
+  border-radius: 8px;
 `;
 
 const InnerContainer = styled.div`
+  display: flex;
+  flex-direction: column;
   padding-left: 1rem;
   width: 100%;
-  height: 80%;
+  max-height: 100%;
   scrollbar-width: none;
-  overflow: auto;
+  overflow-y: scroll;
+
   &::-webkit-scrollbar {
     width: 8px;
     height: 8px;
     border-radius: 6px;
-    background: rgba(255, 255, 255, 0.4);
+    background: #575757;
   }
   &::-webkit-scrollbar-thumb {
     background-color: rgba(0, 0, 0, 0.3);
@@ -43,6 +51,7 @@ const InnerContainer = styled.div`
 `;
 
 const TitleText = styled.span`
-  font-size: 1.5rem;
+  font-size: 2rem;
   padding-left: 1rem;
+  color: #ffffff;
 `;

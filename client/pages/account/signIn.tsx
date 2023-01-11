@@ -38,7 +38,9 @@ export default function SignInPage() {
       });
       const jsons = await responses.json();
       ctx!.setUserData!(jsons);
-      router.push("/home");
+      localStorage.setItem("userToken", JSON.stringify(json.access_token));
+      localStorage.setItem("userData", JSON.stringify(jsons));
+      router.push("/");
     } else {
       alert("아이디 및 비밀번호를 확인해주세요.");
     }

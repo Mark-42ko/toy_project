@@ -42,10 +42,6 @@ type ButtonProps = {
 
 const Container = styled.button`
   padding: 1rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
   width: 100%;
   border: 1px solid;
   border-radius: 1rem;

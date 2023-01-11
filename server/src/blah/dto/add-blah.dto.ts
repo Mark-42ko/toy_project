@@ -17,4 +17,5 @@ export class AddBlah {
       filesize: number;
     },
   ];
+  status: string;
 }

@@ -1,29 +1,40 @@
 import { useState } from "react";
+import { useEffect } from "react";
 import styled from "styled-components";
 
 type Props = {
   tabHandle: string;
   roomData: any;
-  choose: boolean;
-  setChoose: Function;
   setChatRoom: Function;
+  chatRoom: any;
 };
 
 export default function MailList(props: Props) {
+  const [check, setCheck] = useState<boolean>(false);
   const nameTag =
     props.roomData.user.length === 2
       ? props.roomData.user[1].name
       : props.roomData.user[1].name + " 외" + (props.roomData.user.length - 1) + " 명";
-  const [select, setSelect] = useState<boolean>(false);
+  let lastOder;
+  if (props.roomData.blah[0]) {
+    if (props.roomData.blah[props.roomData.blah.length - 1].comments) {
+      lastOder = props.roomData.blah[props.roomData.blah.length - 1].comments;
+    } else {
+      lastOder = "";
+    }
+  }
+
+  useEffect(() => {
+    props.roomData !== props.chatRoom && setCheck(false);
+  }, [props.chatRoom, lastOder]);
 
   const clickHandle = () => {
-    setSelect(true);
-    props.setChoose(true);
+    setCheck(true);
     props.setChatRoom(props.roomData);
   };
 
   return (
-    <ButtonContainer select={select} onClick={clickHandle}>
+    <ButtonContainer selected={check} onClick={clickHandle}>
       <ImgDiv />
       <SmallContainer>
         <div>
@@ -31,27 +42,27 @@ export default function MailList(props: Props) {
             <b>{nameTag}</b>
           </NameTag>
         </div>
-        <LastOrder>안녕하세요</LastOrder>
+        <LastOrder>{lastOder}</LastOrder>
       </SmallContainer>
     </ButtonContainer>
   );
 }
 
 type ButtonProps = {
-  select: boolean;
+  selected: boolean;
 };
 
-const ButtonContainer = styled.button`
+const ButtonContainer = styled.button<ButtonProps>`
   width: 100%;
   height: 70px;
   display: flex;
   flex-direction: row;
   margin-top: 15px;
   border: none;
-  border-radius: 30px;
-  background: #ffffff;
+  border-radius: 8px;
   align-items: center;
-  background: ${(props: ButtonProps) => (props.select === true ? "#F2F2F2" : "#FFFFFF")};
+  background: ${({ selected }) => (selected ? "#F2F2F2" : "#fff")};
+  cursor: pointer;
 `;
 
 const ImgDiv = styled.div`
@@ -60,7 +71,7 @@ const ImgDiv = styled.div`
   width: 65px;
   height: 60px;
   border: none;
-  border-radius: 20px;
+  border-radius: 10px;
 `;
 
 const SmallContainer = styled.div`
@@ -78,5 +89,5 @@ const NameTag = styled.a`
 `;
 
 const LastOrder = styled.a`
-  font-size: 0.7rem;
+  font-size: 1rem;
 `;

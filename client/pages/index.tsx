@@ -1,10 +1,10 @@
 import React from "react";
-import SignInPage from "./account/signIn";
+import HomePage from "./home";
 
 export default function Home() {
   return (
     <>
-      <SignInPage />
+      <HomePage />
     </>
   );
 }

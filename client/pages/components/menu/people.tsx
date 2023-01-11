@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import ConnectionList from "./connectionList";
-import { useState, useEffect, useContext } from "react";
+import { useState } from "react";
 import AddPeople from "./addPeople";
 
 const connection = [
@@ -47,6 +47,7 @@ const AddButton = styled.button`
   border-radius: 1rem;
   margin-bottom: 1rem;
   color: #ffffff;
+  cursor: pointer;
 `;
 
 const ModalBackdrop = styled.div`

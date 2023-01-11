@@ -1,6 +1,6 @@
-import { GlobalContext } from "pages/_app";
-import { useState, useContext } from "react";
+import { useState } from "react";
 import styled from "styled-components";
+import { Back } from "@styled-icons/entypo/Back";
 
 type Props = {
   open: boolean;
@@ -10,10 +10,11 @@ type Props = {
 export default function AddPeople(props: Props) {
   const [email, setEmail] = useState<string>("");
   const [emailErrMsg, setEmailErrMsg] = useState<string>();
+  const userData = JSON.parse(localStorage.getItem("userData") as string);
+  const accessToken = JSON.parse(localStorage.getItem("userToken") as string);
   const emailRegex =
     /([\w-.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/;
   const SERVER_URI = process.env.NEXT_PUBLIC_SERVER_URI;
-  const ctx = useContext(GlobalContext);
 
   const addHandle = async () => {
     if (!emailRegex.test(email)) {
@@ -29,13 +30,13 @@ export default function AddPeople(props: Props) {
       if (!json.data) {
         setEmailErrMsg("없는 계정입니다.");
       } else {
-        if (json.data.email === ctx?.userData?.userId) {
+        if (json.data.email === userData.userId) {
           setEmailErrMsg("자기 자신은 추가할 수 없습니다.");
         } else {
           const result = await fetch(`${SERVER_URI}/people/add`, {
             method: "POST",
             body: JSON.stringify({
-              user: ctx?.userData?.username,
+              user: userData.username,
               friend: {
                 email: email,
                 name: json.data.name,
@@ -43,7 +44,7 @@ export default function AddPeople(props: Props) {
               },
             }),
             headers: {
-              Authorization: `bearer ${ctx?.accessToken}`,
+              Authorization: `bearer ${accessToken}`,
               "Content-type": "application/json",
               "Access-Control-Allow-Origin": "http://localhost:3000",
             },
@@ -62,8 +63,13 @@ export default function AddPeople(props: Props) {
 
   return (
     <Container>
-      <CloseButton onClick={() => props.setOpen(!props.open)}>x</CloseButton>
-      <Title>이메일을 입력해주세요.</Title>
+      <TitleContainer>
+        <CloseButton onClick={() => props.setOpen(!props.open)}>
+          <Back />
+        </CloseButton>
+        <Title>이메일을 입력해주세요.</Title>
+        <div style={{ width: "40px" }} />
+      </TitleContainer>
       <EmailInput type={"email"} onChange={(evt) => setEmail(evt.currentTarget.value)} />
       {emailErrMsg && <ErrMsg>{emailErrMsg}</ErrMsg>}
       <AddButton onClick={addHandle}>
@@ -88,13 +94,21 @@ const Container = styled.div`
   position: sticky;
 `;
 
+const TitleContainer = styled.div`
+  display: flex;
+  align-items: center;
+  width: 100%;
+  justify-content: space-between;
+`;
+
 const CloseButton = styled.button`
-  position: absolute;
-  top: 0;
-  right: 0;
-  border-radius: 50px;
-  width: 2rem;
-  height: 2rem;
+  border: none;
+  background: #ffffff;
+  cursor: pointer;
+  svg {
+    width: 30px;
+    height: 30px;
+  }
 `;
 
 const Title = styled.span`
@@ -110,9 +124,10 @@ const AddButton = styled.button`
   background: #8181f7;
   width: 50%;
   height: 40px;
-  border-radius: 1rem;
+  border-radius: 8px;
   font-size: 1.3rem;
   color: #ffffff;
+  cursor: pointer;
 `;
 
 const ErrMsg = styled.span`

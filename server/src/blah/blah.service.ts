@@ -17,6 +17,7 @@ export class BlahService {
     const result = await this.BlahModel.create({
       user: addBlahDto.user,
       blah: addBlahDto.blah,
+      status: addBlahDto.status,
     });
     return result.save();
   }

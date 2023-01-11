@@ -36,6 +36,7 @@ const Button = styled.button`
   border: none;
   border-radius: 10px;
   width: 32%;
-  alignitems: center;
+  align-items: center;
+  cursor: pointer;
   background: ${(props: ButtonProps) => (props.choose === true ? "#FFFFFF" : "#F2F2F2")};
 `;

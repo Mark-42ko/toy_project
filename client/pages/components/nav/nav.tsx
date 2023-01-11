@@ -6,7 +6,6 @@ import { Award } from "@styled-icons/bootstrap/Award";
 import { Robot } from "@styled-icons/fa-solid/Robot";
 import { Send } from "@styled-icons/bootstrap/Send";
 import Button from "./Button";
-import { signOut } from "next-auth/react";
 import { LogOut } from "@styled-icons/boxicons-regular/LogOut";
 import { useRouter } from "next/router";
 
@@ -21,7 +20,7 @@ type ButtonIcon = [
 
 const buttonIcon: ButtonIcon = [
   { text: "people", icon: <People /> },
-  { text: "mailInBox", icon: <MailInbox /> },
+  { text: "mail", icon: <MailInbox /> },
   { text: "ListUl", icon: <ListUl /> },
   { text: "Award", icon: <Award /> },
   { text: "Robot", icon: <Robot /> },
@@ -37,38 +36,49 @@ export default function Nav(props: Props) {
   const router = useRouter();
 
   const logOutHandle = () => {
-    signOut({ redirect: false });
-    router.push("/");
+    localStorage.removeItem("userData");
+    localStorage.removeItem("userToken");
+    router.push("/account/signIn");
   };
 
   return (
     <SideMenu>
-      {buttonIcon.map((one) => {
-        return (
-          <Button
-            data={one}
-            key={one.text}
-            navController={props.navController}
-            setNavController={props.setNavController}
-          />
-        );
-      })}
+      <div>
+        {buttonIcon.map((one) => {
+          return (
+            <Button
+              data={one}
+              key={one.text}
+              navController={props.navController}
+              setNavController={props.setNavController}
+            />
+          );
+        })}
+      </div>
       <ButtonBox onClick={logOutHandle}>
-        <LogOut style={{ width: 35, height: 35 }} />
+        <LogOut style={{ width: "40px", height: "40px" }} />
       </ButtonBox>
     </SideMenu>
   );
 }
 
 const ButtonBox = styled.button`
-  width: 50px;
+  width: 100%;
   height: 50px;
   border: none;
-  padding: 0.25em 0.7em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
 `;
 
 const SideMenu = styled.div`
   width: 50px;
-  height: 95vh;
   background-color: #f2f2f2;
+  padding: 1rem;
+  height: calc(100vh - (1rem * 2));
+  display: flex;
+  flex-direction: column;
+  gap: 1rem 0;
+  justify-content: space-between;
 `;

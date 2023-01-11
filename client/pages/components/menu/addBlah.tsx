@@ -1,8 +1,8 @@
-import { GlobalContext } from "pages/_app";
-import { useState, useContext, useEffect } from "react";
+import { useState, useEffect } from "react";
 import styled from "styled-components";
 import AddBlahCard from "./addBlahCard";
 import NewBlahCheck from "./newBlahCheck";
+import { Back } from "@styled-icons/entypo/Back";
 
 type Props = {
   open: boolean;
@@ -11,33 +11,31 @@ type Props = {
 
 export default function AddBlah(props: Props) {
   const SERVER_URI = process.env.NEXT_PUBLIC_SERVER_URI;
-  const ctx = useContext(GlobalContext);
   const [friendData, setFriendeData] = useState<any>();
   const [selectFriend, setSelectFriend] = useState<any>([]);
   const [errMsg, setErrMsg] = useState<string | undefined>();
   const [newBlahCheck, setNewBlahCheck] = useState<boolean>(false);
+  const userData = JSON.parse(localStorage.getItem("userData") as string);
+  const accessToken = JSON.parse(localStorage.getItem("userToken") as string);
 
   useEffect(() => {
     !(async function () {
-      const reponse = await fetch(
-        `${SERVER_URI}/people/readPeople?username=${ctx?.userData?.username}`,
-        {
-          method: "GET",
-          headers: {
-            Authorization: `bearer ${ctx?.accessToken}`,
-            "Content-type": "application/json",
-            "Access-Control-Allow-Origin": "http://localhost:3000",
-          },
+      const reponse = await fetch(`${SERVER_URI}/people/readPeople?username=${userData.username}`, {
+        method: "GET",
+        headers: {
+          Authorization: `bearer ${accessToken}`,
+          "Content-type": "application/json",
+          "Access-Control-Allow-Origin": "http://localhost:3000",
         },
-      );
+      });
       const json = await reponse.json();
       setFriendeData(json.data);
       setSelectFriend([
         ...selectFriend,
         {
-          email: ctx?.userData?.userId,
-          name: ctx?.userData?.username,
-          phoneNumber: ctx?.userData?.userPhoneNumber,
+          email: userData.userId,
+          name: userData.username,
+          phoneNumber: userData.userPhoneNumber,
         },
       ]);
     })();
@@ -49,9 +47,10 @@ export default function AddBlah(props: Props) {
       body: JSON.stringify({
         user: selectFriend,
         blah: [],
+        status: "Proceeding",
       }),
       headers: {
-        Authorization: `bearer ${ctx?.accessToken}`,
+        Authorization: `bearer ${accessToken}`,
         "Content-type": "application/json",
         "Access-Control-Allow-Origin": "http://localhost:3000",
       },
@@ -70,9 +69,10 @@ export default function AddBlah(props: Props) {
           body: JSON.stringify({
             user: selectFriend,
             blah: [],
+            status: "진행중",
           }),
           headers: {
-            Authorization: `bearer ${ctx?.accessToken}`,
+            Authorization: `bearer ${accessToken}`,
             "Content-type": "application/json",
             "Access-Control-Allow-Origin": "http://localhost:3000",
           },
@@ -85,8 +85,13 @@ export default function AddBlah(props: Props) {
 
   return (
     <Container>
-      <CloseButton onClick={() => props.setOpen(!props.open)}>x</CloseButton>
-      <Title>대화상대를 선택해주세요.</Title>
+      <TitleContainer>
+        <CloseButton onClick={() => props.setOpen(!props.open)}>
+          <Back />
+        </CloseButton>
+        <Title>대화상대를 선택해주세요.</Title>
+        <div style={{ width: "40px" }} />
+      </TitleContainer>
       {errMsg && <ErrMsg>{errMsg}</ErrMsg>}
       <InnerContainer>
         {friendData ? (
@@ -121,32 +126,41 @@ export default function AddBlah(props: Props) {
 
 const Container = styled.div`
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  flex-direction: column;
-  background-color: #ffffff;
-  border: none;
-  border-radius: 1rem;
   gap: 1.5rem;
-  width: 30%;
-  min-width: 400px;
+  flex: 0.3;
+
+  background-color: #ffffff;
+
+  box-sizing: border-box;
+  border: none;
+  border-radius: 8px;
+
   padding: 1rem;
-  position: sticky;
-  height: 55%;
+`;
+
+const TitleContainer = styled.div`
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
 `;
 
 const InnerContainer = styled.div`
   display: flex;
   align-items: center;
-  justify-content: center;
   flex-direction: column;
+  gap: 1rem 0;
   background-color: #ffffff;
-  min-width: 400px;
-  gap: 1rem;
-  height: 60%;
-  scrollbar-width: none;
+
+  width: 100%;
+  max-height: 300px;
   padding: 1rem;
-  overflow: auto;
+
+  overflow-y: scroll;
+  scrollbar-width: none;
   &::-webkit-scrollbar {
     width: 8px;
     height: 8px;
@@ -160,12 +174,13 @@ const InnerContainer = styled.div`
 `;
 
 const CloseButton = styled.button`
-  position: absolute;
-  top: 0;
-  right: 0;
-  border-radius: 50px;
-  width: 2rem;
-  height: 2rem;
+  border: none;
+  background: #ffffff;
+  cursor: pointer;
+  svg {
+    width: 30px;
+    height: 30px;
+  }
 `;
 
 const Title = styled.span`
@@ -177,9 +192,10 @@ const AddButton = styled.button`
   background: #8181f7;
   width: 50%;
   height: 40px;
-  border-radius: 1rem;
+  border-radius: 8px;
   font-size: 1.3rem;
   color: #ffffff;
+  cursor: pointer;
 `;
 
 const ErrMsg = styled.span`

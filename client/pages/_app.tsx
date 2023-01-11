@@ -1,6 +1,7 @@
 import { SessionProvider } from "next-auth/react";
 import type { AppProps } from "next/app";
-import { createContext, useState } from "react";
+import { createContext, useState, useEffect } from "react";
+import { createGlobalStyle } from "styled-components";
 
 interface GlobalContext {
   accessToken?: string;
@@ -15,6 +16,17 @@ interface GlobalContext {
 
 export const GlobalContext = createContext<GlobalContext | null>({});
 
+export const GlobalStyles = createGlobalStyle`
+  html, body, #__next {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+  }
+`;
+
 export default function App({ Component, pageProps }: AppProps) {
   const [accessToken, setAccessToken] = useState();
   const [userData, setUserData] = useState();
@@ -27,10 +39,13 @@ export default function App({ Component, pageProps }: AppProps) {
   };
 
   return (
-    <GlobalContext.Provider value={value}>
-      <SessionProvider session={pageProps.session}>
-        <Component {...pageProps} />
-      </SessionProvider>
-    </GlobalContext.Provider>
+    <>
+      <GlobalStyles />
+      <GlobalContext.Provider value={value}>
+        <SessionProvider session={pageProps.session}>
+          <Component {...pageProps} />
+        </SessionProvider>
+      </GlobalContext.Provider>
+    </>
   );
 }

@@ -96,6 +96,14 @@ export default function SignUp(props: Props) {
       <TitleText>회원가입</TitleText>
       <CloseButton onClick={props.signUpModalHandle}>X</CloseButton>
       <InnerContainer>
+        <TextArea>프로필 이미지 : </TextArea>
+        <TextInput
+          placeholder="example@google.com"
+          type={"email"}
+          onChange={(evt) => setEmail(evt.currentTarget.value)}
+        />
+      </InnerContainer>
+      <InnerContainer>
         <TextArea>아이디 : </TextArea>
         <TextInput
           placeholder="example@google.com"
@@ -104,7 +112,7 @@ export default function SignUp(props: Props) {
         />
       </InnerContainer>
       <ErrMsgArea>{emailErr}</ErrMsgArea>
-      <InnerContainer style={{ marginTop: 10 }}>
+      <InnerContainer>
         <TextArea>비밀번호 : </TextArea>
         <TextInput
           placeholder="특수문자 포함 8자 이상"
@@ -113,17 +121,17 @@ export default function SignUp(props: Props) {
         />
       </InnerContainer>
       <ErrMsgArea>{passwordErr}</ErrMsgArea>
-      <InnerContainer style={{ marginTop: 10 }}>
+      <InnerContainer>
         <TextArea>비밀번호 확인 : </TextArea>
         <TextInput type={"password"} onChange={(evt) => setRePassword(evt.currentTarget.value)} />
       </InnerContainer>
       <ErrMsgArea>{rePasswordErr}</ErrMsgArea>
-      <InnerContainer style={{ marginTop: 10 }}>
+      <InnerContainer>
         <TextArea>이름 : </TextArea>
         <TextInput type={"text"} onChange={(evt) => setName(evt.currentTarget.value)} />
       </InnerContainer>
       <ErrMsgArea>{nameErr}</ErrMsgArea>
-      <InnerContainer style={{ marginTop: 10 }}>
+      <InnerContainer>
         <TextArea>연락처 : </TextArea>
         <NumberInput type={"text"} value={phoneNumber} onChange={handleInput} maxLength={13} />
       </InnerContainer>
@@ -136,7 +144,6 @@ export default function SignUp(props: Props) {
 
 const Container = styled.div`
   width: 30%;
-  hight: 50%;
   min-width: 300px;
   min-height: 300px;
   border: none;
@@ -148,6 +155,7 @@ const Container = styled.div`
   align-items: center;
   background-color: #ffffff;
   position: sticky;
+  gap: 1rem;
 `;
 
 const CloseButton = styled.button`
@@ -178,9 +186,7 @@ const ErrMsgArea = styled.span`
   font-size: 0.7rem;
 `;
 
-const TextInput = styled.input`
-  width: 170px;
-`;
+const TextInput = styled.input``;
 
 const SiginButton = styled.button`
   width: 230px;

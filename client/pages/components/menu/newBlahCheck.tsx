@@ -1,6 +1,5 @@
 import styled from "styled-components";
-import { useContext } from "react";
-import { GlobalContext } from "pages/_app";
+
 type Props = {
   setNewBlahCheck: Function;
   newBlahCheck: boolean;
@@ -11,7 +10,7 @@ type Props = {
 
 export default function NewBlahCheck(props: Props) {
   const SERVER_URI = process.env.NEXT_PUBLIC_SERVER_URI;
-  const ctx = useContext(GlobalContext);
+  const accessToken = JSON.parse(localStorage.getItem("userToken") as string);
 
   const yesButtonHandle = async () => {
     await fetch(`${SERVER_URI}/blah/create`, {
@@ -21,7 +20,7 @@ export default function NewBlahCheck(props: Props) {
         blah: [],
       }),
       headers: {
-        Authorization: `bearer ${ctx?.accessToken}`,
+        Authorization: `bearer ${accessToken}`,
         "Content-type": "application/json",
         "Access-Control-Allow-Origin": "http://localhost:3000",
       },

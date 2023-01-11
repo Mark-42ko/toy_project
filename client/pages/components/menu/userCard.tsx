@@ -1,32 +1,29 @@
 import styled from "styled-components";
 import { PhoneIphone } from "@styled-icons/material/PhoneIphone";
 import { EmailOutline } from "@styled-icons/evaicons-outline/EmailOutline";
-import { useContext, useEffect, useState } from "react";
-import { GlobalContext } from "pages/_app";
+import { useEffect, useState } from "react";
 
 type Props = {
   userData: any;
 };
 
 export default function UserCard(props: Props) {
-  const ctx = useContext(GlobalContext);
   const SERVER_URI = process.env.NEXT_PUBLIC_SERVER_URI;
   const [check, setCheck] = useState<boolean>(false);
   const [reRender, setReRender] = useState<number>(0);
+  const userData = JSON.parse(localStorage.getItem("userData") as string);
+  const accessToken = JSON.parse(localStorage.getItem("userToken") as string);
 
   useEffect(() => {
     !(async function () {
-      const reponse = await fetch(
-        `${SERVER_URI}/people/readPeople?username=${ctx?.userData?.username}`,
-        {
-          method: "GET",
-          headers: {
-            Authorization: `bearer ${ctx?.accessToken}`,
-            "Content-type": "application/json",
-            "Access-Control-Allow-Origin": "http://localhost:3000",
-          },
+      const reponse = await fetch(`${SERVER_URI}/people/readPeople?username=${userData.username}`, {
+        method: "GET",
+        headers: {
+          Authorization: `bearer ${accessToken}`,
+          "Content-type": "application/json",
+          "Access-Control-Allow-Origin": "http://localhost:3000",
         },
-      );
+      });
       const json = await reponse.json();
       if (json.data) {
         json.data.friend.filter((one: any) => {
@@ -35,7 +32,7 @@ export default function UserCard(props: Props) {
           }
         });
       }
-      props.userData.name === ctx?.userData?.username && setCheck(true);
+      props.userData.name === userData.username && setCheck(true);
     })();
   }, [reRender]);
 
@@ -44,7 +41,7 @@ export default function UserCard(props: Props) {
       const result = await fetch(`${SERVER_URI}/people/add`, {
         method: "POST",
         body: JSON.stringify({
-          user: ctx?.userData?.username,
+          user: userData.username,
           friend: {
             email: props.userData.email,
             name: props.userData.name,
@@ -52,7 +49,7 @@ export default function UserCard(props: Props) {
           },
         }),
         headers: {
-          Authorization: `bearer ${ctx?.accessToken}`,
+          Authorization: `bearer ${accessToken}`,
           "Content-type": "application/json",
           "Access-Control-Allow-Origin": "http://localhost:3000",
         },
@@ -73,7 +70,7 @@ export default function UserCard(props: Props) {
       <ProfileContainer>
         <ProfileImg />
         <NameTag>
-          <b>{props.userData.name === ctx?.userData?.username ? "나" : props.userData.name}</b>
+          <b>{props.userData.name === userData.username ? "나" : props.userData.name}</b>
         </NameTag>
       </ProfileContainer>
       <InfoContainer>
@@ -102,9 +99,14 @@ const Container = styled.button`
   justify-content: center;
   flex-direction: column;
   border: 1px solid;
-  border-radius: 1rem;
+  border-radius: 8px;
   border-color: #d8d8d8;
   background-color: #ffffff;
+  cursor: pointer;
+
+  &:active {
+    background-color: rgba(0, 0, 0, 0.5);
+  }
 `;
 
 const ProfileContainer = styled.div`
@@ -122,7 +124,7 @@ const ProfileImg = styled.div`
   width: 65px;
   height: 65px;
   border: none;
-  border-radius: 20px;
+  border-radius: 8px;
 `;
 
 const NameTag = styled.div`

@@ -1,15 +1,13 @@
 import styled from "styled-components";
 import { Search } from "@styled-icons/evaicons-solid/Search";
 import { ThreeDotsVertical } from "@styled-icons/bootstrap/ThreeDotsVertical";
-import { useContext } from "react";
-import { GlobalContext } from "pages/_app";
 
 type Props = {
   roomData: any;
 };
 
 export default function BlahBar(props: Props) {
-  const ctx = useContext(GlobalContext);
+  const userData = JSON.parse(localStorage.getItem("userData") as string);
 
   const searchHandle = () => {};
 
@@ -18,7 +16,7 @@ export default function BlahBar(props: Props) {
   return (
     <Container>
       <NameTag>
-        <b>{ctx?.userData?.username}</b>
+        <b>{userData.username}</b>
       </NameTag>
       <div>
         <Button onClick={searchHandle}>
@@ -47,8 +45,12 @@ const NameTag = styled.h1`
 `;
 
 const Button = styled.button`
-  width: 50px;
-  height: 50px;
   border: none;
   background: #ffffff;
+  cursor: pointer;
+
+  svg {
+    width: 30px;
+    height: 30px;
+  }
 `;

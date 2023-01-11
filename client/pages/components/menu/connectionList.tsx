@@ -1,8 +1,7 @@
 import styled from "styled-components";
 import { RightArrowAlt } from "@styled-icons/boxicons-regular/RightArrowAlt";
 import { DownArrowAlt } from "@styled-icons/boxicons-regular/DownArrowAlt";
-import { useState, useEffect, useContext } from "react";
-import { GlobalContext } from "pages/_app";
+import { useState, useEffect } from "react";
 
 type Props = {
   tag: string;
@@ -12,25 +11,27 @@ type Props = {
 export default function ConnectionList(props: Props) {
   const [check, setCheck] = useState<boolean>(false);
   const [peopleData, setPeopleData] = useState<any>();
-  const ctx = useContext(GlobalContext);
   const SERVER_URI = process.env.NEXT_PUBLIC_SERVER_URI;
-
+  const userData = JSON.parse(localStorage.getItem("userData") as string);
+  const accessToken = JSON.parse(localStorage.getItem("userToken") as string);
   useEffect(() => {
-    !(async function () {
-      const reponse = await fetch(
-        `${SERVER_URI}/people/readPeople?username=${ctx?.userData?.username}`,
-        {
-          method: "GET",
-          headers: {
-            Authorization: `bearer ${ctx?.accessToken}`,
-            "Content-type": "application/json",
-            "Access-Control-Allow-Origin": "http://localhost:3000",
+    if (userData && accessToken) {
+      !(async function () {
+        const reponse = await fetch(
+          `${SERVER_URI}/people/readPeople?username=${userData.username}`,
+          {
+            method: "GET",
+            headers: {
+              Authorization: `bearer ${accessToken}`,
+              "Content-type": "application/json",
+              "Access-Control-Allow-Origin": "http://localhost:3000",
+            },
           },
-        },
-      );
-      const json = await reponse.json();
-      setPeopleData(json.data);
-    })();
+        );
+        const json = await reponse.json();
+        setPeopleData(json.data);
+      })();
+    }
   }, [props.open]);
 
   return (
@@ -62,6 +63,7 @@ const ListButton = styled.button`
   display: flex;
   align-items: center;
   margin-bottom: 0.4rem;
+  cursor: pointer;
 `;
 
 const ListTag = styled.span`

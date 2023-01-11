@@ -1,8 +1,8 @@
-import { GlobalContext } from "pages/_app";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { io } from "socket.io-client";
 import styled from "styled-components";
 import { FileEarmarkArrowDown } from "@styled-icons/bootstrap/FileEarmarkArrowDown";
+import Image from "next/image";
 
 type Props = {
   chatData: any;
@@ -22,11 +22,14 @@ export default function ChatBox(props: Props) {
   const dataTime = dataDate[4].split(":");
   const [chats, setChats] = useState<any>();
   const [imageFileUrl, setImageFileUrl] = useState<string>();
+  const userData = JSON.parse(localStorage.getItem("userData") as string);
+  const accessToken = JSON.parse(localStorage.getItem("userToken") as string);
 
+  const urlRegex =
+    /(((http(s)?:\/\/)\S+(\.[^(\n|\t|\s,)]+)+)|((http(s)?:\/\/)?(([a-zA-z\-_]+[0-9]*)|([0-9]*[a-zA-z\-_]+)){2,}(\.[^(\n|\t|\s,)]+)+))+/gi;
   const timeStamp = `${dataDate[3]} ${dataTime[0]}:${dataTime[1]}`;
 
-  const ctx = useContext(GlobalContext);
-  const check = props.chatData.name === ctx?.userData?.username ? true : false;
+  const check = props.chatData.name === userData.username ? true : false;
 
   let extension;
   if (props.chatData.filename) {
@@ -35,7 +38,7 @@ export default function ChatBox(props: Props) {
   const data = {
     _id: props._id,
     idx: props.idx,
-    email: ctx?.userData?.userId,
+    email: userData.userId,
   };
 
   useEffect(() => {
@@ -61,10 +64,10 @@ export default function ChatBox(props: Props) {
         body: JSON.stringify({
           _id: props._id,
           idx: props.idx,
-          email: ctx?.userData?.userId,
+          email: userData.userId,
         }),
         headers: {
-          Authorization: `bearer ${ctx?.accessToken}`,
+          Authorization: `bearer ${accessToken}`,
           "Content-type": "application/json",
           "Access-Control-Allow-Origin": "http://localhost:3000",
         },
@@ -77,7 +80,7 @@ export default function ChatBox(props: Props) {
       const result = await fetch(`${SERVER_URI}/blah/room?id=${props._id}`, {
         method: "GET",
         headers: {
-          Authorization: `bearer ${ctx?.accessToken}`,
+          Authorization: `bearer ${accessToken}`,
           "Content-type": "application/json",
           "Access-Control-Allow-Origin": "http://localhost:3000",
         },
@@ -98,7 +101,7 @@ export default function ChatBox(props: Props) {
             {
               method: "GET",
               headers: {
-                Authorization: `bearer ${ctx?.accessToken}`,
+                Authorization: `bearer ${accessToken}`,
                 "Content-type": "application/json",
                 "Access-Control-Allow-Origin": "http://localhost:3000",
               },
@@ -116,7 +119,7 @@ export default function ChatBox(props: Props) {
     const result = await fetch(`${SERVER_URI}/blah/download?filename=${props.chatData.filename}`, {
       method: "GET",
       headers: {
-        Authorization: `bearer ${ctx?.accessToken}`,
+        Authorization: `bearer ${accessToken}`,
         "Content-type": "application/json",
         "Access-Control-Allow-Origin": "http://localhost:3000",
       },
@@ -135,6 +138,24 @@ export default function ChatBox(props: Props) {
     window.URL.revokeObjectURL(downloadUrl);
   };
 
+  const linkClickHandle = () => {
+    let url = props.chatData.comments;
+    if (
+      !props.chatData.comments.includes("http://") &&
+      !props.chatData.comments.includes("https://")
+    ) {
+      url = `http://${props.chatData.comments}`;
+    }
+    const anchorElement = document.createElement("a");
+    document.body.appendChild(anchorElement);
+    anchorElement.href = url;
+    anchorElement.target = "_blank";
+
+    anchorElement.click();
+
+    document.body.removeChild(anchorElement);
+  };
+
   return (
     <Container check={check}>
       {check ? (
@@ -144,13 +165,13 @@ export default function ChatBox(props: Props) {
             <TimeLine>{timeStamp}</TimeLine>
           </MinInfoContainer>
           {props.chatData.filename ? (
-            <FileButton onClick={downloadHandle} type={"submit"}>
+            <FileButton onClick={downloadHandle} type={"submit"} title="이미지 다운로드하기">
               {(extension === "jpg" ||
                 extension === "jpeg" ||
                 extension === "png" ||
                 extension === "gif") &&
                 (imageFileUrl ? (
-                  <img src={imageFileUrl} width={200} height={200} />
+                  <Image src={imageFileUrl} width={200} height={200} alt="url" />
                 ) : (
                   <ImgLoading></ImgLoading>
                 ))}
@@ -161,7 +182,13 @@ export default function ChatBox(props: Props) {
             </FileButton>
           ) : (
             <InnerContainer>
-              <TextBox check={check}>{props.chatData.comments}</TextBox>
+              {urlRegex.test(props.chatData.comments) ? (
+                <LinkText check={check} onClick={linkClickHandle}>
+                  <u>{props.chatData.comments}</u>
+                </LinkText>
+              ) : (
+                <TextBox check={check}>{props.chatData.comments}</TextBox>
+              )}
             </InnerContainer>
           )}
         </ProfileContainer>
@@ -173,13 +200,13 @@ export default function ChatBox(props: Props) {
               <b>{props.chatData.name}</b>
             </NameTag>
             {props.chatData.filename ? (
-              <FileButton onClick={downloadHandle} type={"submit"}>
+              <FileButton onClick={downloadHandle} type={"submit"} title="이미지 다운로드하기">
                 {(extension === "jpg" ||
                   extension === "jpeg" ||
                   extension === "png" ||
                   extension === "gif") &&
                   (imageFileUrl ? (
-                    <img src={imageFileUrl} width={200} height={200} />
+                    <Image src={imageFileUrl} width={200} height={200} alt="이미지 다운로드하기" />
                   ) : (
                     <ImgLoading></ImgLoading>
                   ))}
@@ -209,8 +236,8 @@ type CheckProps = {
 };
 
 const Container = styled.div`
-  width: 90%;
   display: flex;
+  width: 100%;
   justify-content: ${(props: CheckProps) => (props.check === true ? "end" : "start")};
 `;
 
@@ -274,6 +301,7 @@ const FileButton = styled.button`
   align-items: center;
   padding: 1rem;
   gap: 1rem;
+  cursor: pointer;
 `;
 
 const ImgInfoDiv = styled.div`
@@ -299,4 +327,17 @@ const ImgLoading = styled.div`
   width: 200px;
   height: 200px;
   background-color: #ffffff;
+`;
+
+const LinkText = styled.button`
+  color: #0000ff;
+  display: flex;
+  font-size: 1.4rem;
+  display: flex;
+  align-items: center;
+  background-color: ${(props: CheckProps) => (props.check === true ? "#F4FA58" : "#FFFFFF")};
+  border: none;
+  border-radius: 1rem;
+  padding: 1rem;
+  word-break: break-all;
 `;

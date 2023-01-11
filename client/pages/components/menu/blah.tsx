@@ -1,8 +1,7 @@
 import styled from "styled-components";
 import { Send } from "@styled-icons/ionicons-sharp/Send";
-import { useContext, useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 import ChatBox from "./chatBox";
-import { GlobalContext } from "pages/_app";
 import { io } from "socket.io-client";
 import { PlusCircle } from "@styled-icons/bootstrap/PlusCircle";
 
@@ -25,13 +24,13 @@ export default function Blah(props: Props) {
   const [check, setCheck] = useState<number>(0);
   const [files, setFiles] = useState<File[]>([]);
   const ref = useRef<HTMLInputElement>(null);
-
-  const ctx = useContext(GlobalContext);
+  const userData = JSON.parse(localStorage.getItem("userData") as string);
+  const accessToken = JSON.parse(localStorage.getItem("userToken") as string);
 
   const chatUser: string[] = [];
 
   for (let i = 0; i < props.roomData.user.length; i++) {
-    if (props.roomData.user[i] !== ctx?.userData?.username) {
+    if (props.roomData.user[i] !== userData.username) {
       chatUser.push(props.roomData.user[i].email);
     }
   }
@@ -45,7 +44,6 @@ export default function Blah(props: Props) {
   }, []);
 
   useEffect(() => {
-    // scrollRef.current?.scrollIntoView({ behavior: "auto", block: "end" });
     const blah = document.getElementById("blah");
     blah?.scrollIntoView({ behavior: "auto", block: "end", inline: "end" });
   }, [updateData]);
@@ -55,7 +53,7 @@ export default function Blah(props: Props) {
       const result = await fetch(`${SERVER_URI}/blah/room?id=${props.roomData._id}`, {
         method: "GET",
         headers: {
-          Authorization: `bearer ${ctx?.accessToken}`,
+          Authorization: `bearer ${accessToken}`,
           "Content-type": "application/json",
           "Access-Control-Allow-Origin": "http://localhost:3000",
         },
@@ -66,7 +64,6 @@ export default function Blah(props: Props) {
   }, [chats, props.roomData]);
 
   const inputButtonHandle = async () => {
-    console.log(files);
     if (inputData === "") {
       alert("메시지를 입력해주세요.");
     } else {
@@ -79,18 +76,17 @@ export default function Blah(props: Props) {
           method: "POST",
           body: formData,
           headers: {
-            Authorization: `bearer ${ctx?.accessToken}`,
+            Authorization: `bearer ${accessToken}`,
             "Access-Control-Allow-Origin": "http://localhost:3000",
           },
         });
         const json = await response.json();
-        console.log(json);
         await fetch(`${SERVER_URI}/blah/chatAdd`, {
           method: "Post",
           body: JSON.stringify({
             _id: props.roomData._id,
             blah: {
-              name: ctx?.userData?.username,
+              name: userData.username,
               comments: json.fileOriginName,
               date: new Date(),
               counts: chatUser,
@@ -100,14 +96,14 @@ export default function Blah(props: Props) {
             },
           }),
           headers: {
-            Authorization: `bearer ${ctx?.accessToken}`,
+            Authorization: `bearer ${accessToken}`,
             "Content-type": "application/json",
             "Access-Control-Allow-Origin": "http://localhost:3000",
           },
         });
         const data = {
           _id: props.roomData._id,
-          username: ctx?.userData?.username,
+          username: userData.username,
         };
         socket.emit("message", data, (chat: any) => {
           setUpdateData(chat);
@@ -121,21 +117,21 @@ export default function Blah(props: Props) {
           body: JSON.stringify({
             _id: props.roomData._id,
             blah: {
-              name: ctx?.userData?.username,
+              name: userData.username,
               comments: inputData,
               date: new Date(),
               counts: chatUser,
             },
           }),
           headers: {
-            Authorization: `bearer ${ctx?.accessToken}`,
+            Authorization: `bearer ${accessToken}`,
             "Content-type": "application/json",
             "Access-Control-Allow-Origin": "http://localhost:3000",
           },
         });
         const data = {
           _id: props.roomData._id,
-          username: ctx?.userData?.username,
+          username: userData.username,
         };
         socket.emit("message", data, (chat: any) => {
           setUpdateData(chat);
@@ -201,76 +197,101 @@ const Container = styled.div`
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  gap: 2rem;
+  gap: 16px;
 `;
 
 const BlahContainer = styled.div`
   display: flex;
-  background-color: #e6e0f8;
-  width: 100%;
-  height: 80vh;
-  border: none;
-  border-radius: 1rem;
+  flex-direction: column;
   align-items: center;
   gap: 1rem;
-  padding: 0.5rem;
-  padding-right: 1.5rem;
-  flex-direction: column;
+  background-color: #e6e0f8;
+
+  width: calc(100% - 32px);
+  height: 80vh;
+  overflow-y: scroll;
+  padding: 1rem 1rem 0 1rem;
+  border-radius: 8px;
   scrollbar-width: none;
-  overflow: auto;
+
   &::-webkit-scrollbar {
     width: 8px;
     height: 8px;
-    border-radius: 6px;
-    background: rgba(255, 255, 255, 0.4);
+    border-radius: 8px;
+    background: #e6e0f8;
   }
   &::-webkit-scrollbar-thumb {
     background-color: rgba(0, 0, 0, 0.3);
-    border-radius: 6px;
+    border-radius: 4px;
   }
 `;
 
 const InputBox = styled.input`
-  width: 80%;
-  height: 3vh;
-  border-radius: 3rem;
-  padding: 1rem;
+  border-radius: 8px;
+  padding: 0 1rem;
   word-break: break-all;
+  box-sizing: border-box;
+  height: 40px;
+  border: 1px solid black;
+  flex: 1;
 `;
 
 const SendButton = styled.button`
-  width: 60px;
-  height: 60px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
   border: none;
-  border-radius: 50px;
+  box-sizing: border-box;
   padding: 0.6rem;
-  background: #0000ff;
+  background: #b8d60c;
   color: #ffffff;
   display: flex;
   align-items: center;
   justify-content: center;
+  cursor: pointer;
 `;
 
 const InputContainer = styled.div`
   width: 100%;
-  height: 3vh;
   display: flex;
   align-items: center;
   flex-direction: row;
   justify-content: center;
   gap: 0.5rem;
+  height: 40px;
 `;
 
 const FileAddButton = styled.button`
-  width: 4rem;
-  height: 4rem;
+  width: 40px;
+  height: 40px;
   border: none;
-  border-radius: 50px;
-  background: #0000ff;
+  border-radius: 50%;
+  background: #3030b9;
   color: #ffffff;
   display: flex;
   align-items: center;
   justify-content: center;
+  cursor: pointer;
 `;
 
 const FileInput = styled.input``;
+
+export const hexToRGBA = (hex: string): string => {
+  // #e6e0f8
+  if (!hex.startsWith("#") || hex.length !== 7) {
+    return hex;
+  }
+
+  const parsing = (h: string, start: number, end: number): number =>
+    parseInt(h.slice(start, end), 10);
+
+  const tempHex = hex.slice(1);
+
+  // e6 e0 f8
+  const r = parsing(tempHex, 0, 2);
+  const g = parsing(tempHex, 2, 4);
+  const b = parsing(tempHex, 4, 6);
+
+  // alpha = 투명도 opacity의 반대 의미
+  return `rgba(${r}, ${g}, ${b}, 1)`;
+};

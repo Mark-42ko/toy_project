@@ -8,15 +8,15 @@ type Props = {
 };
 
 export default function Button(props: Props) {
-  const [choose, setChoose] = useState<boolean>(false); // 버튼 누름 상태 확인용 hook
+  const [choose, setChoose] = useState<boolean>(false);
 
   useEffect(() => {
-    props.data.text === "people" && setChoose(true); // default 선택값인 people 버튼 누름 상태
-    props.navController !== props.data.text && setChoose(false); // 버튼 누름 상태 1개만 활성화
+    props.data.text === "mail" && setChoose(true);
+    props.navController !== props.data.text && setChoose(false);
   }, [props.navController]);
 
   const chooseHandler = () => {
-    props.setNavController(props.data.text); // nav 값 전달
+    props.setNavController(props.data.text);
     setChoose(true);
   };
 
@@ -33,7 +33,17 @@ type ButtonProps = {
 
 const Buttons = styled.button`
   border: none;
-  width: 50px;
+  cursor: pointer;
+  width: 100%;
   height: 50px;
-  background: ${(props: ButtonProps) => (props.choose === true ? "#FFFFFF" : "#F2F2F2")};
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: ${(props: ButtonProps) => (props.choose ? "#FFFFFF" : "#F2F2F2")};
+
+  svg {
+    width: 40px;
+    height: 40px;
+  }
 `;

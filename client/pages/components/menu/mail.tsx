@@ -1,29 +1,30 @@
 import styled from "styled-components";
 import TabBar from "./tabBar";
-import { useState, useContext, useEffect } from "react";
+import { useState, useEffect } from "react";
 import MailList from "./mailList";
 import BlahBar from "./blahBar";
 import Blah from "./blah";
 import UserInfo from "./userInfo";
 import { ChatNew } from "@styled-icons/remix-line/ChatNew";
-import { GlobalContext } from "pages/_app";
 import AddBlah from "./addBlah";
 
 export default function People() {
   const [tabHandle, setTabHandle] = useState<string>("진행중");
   const [open, setOpen] = useState<boolean>(false);
-  const ctx = useContext(GlobalContext);
   const SERVER_URI = process.env.NEXT_PUBLIC_SERVER_URI;
   const [roomData, setRoomData] = useState<any>();
-  const [choose, setChoose] = useState<boolean>(false);
   const [chatRoom, setChatRoom] = useState<any>();
+  const [userDatas, setUserDatas] = useState<any>();
 
   useEffect(() => {
+    const userData = JSON.parse(localStorage.getItem("userData") as string);
+    setUserDatas(userData);
+    const accessToken = JSON.parse(localStorage.getItem("userToken") as string);
     !(async function () {
-      const result = await fetch(`${SERVER_URI}/blah?email=${ctx?.userData?.userId}`, {
+      const result = await fetch(`${SERVER_URI}/blah?email=${userData.userId}`, {
         method: "GET",
         headers: {
-          Authorization: `bearer ${ctx?.accessToken}`,
+          Authorization: `bearer ${accessToken}`,
           "Content-type": "application/json",
           "Access-Control-Allow-Origin": "http://localhost:3000",
         },
@@ -31,7 +32,7 @@ export default function People() {
       const json = await result.json();
       setRoomData(json.data);
     })();
-  }, []);
+  }, [open]);
 
   const newChatButtonHandle = () => {
     setOpen(!open);
@@ -41,7 +42,7 @@ export default function People() {
     <Container>
       <ListContainer>
         <NameContainer>
-          <NameTag>{ctx?.userData?.username}</NameTag>
+          {userDatas && <NameTag>{userDatas.username}</NameTag>}
           <NewChatButton onClick={newChatButtonHandle}>
             <ChatNew />
           </NewChatButton>
@@ -52,22 +53,22 @@ export default function People() {
           ) : null}
         </NameContainer>
         <TabBar tabHandle={tabHandle} setTabHandle={setTabHandle} />
-        {roomData ? (
-          roomData.map((one: any) => (
-            <MailList
-              key={one._id}
-              tabHandle={tabHandle}
-              roomData={one}
-              choose={choose}
-              setChoose={setChoose}
-              setChatRoom={setChatRoom}
-            />
-          ))
-        ) : (
-          <ErrMsg>친구를 추가해주세요.</ErrMsg>
-        )}
+        {roomData &&
+          roomData.map((one: any) => {
+            if (tabHandle === one.status) {
+              return (
+                <MailList
+                  key={one._id}
+                  tabHandle={tabHandle}
+                  roomData={one}
+                  setChatRoom={setChatRoom}
+                  chatRoom={chatRoom}
+                />
+              );
+            }
+          })}
       </ListContainer>
-      {chatRoom && choose && (
+      {chatRoom && (
         <InfoContainer>
           <BlahBar roomData={chatRoom} />
           <InnerContainer>
@@ -99,6 +100,7 @@ const NameContainer = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  align-items: center;
 `;
 
 const NameTag = styled.h1`
@@ -117,29 +119,30 @@ const InnerContainer = styled.div`
   display: flex;
   flex-direction: row;
   margin-left: 20px;
+  gap: 1rem;
 `;
 
 const NewChatButton = styled.button`
-  width: 50px;
-  height: 50px;
   border: none;
   background: #ffffff;
+  cursor: pointer;
+
+  svg {
+    width: 30px;
+    height: 30px;
+  }
 `;
 
 const ModalBackdrop = styled.div`
-  width: 100%;
-  height: 100%;
   position: fixed;
   right: 0;
   top: 0;
+  left: 0;
+  bottom: 0;
+
   display: flex;
-  flex-flow: row wrep;
+  flex-flow: row wrap;
   justify-content: center;
   align-items: center;
   background: rgba(0, 0, 0, 0.5);
-`;
-
-const ErrMsg = styled.span`
-  font-size: 1rem;
-  color: #ff0000;
 `;

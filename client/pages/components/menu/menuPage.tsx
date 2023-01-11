@@ -11,7 +11,7 @@ export default function MenuPage(props: Props) {
     <>
       <MenuContainer>
         {props.navController === "people" && <People />}
-        {props.navController === "mailInBox" && <Mail />}
+        {props.navController === "mail" && <Mail />}
         {props.navController === "ListUl" && null}
         {props.navController === "Award" && null}
         {props.navController === "Robot" && null}
