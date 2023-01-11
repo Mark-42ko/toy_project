@@ -1,6 +1,8 @@
 import styled from "styled-components";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { hash } from "bcryptjs";
+import { Back } from "@styled-icons/entypo/Back";
+import Image from "next/image";
 
 type Props = {
   signUpModalHandle: () => void;
@@ -14,11 +16,13 @@ export default function SignUp(props: Props) {
   const [rePassword, setRePassword] = useState<string>("");
   const [name, setName] = useState<string>("");
   const [phoneNumber, setPhoneNumber] = useState<string>();
-
+  const [files, setFiles] = useState<File[]>([]);
   const [emailErr, setEmailErr] = useState<string>();
   const [passwordErr, setPasswordErr] = useState<string>();
   const [rePasswordErr, setRePasswordErr] = useState<string>();
   const [nameErr, setNameErr] = useState<string>();
+  const [imgFile, setImgFile] = useState<any>();
+  const ref = useRef<HTMLInputElement>(null);
 
   const nameRegex = /^[가-힣a-zA-Z]+$/;
   const emailRegex =
@@ -69,6 +73,18 @@ export default function SignUp(props: Props) {
       } else {
         const hashPassword = await hash(password, 12);
         try {
+          const formData = new FormData();
+          files.forEach((one) => {
+            formData.append("file", one);
+          });
+          const response = await fetch(`${SERVER_URI}/account/upload`, {
+            method: "POST",
+            body: formData,
+            headers: {
+              "Access-Control-Allow-Origin": "http://localhost:3000",
+            },
+          });
+          const json = await response.json();
           await fetch(`${SERVER_URI}/account/signUp`, {
             method: "POST",
             body: JSON.stringify({
@@ -76,6 +92,7 @@ export default function SignUp(props: Props) {
               password: hashPassword,
               name: name,
               phoneNumber: phoneNumber,
+              filename: json.filename ? json.filename : undefined,
             }),
             headers: {
               "Content-type": "application/json",
@@ -91,50 +108,108 @@ export default function SignUp(props: Props) {
     }
   };
 
+  const fileAddButtonHandle: React.ChangeEventHandler<HTMLInputElement> = (evt) => {
+    if (evt.target.files) {
+      const file = evt.target.files[0];
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onloadend = () => {
+        setImgFile(reader.result);
+      };
+      const t = Array.from(evt.target.files!);
+      setFiles([...files, ...t]);
+    }
+  };
+
   return (
     <Container>
-      <TitleText>회원가입</TitleText>
-      <CloseButton onClick={props.signUpModalHandle}>X</CloseButton>
-      <InnerContainer>
-        <TextArea>프로필 이미지 : </TextArea>
-        <TextInput
-          placeholder="example@google.com"
-          type={"email"}
-          onChange={(evt) => setEmail(evt.currentTarget.value)}
-        />
-      </InnerContainer>
-      <InnerContainer>
-        <TextArea>아이디 : </TextArea>
-        <TextInput
-          placeholder="example@google.com"
-          type={"email"}
-          onChange={(evt) => setEmail(evt.currentTarget.value)}
-        />
-      </InnerContainer>
-      <ErrMsgArea>{emailErr}</ErrMsgArea>
-      <InnerContainer>
-        <TextArea>비밀번호 : </TextArea>
-        <TextInput
-          placeholder="특수문자 포함 8자 이상"
-          type={"password"}
-          onChange={(evt) => setPassword(evt.currentTarget.value)}
-        />
-      </InnerContainer>
-      <ErrMsgArea>{passwordErr}</ErrMsgArea>
-      <InnerContainer>
-        <TextArea>비밀번호 확인 : </TextArea>
-        <TextInput type={"password"} onChange={(evt) => setRePassword(evt.currentTarget.value)} />
-      </InnerContainer>
-      <ErrMsgArea>{rePasswordErr}</ErrMsgArea>
-      <InnerContainer>
-        <TextArea>이름 : </TextArea>
-        <TextInput type={"text"} onChange={(evt) => setName(evt.currentTarget.value)} />
-      </InnerContainer>
-      <ErrMsgArea>{nameErr}</ErrMsgArea>
-      <InnerContainer>
-        <TextArea>연락처 : </TextArea>
-        <NumberInput type={"text"} value={phoneNumber} onChange={handleInput} maxLength={13} />
-      </InnerContainer>
+      <TitleContainer>
+        <CloseButton onClick={props.signUpModalHandle}>
+          <Back />
+        </CloseButton>
+        <TitleText>회원가입</TitleText>
+        <div style={{ width: "40px" }} />
+      </TitleContainer>
+      <BodyContainer>
+        <MidleContainer>
+          <TextArea>
+            <b>프로필 이미지</b>
+          </TextArea>
+          {imgFile ? (
+            <>
+              <Image
+                src={imgFile}
+                alt={"프로필 이미지"}
+                style={{ cursor: "pointer", borderRadius: "8px" }}
+                width={150}
+                height={150}
+                onClick={() => ref.current?.click()}
+              />
+              <FileInput
+                type="file"
+                ref={ref}
+                style={{ display: "none" }}
+                onChange={(e) => {
+                  fileAddButtonHandle(e);
+                  e.target.value = "";
+                }}
+              />
+            </>
+          ) : (
+            <>
+              <FileAddButton onClick={() => ref.current?.click()}>
+                <b>업로드</b>
+              </FileAddButton>
+              <FileInput
+                type="file"
+                ref={ref}
+                style={{ display: "none" }}
+                onChange={(e) => {
+                  fileAddButtonHandle(e);
+                  e.target.value = "";
+                }}
+              />
+            </>
+          )}
+        </MidleContainer>
+        <MidleContainer>
+          <InnerContainer>
+            <TextArea>아이디 : </TextArea>
+            <TextInput
+              placeholder="example@google.com"
+              type={"email"}
+              onChange={(evt) => setEmail(evt.currentTarget.value)}
+            />
+          </InnerContainer>
+          <ErrMsgArea>{emailErr}</ErrMsgArea>
+          <InnerContainer>
+            <TextArea>비밀번호 : </TextArea>
+            <TextInput
+              placeholder="특수문자 포함 8자 이상"
+              type={"password"}
+              onChange={(evt) => setPassword(evt.currentTarget.value)}
+            />
+          </InnerContainer>
+          <ErrMsgArea>{passwordErr}</ErrMsgArea>
+          <InnerContainer>
+            <TextArea>비밀번호 확인 : </TextArea>
+            <TextInput
+              type={"password"}
+              onChange={(evt) => setRePassword(evt.currentTarget.value)}
+            />
+          </InnerContainer>
+          <ErrMsgArea>{rePasswordErr}</ErrMsgArea>
+          <InnerContainer>
+            <TextArea>이름 : </TextArea>
+            <TextInput type={"text"} onChange={(evt) => setName(evt.currentTarget.value)} />
+          </InnerContainer>
+          <ErrMsgArea>{nameErr}</ErrMsgArea>
+          <InnerContainer>
+            <TextArea>연락처 : </TextArea>
+            <NumberInput type={"text"} value={phoneNumber} onChange={handleInput} maxLength={13} />
+          </InnerContainer>
+        </MidleContainer>
+      </BodyContainer>
       <SiginButton onClick={signUpHandle}>
         <b>회원가입</b>
       </SiginButton>
@@ -143,30 +218,48 @@ export default function SignUp(props: Props) {
 }
 
 const Container = styled.div`
-  width: 30%;
-  min-width: 300px;
-  min-height: 300px;
   border: none;
-  border-radius: 20px;
-  padding: 2em;
+  border-radius: 8px;
+  padding: 1em;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   background-color: #ffffff;
-  position: sticky;
   gap: 1rem;
 `;
 
+const TitleContainer = styled.div`
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+`;
+
+const BodyContainer = styled.div`
+  display: flex;
+  width: 100%;
+  align-items: center;
+  flex-direction: row;
+  gap: 1.4rem;
+`;
+
+const MidleContainer = styled.div`
+  display: flex;
+  width: 100%;
+  align-items: center;
+  flex-direction: column;
+  gap: 0.6rem;
+`;
+
 const CloseButton = styled.button`
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 30px;
-  height: 30px;
   border: none;
-  border-radius: 50px;
-  background: #5858fa;
+  background: #ffffff;
+  cursor: pointer;
+  svg {
+    width: 30px;
+    height: 30px;
+  }
 `;
 
 const TitleText = styled.h1`
@@ -193,9 +286,11 @@ const SiginButton = styled.button`
   border: none;
   font-size: 1.2rem;
   background: #5858fa;
-  margin-top: 15px;
+  color: #ffffff;
   border: none;
-  border-radius: 10px;
+  border-radius: 8px;
+  margin-top: 20px;
+  cursor: pointer;
 `;
 
 const NumberInput = styled.input`
@@ -209,3 +304,19 @@ const NumberInput = styled.input`
     margin: 0;
   }
 `;
+
+const FileAddButton = styled.div`
+  width: 150px;
+  height: 150px;
+  border: none;
+  border-radius: 8px;
+  background-image: url("/images/defaultGuest.jpg");
+  background-size: cover;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  cursor: pointer;
+`;
+
+const FileInput = styled.input``;

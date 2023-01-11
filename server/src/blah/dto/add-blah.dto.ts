@@ -9,6 +9,7 @@ export class AddBlah {
   blah: [
     {
       name: string;
+      profile: string | undefined;
       comments: string;
       date: Date;
       counts: [string];

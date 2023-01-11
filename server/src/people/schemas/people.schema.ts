@@ -14,6 +14,7 @@ export class People {
       email: string;
       name: string;
       phoneNumber: string;
+      filename: string | undefined;
     },
   ];
 }

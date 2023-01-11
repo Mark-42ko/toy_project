@@ -21,6 +21,7 @@ export class AuthService {
       username: user._doc.name,
       sub: user._doc.email,
       userPhoneNumber: user._doc.phoneNumber,
+      filename: user._doc.filename,
     };
     return {
       access_token: this.jwtService.sign(payload),

@@ -1,11 +1,13 @@
 import styled from "styled-components";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import Image from "next/image";
 
 type Props = {
   friendData: {
     email: string;
     name: string;
     phoneNumber: string;
+    filename: string | undefined;
   };
   setSelectFriend: Function;
   selectFriend: any;
@@ -13,6 +15,39 @@ type Props = {
 
 export default function AddBlahCard(props: Props) {
   const [select, setSelect] = useState<boolean>(false);
+  const [profileImg, setProfileImg] = useState<string>();
+  const SERVER_URI = process.env.NEXT_PUBLIC_SERVER_URI;
+  const accessToken = JSON.parse(localStorage.getItem("userToken") as string);
+
+  useEffect(() => {
+    !(async function () {
+      if (props.friendData.filename) {
+        const extension =
+          props.friendData.filename.split(".")[props.friendData.filename.split(".").length - 1];
+        if (
+          extension === "jpg" ||
+          extension === "jpeg" ||
+          extension === "png" ||
+          extension === "gif"
+        ) {
+          const result = await fetch(
+            `${SERVER_URI}/blah/download?filename=${props.friendData.filename}`,
+            {
+              method: "GET",
+              headers: {
+                Authorization: `bearer ${accessToken}`,
+                "Content-type": "application/json",
+                "Access-Control-Allow-Origin": "http://localhost:3000",
+              },
+            },
+          );
+          const file = await result.blob();
+          const downloadUrl = window.URL.createObjectURL(file);
+          setProfileImg(downloadUrl);
+        }
+      }
+    })();
+  }, []);
 
   const clickHandle = () => {
     setSelect(!select);
@@ -27,7 +62,17 @@ export default function AddBlahCard(props: Props) {
   return (
     <Container choose={select} onClick={clickHandle}>
       <ProfileContainer>
-        <ProfileImg />
+        {profileImg ? (
+          <Image
+            src={profileImg}
+            alt="프로필 이미지"
+            width={65}
+            height={65}
+            style={{ borderRadius: "8px" }}
+          />
+        ) : (
+          <ProfileImg />
+        )}
         <NameTag>
           <b>{props.friendData.name}</b>
         </NameTag>
@@ -63,7 +108,7 @@ const ProfileImg = styled.div`
   width: 65px;
   height: 65px;
   border: none;
-  border-radius: 20px;
+  border-radius: 8px;
 `;
 
 const NameTag = styled.div`

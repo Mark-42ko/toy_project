@@ -7,6 +7,7 @@ import { PlusCircle } from "@styled-icons/bootstrap/PlusCircle";
 
 type Props = {
   roomData: any;
+  setRerendering: Function;
 };
 
 interface IChat {
@@ -61,6 +62,7 @@ export default function Blah(props: Props) {
       const json = await result.json();
       setUpdateData(json.data);
     })();
+    props.setRerendering(Math.random());
   }, [chats, props.roomData]);
 
   const inputButtonHandle = async () => {
@@ -87,6 +89,7 @@ export default function Blah(props: Props) {
             _id: props.roomData._id,
             blah: {
               name: userData.username,
+              profile: userData.filename,
               comments: json.fileOriginName,
               date: new Date(),
               counts: chatUser,
@@ -106,6 +109,7 @@ export default function Blah(props: Props) {
           username: userData.username,
         };
         socket.emit("message", data, (chat: any) => {
+          props.setRerendering(Math.random());
           setUpdateData(chat);
           setInputData("");
           setCheck(chat.blah.length);
@@ -118,6 +122,7 @@ export default function Blah(props: Props) {
             _id: props.roomData._id,
             blah: {
               name: userData.username,
+              profile: userData.filename,
               comments: inputData,
               date: new Date(),
               counts: chatUser,
@@ -134,6 +139,7 @@ export default function Blah(props: Props) {
           username: userData.username,
         };
         socket.emit("message", data, (chat: any) => {
+          props.setRerendering(Math.random());
           setUpdateData(chat);
           setInputData("");
           setCheck(chat.blah.length);
@@ -165,6 +171,7 @@ export default function Blah(props: Props) {
               check={check}
               chats={chats}
               roomData={props.roomData}
+              setRerendering={props.setRerendering}
             />
           ))}
         <div id="blah"></div>

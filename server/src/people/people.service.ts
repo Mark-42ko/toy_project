@@ -24,6 +24,7 @@ export class PeopleService {
                 email: addPeopleDto.friend.email,
                 name: addPeopleDto.friend.name,
                 phoneNumber: addPeopleDto.friend.phoneNumber,
+                filename: addPeopleDto.friend.filename,
               },
             },
           },
@@ -44,6 +45,7 @@ export class PeopleService {
             email: addPeopleDto.friend.email,
             name: addPeopleDto.friend.name,
             phoneNumber: addPeopleDto.friend.phoneNumber,
+            filename: addPeopleDto.friend.filename,
           },
         ],
       });

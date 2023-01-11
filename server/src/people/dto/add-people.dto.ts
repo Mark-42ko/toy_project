@@ -4,5 +4,6 @@ export class AddPeople {
     email: string;
     name: string;
     phoneNumber: string;
+    filename: string | undefined;
   };
 }

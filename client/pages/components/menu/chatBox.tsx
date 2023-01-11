@@ -11,6 +11,7 @@ type Props = {
   check: number;
   chats: any;
   roomData: any;
+  setRerendering: Function;
 };
 
 const SERVER_URI = process.env.NEXT_PUBLIC_SERVER_URI;
@@ -22,6 +23,7 @@ export default function ChatBox(props: Props) {
   const dataTime = dataDate[4].split(":");
   const [chats, setChats] = useState<any>();
   const [imageFileUrl, setImageFileUrl] = useState<string>();
+  const [profile, setProfile] = useState<string>();
   const userData = JSON.parse(localStorage.getItem("userData") as string);
   const accessToken = JSON.parse(localStorage.getItem("userToken") as string);
 
@@ -40,6 +42,36 @@ export default function ChatBox(props: Props) {
     idx: props.idx,
     email: userData.userId,
   };
+
+  useEffect(() => {
+    !(async function () {
+      if (props.chatData.profile) {
+        const extension =
+          props.chatData.profile.split(".")[props.chatData.profile.split(".").length - 1];
+        if (
+          extension === "jpg" ||
+          extension === "jpeg" ||
+          extension === "png" ||
+          extension === "gif"
+        ) {
+          const result = await fetch(
+            `${SERVER_URI}/blah/download?filename=${props.chatData.profile}`,
+            {
+              method: "GET",
+              headers: {
+                Authorization: `bearer ${accessToken}`,
+                "Content-type": "application/json",
+                "Access-Control-Allow-Origin": "http://localhost:3000",
+              },
+            },
+          );
+          const file = await result.blob();
+          const downloadUrl = window.URL.createObjectURL(file);
+          setProfile(downloadUrl);
+        }
+      }
+    })();
+  }, []);
 
   useEffect(() => {
     const messageHandler = (chat: any) => {
@@ -72,6 +104,7 @@ export default function ChatBox(props: Props) {
           "Access-Control-Allow-Origin": "http://localhost:3000",
         },
       });
+      props.setRerendering(Math.random());
     })();
   }, []);
 
@@ -194,7 +227,17 @@ export default function ChatBox(props: Props) {
         </ProfileContainer>
       ) : (
         <ProfileContainer>
-          <ProfileDiv />
+          {profile ? (
+            <Image
+              src={profile}
+              alt="프로필이미지"
+              width={65}
+              height={65}
+              style={{ borderRadius: "8px" }}
+            />
+          ) : (
+            <ProfileDiv />
+          )}
           <InnerContainer>
             <NameTag>
               <b>{props.chatData.name}</b>
@@ -253,7 +296,7 @@ const ProfileDiv = styled.div`
   width: 65px;
   height: 65px;
   border: none;
-  border-radius: 20px;
+  border-radius: 8px;
 `;
 
 const InnerContainer = styled.div`
@@ -283,7 +326,6 @@ const MinInfoContainer = styled.div`
   flex-direction: column;
   justify-content: end;
   align-items: ${(props: CheckProps) => (props.check === true ? "end" : "start")};
-  margin-left: 1rem;
 `;
 
 const CountCheck = styled.label`

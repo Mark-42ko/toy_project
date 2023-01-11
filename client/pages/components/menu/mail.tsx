@@ -7,6 +7,10 @@ import Blah from "./blah";
 import UserInfo from "./userInfo";
 import { ChatNew } from "@styled-icons/remix-line/ChatNew";
 import AddBlah from "./addBlah";
+import { io } from "socket.io-client";
+
+const SERVER_URI = process.env.NEXT_PUBLIC_SERVER_URI;
+const socket = io(`${SERVER_URI}/chat`);
 
 export default function People() {
   const [tabHandle, setTabHandle] = useState<string>("진행중");
@@ -15,24 +19,35 @@ export default function People() {
   const [roomData, setRoomData] = useState<any>();
   const [chatRoom, setChatRoom] = useState<any>();
   const [userDatas, setUserDatas] = useState<any>();
+  const [rerendering, setRerendering] = useState<number>(0);
+
+  useEffect(() => {
+    const messageHandler = (chat: any) => setRerendering(Math.random());
+    socket.on("message", messageHandler);
+    return () => {
+      socket.off("message", messageHandler);
+    };
+  }, []);
 
   useEffect(() => {
     const userData = JSON.parse(localStorage.getItem("userData") as string);
     setUserDatas(userData);
     const accessToken = JSON.parse(localStorage.getItem("userToken") as string);
-    !(async function () {
-      const result = await fetch(`${SERVER_URI}/blah?email=${userData.userId}`, {
-        method: "GET",
-        headers: {
-          Authorization: `bearer ${accessToken}`,
-          "Content-type": "application/json",
-          "Access-Control-Allow-Origin": "http://localhost:3000",
-        },
-      });
-      const json = await result.json();
-      setRoomData(json.data);
-    })();
-  }, [open]);
+    if (userData && accessToken) {
+      !(async function () {
+        const result = await fetch(`${SERVER_URI}/blah?email=${userData.userId}`, {
+          method: "GET",
+          headers: {
+            Authorization: `bearer ${accessToken}`,
+            "Content-type": "application/json",
+            "Access-Control-Allow-Origin": "http://localhost:3000",
+          },
+        });
+        const json = await result.json();
+        setRoomData(json.data);
+      })();
+    }
+  }, [open, rerendering]);
 
   const newChatButtonHandle = () => {
     setOpen(!open);
@@ -63,6 +78,8 @@ export default function People() {
                   roomData={one}
                   setChatRoom={setChatRoom}
                   chatRoom={chatRoom}
+                  userDatas={userDatas}
+                  rerendering={rerendering}
                 />
               );
             }
@@ -72,7 +89,7 @@ export default function People() {
         <InfoContainer>
           <BlahBar roomData={chatRoom} />
           <InnerContainer>
-            <Blah roomData={chatRoom} />
+            <Blah roomData={chatRoom} setRerendering={setRerendering} />
             <UserInfo roomData={chatRoom} />
           </InnerContainer>
         </InfoContainer>

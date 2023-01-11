@@ -2,6 +2,7 @@ import styled from "styled-components";
 import { PhoneIphone } from "@styled-icons/material/PhoneIphone";
 import { EmailOutline } from "@styled-icons/evaicons-outline/EmailOutline";
 import { useEffect, useState } from "react";
+import Image from "next/image";
 
 type Props = {
   userData: any;
@@ -13,6 +14,37 @@ export default function UserCard(props: Props) {
   const [reRender, setReRender] = useState<number>(0);
   const userData = JSON.parse(localStorage.getItem("userData") as string);
   const accessToken = JSON.parse(localStorage.getItem("userToken") as string);
+  const [profileImg, setProfileImg] = useState<string>();
+
+  useEffect(() => {
+    !(async function () {
+      if (props.userData.filename) {
+        const extension =
+          props.userData.filename.split(".")[props.userData.filename.split(".").length - 1];
+        if (
+          extension === "jpg" ||
+          extension === "jpeg" ||
+          extension === "png" ||
+          extension === "gif"
+        ) {
+          const result = await fetch(
+            `${SERVER_URI}/blah/download?filename=${props.userData.filename}`,
+            {
+              method: "GET",
+              headers: {
+                Authorization: `bearer ${accessToken}`,
+                "Content-type": "application/json",
+                "Access-Control-Allow-Origin": "http://localhost:3000",
+              },
+            },
+          );
+          const file = await result.blob();
+          const downloadUrl = window.URL.createObjectURL(file);
+          setProfileImg(downloadUrl);
+        }
+      }
+    })();
+  }, []);
 
   useEffect(() => {
     !(async function () {
@@ -68,7 +100,17 @@ export default function UserCard(props: Props) {
   return (
     <Container onClick={clickHandle}>
       <ProfileContainer>
-        <ProfileImg />
+        {profileImg ? (
+          <Image
+            src={profileImg}
+            alt="프로필 이미지"
+            width={65}
+            height={65}
+            style={{ borderRadius: "8px" }}
+          />
+        ) : (
+          <ProfileImg />
+        )}
         <NameTag>
           <b>{props.userData.name === userData.username ? "나" : props.userData.name}</b>
         </NameTag>

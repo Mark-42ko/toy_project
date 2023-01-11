@@ -36,6 +36,7 @@ export default function AddBlah(props: Props) {
           email: userData.userId,
           name: userData.username,
           phoneNumber: userData.userPhoneNumber,
+          filename: userData.filename,
         },
       ]);
     })();

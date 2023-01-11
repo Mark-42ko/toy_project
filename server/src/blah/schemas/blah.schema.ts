@@ -18,6 +18,7 @@ export class Blah {
   blah: [
     {
       name: string;
+      profile: string | undefined;
       comments: string;
       date: Date;
       counts: [string];

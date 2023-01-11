@@ -15,23 +15,18 @@ export default function ConnectionList(props: Props) {
   const userData = JSON.parse(localStorage.getItem("userData") as string);
   const accessToken = JSON.parse(localStorage.getItem("userToken") as string);
   useEffect(() => {
-    if (userData && accessToken) {
-      !(async function () {
-        const reponse = await fetch(
-          `${SERVER_URI}/people/readPeople?username=${userData.username}`,
-          {
-            method: "GET",
-            headers: {
-              Authorization: `bearer ${accessToken}`,
-              "Content-type": "application/json",
-              "Access-Control-Allow-Origin": "http://localhost:3000",
-            },
-          },
-        );
-        const json = await reponse.json();
-        setPeopleData(json.data);
-      })();
-    }
+    !(async function () {
+      const reponse = await fetch(`${SERVER_URI}/people/readPeople?username=${userData.username}`, {
+        method: "GET",
+        headers: {
+          Authorization: `bearer ${accessToken}`,
+          "Content-type": "application/json",
+          "Access-Control-Allow-Origin": "http://localhost:3000",
+        },
+      });
+      const json = await reponse.json();
+      setPeopleData(json.data);
+    })();
   }, [props.open]);
 
   return (

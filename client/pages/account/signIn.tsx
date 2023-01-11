@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { useRouter } from "next/router";
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import SignUp from "./signUp";
 import { GlobalContext } from "pages/_app";
 // import { Google } from '@styled-icons/bootstrap/Google';
@@ -12,6 +12,15 @@ export default function SignInPage() {
   const [password, setPassword] = useState<string>("");
   const SERVER_URI = process.env.NEXT_PUBLIC_SERVER_URI;
   const ctx = useContext(GlobalContext);
+
+  useEffect(() => {
+    const userData = JSON.parse(localStorage.getItem("userData") as string);
+    const accessToken = JSON.parse(localStorage.getItem("userToken") as string);
+    if (userData && accessToken) {
+      alert("이미 로그인 되어있습니다. 로그아웃 후 진행해주세요.");
+      router.push("/");
+    }
+  }, []);
 
   const signInHandle = async () => {
     const response = await fetch(`${SERVER_URI}/auth/login`, {
@@ -138,6 +147,7 @@ const SiginButton = styled.button`
   background: #5858fa;
   border-radius: 10px;
   align-items: center;
+  cursor: pointer;
 `;
 
 const SignUpButton = styled.button`
@@ -146,6 +156,7 @@ const SignUpButton = styled.button`
   color: #0000ff;
   width: 100px;
   font-size: 1rem;
+  cursor: pointer;
 `;
 
 const ModalBackdrop = styled.div`

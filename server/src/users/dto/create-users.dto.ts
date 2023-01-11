@@ -3,4 +3,5 @@ export class CreateUsersDto {
   password: string;
   name: string;
   phoneNumber: string;
+  filename: string | undefined;
 }

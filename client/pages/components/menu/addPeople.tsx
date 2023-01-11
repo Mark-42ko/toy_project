@@ -41,6 +41,7 @@ export default function AddPeople(props: Props) {
                 email: email,
                 name: json.data.name,
                 phoneNumber: json.data.phoneNumber,
+                filename: json.data.filename,
               },
             }),
             headers: {

@@ -8,6 +8,7 @@ import { CountUpdate } from "./dto/update-count.dto";
 import * as path from "path";
 import { Response } from "express";
 import { createReadStream } from "fs";
+import { NotReadBlah } from "./dto/notRead-blah.dto";
 
 @Injectable()
 export class BlahService {
@@ -100,6 +101,19 @@ export class BlahService {
       }
     }
     return results;
+  }
+
+  async notRead(data: NotReadBlah): Promise<number> {
+    const result = await this.BlahModel.findOne({ _id: data._id });
+    let counts = 0;
+    for (let t = 0; t < result.blah.length; t++) {
+      for (let g = 0; g < result.blah[t].counts.length; g++) {
+        if (result.blah[t].counts[g] === data.email) {
+          counts = counts + 1;
+        }
+      }
+    }
+    return counts;
   }
 
   async uploadFile(file: Express.Multer.File) {
