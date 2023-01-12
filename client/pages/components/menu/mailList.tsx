@@ -16,7 +16,7 @@ const SERVER_URI = process.env.NEXT_PUBLIC_SERVER_URI;
 
 export default function MailList(props: Props) {
   const [check, setCheck] = useState<boolean>(false);
-  const [profileImg, setProfileImg] = useState<string>();
+  const [profileImg, setProfileImg] = useState<string>("");
   const [notReadCounts, setNotReadCounts] = useState<number>(0);
 
   let nameTag;
@@ -41,6 +41,7 @@ export default function MailList(props: Props) {
   }
 
   useEffect(() => {
+    setProfileImg("");
     const userData = JSON.parse(localStorage.getItem("userData") as string);
     const accessToken = JSON.parse(localStorage.getItem("userToken") as string);
     !(async function () {
@@ -108,7 +109,7 @@ export default function MailList(props: Props) {
         }
       }
     })();
-  }, [props.chatRoom, lastOder, props.rerendering]);
+  }, [props.chatRoom, lastOder, props.rerendering, check]);
 
   useEffect(() => {
     props.roomData !== props.chatRoom && setCheck(false);
@@ -142,17 +143,20 @@ export default function MailList(props: Props) {
 
   return (
     <ButtonContainer selected={check} onClick={clickHandle}>
-      {notReadCounts !== 0 && <NotReadText>{notReadCounts}</NotReadText>}
-      {profileImg ? (
-        <Image
-          src={profileImg}
-          alt="프로필이미지"
-          width={65}
-          height={65}
-          style={{ borderRadius: "8px" }}
-        />
+      {/* {notReadCounts !== 0 && <NotReadText>{notReadCounts}</NotReadText>} */}
+      {profileImg !== "" ? (
+        // <Image
+        //   src={profileImg}
+        //   alt="프로필이미지"
+        //   width={65}
+        //   height={65}
+        //   style={{ borderRadius: "8px" }}
+        // ></Image>
+        <ProfileImg profileImg={profileImg}>
+          {notReadCounts !== 0 && <NotReadText>{notReadCounts}</NotReadText>}
+        </ProfileImg>
       ) : (
-        <ImgDiv />
+        <ImgDiv>{notReadCounts !== 0 && <NotReadText>{notReadCounts}</NotReadText>}</ImgDiv>
       )}
       <SmallContainer>
         <div>
@@ -180,13 +184,14 @@ const ButtonContainer = styled.button<ButtonProps>`
   border-radius: 8px;
   align-items: center;
   background: ${({ selected }) => (selected ? "#F2F2F2" : "#fff")};
-  position: sticky;
+  /* position: sticky; */
   cursor: pointer;
 `;
 
 const ImgDiv = styled.div`
   background-image: url("/images/defaultGuest.jpg");
   background-size: cover;
+  min-width: 65px;
   width: 65px;
   height: 65px;
   border: none;
@@ -207,8 +212,16 @@ const NameTag = styled.a`
   font-size: 1rem;
 `;
 
-const LastOrder = styled.a`
+const LastOrder = styled.span`
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 90%;
   font-size: 1rem;
+  text-align: left;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  word-break: break-all;
 `;
 
 const NotReadText = styled.span`
@@ -217,12 +230,27 @@ const NotReadText = styled.span`
   justify-content: center;
   width: 20px;
   height: 20px;
-  position: absolute;
+  /* position: absolute;
   left: 0;
-  top: 0;
+  top: 0; */
   border: none;
   border-radius: 50%;
   background-color: #ff0000;
   color: #ffffff;
   font-size: 1rem;
+`;
+
+type Profile = {
+  profileImg: any;
+};
+
+const ProfileImg = styled.div`
+  background-image: ${(props: Profile) => "url(" + props.profileImg + ")"};
+  background-size: cover;
+  background-size: 100% 100%;
+  min-width: 65px;
+  width: 65px;
+  height: 65px;
+  border: none;
+  border-radius: 8px;
 `;

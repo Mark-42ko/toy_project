@@ -191,7 +191,11 @@ export default function ChatBox(props: Props) {
 
   return (
     <Container check={check}>
-      {check ? (
+      {props.chatData.name === "알림" ? (
+        <SystemMsg>
+          <b>{props.chatData.comments}</b>
+        </SystemMsg>
+      ) : check ? (
         <ProfileContainer>
           <MinInfoContainer check={check}>
             {counting !== 0 && <CountCheck>{counting}</CountCheck>}
@@ -319,6 +323,7 @@ const TextBox = styled.span`
   border-radius: 1rem;
   padding: 1rem;
   word-break: break-all;
+  max-width: 450px;
 `;
 
 const MinInfoContainer = styled.div`
@@ -382,4 +387,11 @@ const LinkText = styled.button`
   border-radius: 1rem;
   padding: 1rem;
   word-break: break-all;
+`;
+
+const SystemMsg = styled.span`
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  font-size: 1rem;
 `;

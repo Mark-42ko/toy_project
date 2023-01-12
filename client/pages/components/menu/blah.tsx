@@ -177,7 +177,11 @@ export default function Blah(props: Props) {
         <div id="blah"></div>
       </BlahContainer>
       <InputContainer>
-        <InputBox onChange={(evt) => setInputData(evt.currentTarget.value)} value={inputData} />
+        {props.roomData.status === "종료됨" ? (
+          <InputBox disabled />
+        ) : (
+          <InputBox onChange={(evt) => setInputData(evt.currentTarget.value)} value={inputData} />
+        )}
         <FileAddButton onClick={() => ref.current?.click()}>
           <PlusCircle />
         </FileAddButton>

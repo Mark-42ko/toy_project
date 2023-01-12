@@ -12,7 +12,7 @@ export class PeopleController {
   @UseGuards(JwtAuthGuard)
   @Post("add")
   @HttpCode(201)
-  async add(@Body() addPeopleDto: AddPeople) {
+  async add(@Body() addPeopleDto: AddPeople): Promise<any> {
     return this.peopleService.add(addPeopleDto);
   }
 
@@ -24,8 +24,8 @@ export class PeopleController {
 
   @UseGuards(JwtAuthGuard)
   @Get("readPeople")
-  async findOne(@Query("username") username: string): Promise<People> {
-    const foundEmail = await this.peopleService.findOne(username);
+  async findOne(@Query("user") user: string): Promise<People> {
+    const foundEmail = await this.peopleService.findOne(user);
     return Object.assign({
       data: foundEmail,
       statusCode: 200,

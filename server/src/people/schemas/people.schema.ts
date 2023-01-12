@@ -8,13 +8,14 @@ export class People {
   @Prop({ required: true })
   user: string;
 
-  @Prop({ required: true, unique: true })
+  @Prop({})
   friend: [
     {
       email: string;
       name: string;
       phoneNumber: string;
-      filename: string | undefined;
+      filename: string;
+      date: Date;
     },
   ];
 }

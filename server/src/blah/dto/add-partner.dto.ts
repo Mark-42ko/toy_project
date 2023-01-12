@@ -1,12 +1,11 @@
-export class CreatePeople {
-  user: string;
-  friend: [
+export class AddPartner {
+  _id: string;
+  user: [
     {
       email: string;
       name: string;
       phoneNumber: string;
       filename: string;
-      date: Date;
     },
   ];
 }

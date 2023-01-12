@@ -20,12 +20,7 @@ export class PeopleService {
           },
           {
             $push: {
-              friend: {
-                email: addPeopleDto.friend.email,
-                name: addPeopleDto.friend.name,
-                phoneNumber: addPeopleDto.friend.phoneNumber,
-                filename: addPeopleDto.friend.filename,
-              },
+              friend: addPeopleDto.friend,
             },
           },
         ).exec();
@@ -40,14 +35,7 @@ export class PeopleService {
     } else {
       const peopleAccount = await this.PeopleModel.create({
         user: addPeopleDto.user,
-        friend: [
-          {
-            email: addPeopleDto.friend.email,
-            name: addPeopleDto.friend.name,
-            phoneNumber: addPeopleDto.friend.phoneNumber,
-            filename: addPeopleDto.friend.filename,
-          },
-        ],
+        friend: [addPeopleDto.friend],
       });
       return peopleAccount.save();
     }
@@ -57,12 +45,10 @@ export class PeopleService {
     return this.PeopleModel.find().exec();
   }
 
-  async findOne(username: string): Promise<People> {
-    const result = this.PeopleModel.findOne({ user: username }).exec();
+  async findOne(user: string): Promise<People> {
+    const result = await this.PeopleModel.findOne({ user: user }).exec();
     if (!result) {
-      return Object.assign({
-        statusCode: 418,
-      });
+      return null;
     }
     return result;
   }

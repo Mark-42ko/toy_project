@@ -1,18 +1,46 @@
 import styled from "styled-components";
 import UserCard from "./userCard";
+import { useEffect, useState } from "react";
 
 type Props = {
   roomData: any;
+  rerendering: number;
 };
 
+const SERVER_URI = process.env.NEXT_PUBLIC_SERVER_URI;
+
 export default function UserInfo(props: Props) {
+  const [userDatas, setUserDatas] = useState<any>([]);
+
+  useEffect(() => {
+    const userData = JSON.parse(localStorage.getItem("userData") as string);
+    const accessToken = JSON.parse(localStorage.getItem("userToken") as string);
+    !(async function () {
+      const result = await fetch(`${SERVER_URI}/blah?email=${userData.userId}`, {
+        method: "GET",
+        headers: {
+          Authorization: `bearer ${accessToken}`,
+          "Content-type": "application/json",
+          "Access-Control-Allow-Origin": "http://localhost:3000",
+        },
+      });
+      const json = await result.json();
+      for (let i = 0; i < json.data.length; i++) {
+        if (json.data[i]._id === props.roomData._id) {
+          return setUserDatas(json.data[i].user);
+        }
+      }
+    })();
+  }, [props.roomData, props.rerendering]);
+
   return (
     <Container>
-      <TitleText>참여자({props.roomData.user.length})</TitleText>
+      <TitleText>참여자({userDatas.length})</TitleText>
       <InnerContainer>
-        {props.roomData.user.map((one: any) => (
-          <UserCard userData={one} key={one.name} />
-        ))}
+        {userDatas &&
+          userDatas.map((one: any) => (
+            <UserCard userData={one} key={one.name} rerendering={props.rerendering} />
+          ))}
       </InnerContainer>
     </Container>
   );

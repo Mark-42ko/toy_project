@@ -3,10 +3,15 @@ import { PhoneIphone } from "@styled-icons/material/PhoneIphone";
 import { EmailOutline } from "@styled-icons/evaicons-outline/EmailOutline";
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import { io } from "socket.io-client";
 
 type Props = {
   userData: any;
+  rerendering: number;
 };
+
+const SERVER_URI = process.env.NEXT_PUBLIC_SERVER_URI;
+const socket = io(`${SERVER_URI}/chat`);
 
 export default function UserCard(props: Props) {
   const SERVER_URI = process.env.NEXT_PUBLIC_SERVER_URI;
@@ -15,6 +20,14 @@ export default function UserCard(props: Props) {
   const userData = JSON.parse(localStorage.getItem("userData") as string);
   const accessToken = JSON.parse(localStorage.getItem("userToken") as string);
   const [profileImg, setProfileImg] = useState<string>();
+
+  useEffect(() => {
+    const messageHandler = (chat: any) => setReRender(Math.random());
+    socket.on("message", messageHandler);
+    return () => {
+      socket.off("message", messageHandler);
+    };
+  }, []);
 
   useEffect(() => {
     !(async function () {
@@ -48,7 +61,7 @@ export default function UserCard(props: Props) {
 
   useEffect(() => {
     !(async function () {
-      const reponse = await fetch(`${SERVER_URI}/people/readPeople?username=${userData.username}`, {
+      const reponse = await fetch(`${SERVER_URI}/people/readPeople?user=${userData.username}`, {
         method: "GET",
         headers: {
           Authorization: `bearer ${accessToken}`,
@@ -66,7 +79,7 @@ export default function UserCard(props: Props) {
       }
       props.userData.name === userData.username && setCheck(true);
     })();
-  }, [reRender]);
+  }, [reRender, props.rerendering]);
 
   const clickHandle = async () => {
     if (!check) {
@@ -78,6 +91,8 @@ export default function UserCard(props: Props) {
             email: props.userData.email,
             name: props.userData.name,
             phoneNumber: props.userData.phoneNumber,
+            filename: props.userData.filename ? props.userData.filename : "",
+            date: new Date(),
           },
         }),
         headers: {
@@ -163,6 +178,7 @@ const ProfileContainer = styled.div`
 const ProfileImg = styled.div`
   background-image: url("/images/defaultGuest.jpg");
   background-size: cover;
+  min-width: 65px;
   width: 65px;
   height: 65px;
   border: none;

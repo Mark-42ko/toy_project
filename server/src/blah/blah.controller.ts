@@ -17,6 +17,8 @@ import { AddChat } from "./dto/add-chat.dto";
 import { CountUpdate } from "./dto/update-count.dto";
 import { Response } from "@nestjs/common/decorators/http/route-params.decorator";
 import { NotReadBlah } from "./dto/notRead-blah.dto";
+import { StatusBlah } from "./dto/status-blah.dto";
+import { AddPartner } from "./dto/add-partner.dto";
 
 @Controller("blah")
 export class BlahController {
@@ -83,6 +85,18 @@ export class BlahController {
   @Post("notRead")
   async notRead(@Body() data: NotReadBlah) {
     return await this.blahService.notRead(data);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post("statusChange")
+  async statusChange(@Body() data: StatusBlah) {
+    return await this.blahService.statusChange(data);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post("addPartner")
+  async addPartner(@Body() data: AddPartner) {
+    return await this.blahService.addPartner(data);
   }
 
   @UseGuards(JwtAuthGuard)

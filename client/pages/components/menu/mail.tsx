@@ -47,7 +47,7 @@ export default function People() {
         setRoomData(json.data);
       })();
     }
-  }, [open, rerendering]);
+  }, [open, rerendering, tabHandle]);
 
   const newChatButtonHandle = () => {
     setOpen(!open);
@@ -63,7 +63,7 @@ export default function People() {
           </NewChatButton>
           {open ? (
             <ModalBackdrop>
-              <AddBlah setOpen={setOpen} open={open} />
+              <AddBlah setOpen={setOpen} open={open} setRerendering={setRerendering} />
             </ModalBackdrop>
           ) : null}
         </NameContainer>
@@ -87,10 +87,10 @@ export default function People() {
       </ListContainer>
       {chatRoom && (
         <InfoContainer>
-          <BlahBar roomData={chatRoom} />
+          <BlahBar roomData={chatRoom} setRerendering={setRerendering} />
           <InnerContainer>
             <Blah roomData={chatRoom} setRerendering={setRerendering} />
-            <UserInfo roomData={chatRoom} />
+            <UserInfo roomData={chatRoom} rerendering={rerendering} />
           </InnerContainer>
         </InfoContainer>
       )}

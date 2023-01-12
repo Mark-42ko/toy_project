@@ -9,6 +9,8 @@ import * as path from "path";
 import { Response } from "express";
 import { createReadStream } from "fs";
 import { NotReadBlah } from "./dto/notRead-blah.dto";
+import { StatusBlah } from "./dto/status-blah.dto";
+import { AddPartner } from "./dto/add-partner.dto";
 
 @Injectable()
 export class BlahService {
@@ -114,6 +116,24 @@ export class BlahService {
       }
     }
     return counts;
+  }
+
+  async statusChange(data: StatusBlah): Promise<Blah> {
+    const result = await this.BlahModel.findOneAndUpdate(
+      { _id: data._id },
+      { status: data.status },
+    ).exec();
+    return result;
+  }
+
+  async addPartner(data: AddPartner): Promise<Blah> {
+    for (let q = 0; q < data.user.length; q++) {
+      await this.BlahModel.findOneAndUpdate(
+        { _id: data._id },
+        { $push: { user: data.user[q] } },
+      ).exec();
+    }
+    return null;
   }
 
   async uploadFile(file: Express.Multer.File) {

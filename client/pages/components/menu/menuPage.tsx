@@ -22,7 +22,7 @@ export default function MenuPage(props: Props) {
 }
 
 const MenuContainer = styled.div`
-  width: 100%;
+  width: 92%;
   height: 100%;
   padding: 0em 2em;
 `;

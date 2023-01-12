@@ -8,14 +8,16 @@ import { io } from "socket.io-client";
 type Props = {
   open: boolean;
   setOpen: Function;
+  roomData: any;
   setRerendering: Function;
 };
 
 const SERVER_URI = process.env.NEXT_PUBLIC_SERVER_URI;
 const socket = io(`${SERVER_URI}/chat`);
 
-export default function AddBlah(props: Props) {
-  const [friendData, setFriendeData] = useState<any>();
+export default function addPartner(props: Props) {
+  const SERVER_URI = process.env.NEXT_PUBLIC_SERVER_URI;
+  const [friendData, setFriendData] = useState<any>([]);
   const [selectFriend, setSelectFriend] = useState<any>([]);
   const [errMsg, setErrMsg] = useState<string | undefined>();
   const [newBlahCheck, setNewBlahCheck] = useState<boolean>(false);
@@ -33,61 +35,68 @@ export default function AddBlah(props: Props) {
         },
       });
       const json = await reponse.json();
-      setFriendeData(json.data);
-      setSelectFriend([
-        ...selectFriend,
-        {
-          email: userData.userId,
-          name: userData.username,
-          phoneNumber: userData.userPhoneNumber,
-          filename: userData.filename,
-        },
-      ]);
+      const data: any = [];
+      if (json.data) {
+        await json.data.friend.map((one: any) => {
+          // console.log(one);
+          if (!JSON.stringify(props.roomData.user).includes(JSON.stringify(one.name))) {
+            data.push(one);
+          }
+        });
+        const result = [...new Set(data)];
+        setFriendData(result);
+      }
     })();
   }, []);
 
   const addHandle = async () => {
-    const result = await fetch(`${SERVER_URI}/blah/findOne`, {
-      method: "POST",
-      body: JSON.stringify({
-        user: selectFriend,
-        blah: [],
-        status: "Proceeding",
-      }),
-      headers: {
-        Authorization: `bearer ${accessToken}`,
-        "Content-type": "application/json",
-        "Access-Control-Allow-Origin": "http://localhost:3000",
-      },
-    });
-
-    const jsons = await result.json();
-    if (selectFriend.length === 1) {
-      setErrMsg("혼자서는 생성할 수 없습니다.");
+    if (selectFriend.length === 0) {
+      setErrMsg("선택 된 대화상대가 없습니다.");
     } else {
-      if (jsons.data === true) {
-        setErrMsg(undefined);
-        setNewBlahCheck(true);
+      let systemComments;
+      if (selectFriend.length === 1) {
+        systemComments = `${userData.username}님이 ${selectFriend[0].name}을 초대하였습니다.`;
       } else {
-        await fetch(`${SERVER_URI}/blah/create`, {
-          method: "POST",
-          body: JSON.stringify({
-            user: selectFriend,
-            blah: [],
-            status: "진행중",
-          }),
-          headers: {
-            Authorization: `bearer ${accessToken}`,
-            "Content-type": "application/json",
-            "Access-Control-Allow-Origin": "http://localhost:3000",
-          },
-        });
-        alert("생성완료");
-        props.setOpen(!props.open);
-        socket.emit("message", "sadasd", (chat: any) => {
-          props.setRerendering(Math.random());
-        });
+        systemComments = `${userData.username}님이 ${selectFriend[0].name} 외 ${
+          selectFriend.length - 1
+        }명 을 초대하였습니다.`;
       }
+      await fetch(`${SERVER_URI}/blah/chatAdd`, {
+        method: "Post",
+        body: JSON.stringify({
+          _id: props.roomData._id,
+          blah: {
+            name: "알림",
+            profile: "",
+            comments: systemComments,
+            date: new Date(),
+            counts: [],
+          },
+        }),
+        headers: {
+          Authorization: `bearer ${accessToken}`,
+          "Content-type": "application/json",
+          "Access-Control-Allow-Origin": "http://localhost:3000",
+        },
+      });
+
+      await fetch(`${SERVER_URI}/blah/addPartner`, {
+        method: "POST",
+        body: JSON.stringify({
+          _id: props.roomData._id,
+          user: selectFriend,
+        }),
+        headers: {
+          Authorization: `bearer ${accessToken}`,
+          "Content-type": "application/json",
+          "Access-Control-Allow-Origin": "http://localhost:3000",
+        },
+      });
+      alert("초대완료");
+      props.setOpen(!props.open);
+      socket.emit("message", "aaaa", (chat: any) => {
+        props.setRerendering(Math.random());
+      });
     }
   };
 
@@ -97,13 +106,13 @@ export default function AddBlah(props: Props) {
         <CloseButton onClick={() => props.setOpen(!props.open)}>
           <Back />
         </CloseButton>
-        <Title>대화상대를 선택해주세요.</Title>
+        <Title>초대 할 상대를 선택해주세요.</Title>
         <div style={{ width: "40px" }} />
       </TitleContainer>
       {errMsg && <ErrMsg>{errMsg}</ErrMsg>}
       <InnerContainer>
-        {friendData ? (
-          friendData.friend.map((one: any) => (
+        {friendData[0] ? (
+          friendData.map((one: any) => (
             <AddBlahCard
               key={one.email}
               friendData={one}
@@ -112,7 +121,7 @@ export default function AddBlah(props: Props) {
             />
           ))
         ) : (
-          <ErrMsg>친구가 없습니다. 추가해주세요.</ErrMsg>
+          <ErrMsg>초대 할 상대가 없습니다.</ErrMsg>
         )}
       </InnerContainer>
       {newBlahCheck ? (
@@ -125,7 +134,7 @@ export default function AddBlah(props: Props) {
         />
       ) : (
         <AddButton onClick={addHandle}>
-          <b>대화하기</b>
+          <b>추가하기</b>
         </AddButton>
       )}
     </Container>
