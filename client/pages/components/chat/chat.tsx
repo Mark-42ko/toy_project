@@ -1,12 +1,12 @@
 import styled from "styled-components";
-import TabBar from "./tabBar";
+import TabBar from "../people/tabBar";
 import { useState, useEffect } from "react";
-import MailList from "./mailList";
-import BlahBar from "./blahBar";
+import ChatRooms from "./chatRooms";
+import ChatBar from "./chatBar";
 import Blah from "./blah";
 import UserInfo from "./userInfo";
 import { ChatNew } from "@styled-icons/remix-line/ChatNew";
-import AddBlah from "./addBlah";
+import AddChat from "./addChat";
 import { io } from "socket.io-client";
 
 const SERVER_URI = process.env.NEXT_PUBLIC_SERVER_URI;
@@ -63,7 +63,7 @@ export default function People() {
           </NewChatButton>
           {open ? (
             <ModalBackdrop>
-              <AddBlah setOpen={setOpen} open={open} setRerendering={setRerendering} />
+              <AddChat setOpen={setOpen} open={open} setRerendering={setRerendering} />
             </ModalBackdrop>
           ) : null}
         </NameContainer>
@@ -73,7 +73,7 @@ export default function People() {
             roomData.map((one: any) => {
               if (tabHandle === one.status) {
                 return (
-                  <MailList
+                  <ChatRooms
                     key={one._id}
                     tabHandle={tabHandle}
                     roomData={one}
@@ -89,7 +89,7 @@ export default function People() {
       </ListContainer>
       {chatRoom && (
         <InfoContainer>
-          <BlahBar roomData={chatRoom} setRerendering={setRerendering} />
+          <ChatBar roomData={chatRoom} setRerendering={setRerendering} />
           <InnerContainer>
             <Blah roomData={chatRoom} setRerendering={setRerendering} />
             <UserInfo roomData={chatRoom} rerendering={rerendering} />

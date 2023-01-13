@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import styled from "styled-components";
-import AddBlahCard from "./addBlahCard";
-import NewBlahCheck from "./newBlahCheck";
+import AddChatCard from "./addChatCard";
+import NewChatCheck from "./newChatCheck";
 import { Back } from "@styled-icons/entypo/Back";
 import { io } from "socket.io-client";
 
@@ -14,7 +14,7 @@ type Props = {
 const SERVER_URI = process.env.NEXT_PUBLIC_SERVER_URI;
 const socket = io(`${SERVER_URI}/chat`);
 
-export default function AddBlah(props: Props) {
+export default function AddChat(props: Props) {
   const [friendData, setFriendeData] = useState<any>();
   const [selectFriend, setSelectFriend] = useState<any>([]);
   const [errMsg, setErrMsg] = useState<string | undefined>();
@@ -106,7 +106,7 @@ export default function AddBlah(props: Props) {
       <InnerContainer>
         {friendData ? (
           friendData.friend.map((one: any) => (
-            <AddBlahCard
+            <AddChatCard
               key={one.email}
               friendData={one}
               setSelectFriend={setSelectFriend}
@@ -118,7 +118,7 @@ export default function AddBlah(props: Props) {
         )}
       </InnerContainer>
       {newBlahCheck ? (
-        <NewBlahCheck
+        <NewChatCheck
           setNewBlahCheck={setNewBlahCheck}
           newBlahCheck={newBlahCheck}
           selectFriend={selectFriend}

@@ -1,6 +1,6 @@
 import styled from "styled-components";
-import Mail from "./mail";
-import People from "./people";
+import Chat from "../chat/chat";
+import People from "../people/people";
 
 type Props = {
   navController: string;
@@ -11,7 +11,7 @@ export default function MenuPage(props: Props) {
     <>
       <MenuContainer>
         {props.navController === "people" && <People />}
-        {props.navController === "mail" && <Mail />}
+        {props.navController === "mail" && <Chat />}
         {props.navController === "Robot" && null}
       </MenuContainer>
     </>

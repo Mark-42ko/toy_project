@@ -13,7 +13,7 @@ type Props = {
   selectFriend: any;
 };
 
-export default function AddBlahCard(props: Props) {
+export default function AddChatCard(props: Props) {
   const [select, setSelect] = useState<boolean>(false);
   const [profileImg, setProfileImg] = useState<string>();
   const SERVER_URI = process.env.NEXT_PUBLIC_SERVER_URI;

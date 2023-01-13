@@ -1,13 +1,13 @@
 import styled from "styled-components";
 import { ThreeDotsVertical } from "@styled-icons/bootstrap/ThreeDotsVertical";
-import BlahBarButton from "./blahBarButton";
+import ChatBarButton from "./chatBarButton";
 
 type Props = {
   roomData: any;
   setRerendering: Function;
 };
 
-export default function BlahBar(props: Props) {
+export default function ChatBar(props: Props) {
   const menuHandle = () => {};
 
   const proceeding = ["초대하기", "보류하기", "종료하기"];
@@ -19,7 +19,7 @@ export default function BlahBar(props: Props) {
       {props.roomData.status === "진행중" && (
         <ButtonContainer>
           {proceeding.map((one) => (
-            <BlahBarButton
+            <ChatBarButton
               data={one}
               roomData={props.roomData}
               setRerendering={props.setRerendering}
@@ -31,7 +31,7 @@ export default function BlahBar(props: Props) {
       {props.roomData.status === "보류됨" && (
         <ButtonContainer>
           {withheld.map((one) => (
-            <BlahBarButton
+            <ChatBarButton
               setRerendering={props.setRerendering}
               data={one}
               roomData={props.roomData}

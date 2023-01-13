@@ -8,7 +8,7 @@ type Props = {
   open: boolean;
 };
 
-export default function NewBlahCheck(props: Props) {
+export default function NewChatCheck(props: Props) {
   const SERVER_URI = process.env.NEXT_PUBLIC_SERVER_URI;
   const accessToken = JSON.parse(localStorage.getItem("userToken") as string);
 

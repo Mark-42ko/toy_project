@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import styled from "styled-components";
-import AddBlahCard from "./addBlahCard";
-import NewBlahCheck from "./newBlahCheck";
+import AddChatCard from "./addChatCard";
+import NewChatCheck from "./newChatCheck";
 import { Back } from "@styled-icons/entypo/Back";
 import { io } from "socket.io-client";
 
@@ -114,7 +114,7 @@ export default function AddPartner(props: Props) {
       <InnerContainer>
         {friendData[0] ? (
           friendData.map((one: any) => (
-            <AddBlahCard
+            <AddChatCard
               key={one.email}
               friendData={one}
               setSelectFriend={setSelectFriend}
@@ -126,7 +126,7 @@ export default function AddPartner(props: Props) {
         )}
       </InnerContainer>
       {newBlahCheck ? (
-        <NewBlahCheck
+        <NewChatCheck
           setNewBlahCheck={setNewBlahCheck}
           newBlahCheck={newBlahCheck}
           selectFriend={selectFriend}

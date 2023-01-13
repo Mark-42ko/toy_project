@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { useRouter } from "next/router";
 import { useState, useContext, useEffect } from "react";
-import SignUp from "./signUp";
+import SignUp from "../components/account/signUp";
 import { GlobalContext } from "pages/_app";
 import { ChatQuoteFill } from "@styled-icons/bootstrap/ChatQuoteFill";
 

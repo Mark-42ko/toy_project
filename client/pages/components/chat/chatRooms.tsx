@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { useState } from "react";
 import { useEffect } from "react";
 import styled from "styled-components";
@@ -14,7 +13,7 @@ type Props = {
 
 const SERVER_URI = process.env.NEXT_PUBLIC_SERVER_URI;
 
-export default function MailList(props: Props) {
+export default function ChatRoomsList(props: Props) {
   const [check, setCheck] = useState<boolean>(false);
   const [profileImg, setProfileImg] = useState<string>("");
   const [notReadCounts, setNotReadCounts] = useState<number>(0);
