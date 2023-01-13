@@ -22,13 +22,8 @@ export default function ChatBarButton(props: Props) {
     } else {
       let status;
       let systemComments;
-      if (props.data === "다시 진행하기") {
-        systemComments = `${userData.username}님이 다시 진행하였습니다.`;
-        status = "진행중";
-      } else {
-        status = props.data!.slice(0, 2) + "됨";
-        systemComments = `${userData.username}님이 ${props.data!.slice(0, 2)}하였습니다.`;
-      }
+      status = props.data!.slice(0, 2) + "됨";
+      systemComments = `${userData.username}님이 ${props.data!.slice(0, 2)}하였습니다.`;
 
       await fetch(`${SERVER_URI}/blah/chatAdd`, {
         method: "Post",

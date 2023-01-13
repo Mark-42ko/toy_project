@@ -52,7 +52,7 @@ export default function AddChat(props: Props) {
       body: JSON.stringify({
         user: selectFriend,
         blah: [],
-        status: "Proceeding",
+        status: "대화중",
       }),
       headers: {
         Authorization: `bearer ${accessToken}`,
@@ -74,7 +74,7 @@ export default function AddChat(props: Props) {
           body: JSON.stringify({
             user: selectFriend,
             blah: [],
-            status: "진행중",
+            status: "대화중",
           }),
           headers: {
             Authorization: `bearer ${accessToken}`,

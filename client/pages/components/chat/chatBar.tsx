@@ -10,13 +10,11 @@ type Props = {
 export default function ChatBar(props: Props) {
   const menuHandle = () => {};
 
-  const proceeding = ["초대하기", "보류하기", "종료하기"];
-
-  const withheld = ["다시 진행하기", "종료하기"];
+  const proceeding = ["초대하기", "종료하기"];
 
   return (
     <Container>
-      {props.roomData.status === "진행중" && (
+      {props.roomData.status === "대화중" && (
         <ButtonContainer>
           {proceeding.map((one) => (
             <ChatBarButton
@@ -28,19 +26,7 @@ export default function ChatBar(props: Props) {
           ))}
         </ButtonContainer>
       )}
-      {props.roomData.status === "보류됨" && (
-        <ButtonContainer>
-          {withheld.map((one) => (
-            <ChatBarButton
-              setRerendering={props.setRerendering}
-              data={one}
-              roomData={props.roomData}
-              key={one}
-            />
-          ))}
-        </ButtonContainer>
-      )}
-      {props.roomData.status === "종료됨" && <div />}
+      {props.roomData.status === "완료된 대화" && <div />}
       <Button onClick={menuHandle}>
         <ThreeDotsVertical />
       </Button>

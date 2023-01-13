@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import TabBar from "../people/tabBar";
+import TabBar from "./tabBar";
 import { useState, useEffect } from "react";
 import ChatRooms from "./chatRooms";
 import ChatBar from "./chatBar";
@@ -13,7 +13,7 @@ const SERVER_URI = process.env.NEXT_PUBLIC_SERVER_URI;
 const socket = io(`${SERVER_URI}/chat`);
 
 export default function People() {
-  const [tabHandle, setTabHandle] = useState<string>("진행중");
+  const [tabHandle, setTabHandle] = useState<string>("대화중");
   const [open, setOpen] = useState<boolean>(false);
   const SERVER_URI = process.env.NEXT_PUBLIC_SERVER_URI;
   const [roomData, setRoomData] = useState<any>();

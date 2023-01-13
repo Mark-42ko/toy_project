@@ -1,9 +1,9 @@
 import styled from "styled-components";
 import TabButton from "./tabButton";
 
-type TabList = [{ title: string }, { title: string }, { title: string }];
+type TabList = [{ title: string }, { title: string }];
 
-const tabList: TabList = [{ title: "진행중" }, { title: "보류됨" }, { title: "종료됨" }];
+const tabList: TabList = [{ title: "대화중" }, { title: "완료된 대화" }];
 
 type Props = {
   tabHandle: string;
