@@ -97,7 +97,9 @@ export default function AddBlah(props: Props) {
         <CloseButton onClick={() => props.setOpen(!props.open)}>
           <Back />
         </CloseButton>
-        <Title>대화상대를 선택해주세요.</Title>
+        <Title>
+          <b>대화상대를 선택해주세요</b>
+        </Title>
         <div style={{ width: "40px" }} />
       </TitleContainer>
       {errMsg && <ErrMsg>{errMsg}</ErrMsg>}
@@ -112,7 +114,7 @@ export default function AddBlah(props: Props) {
             />
           ))
         ) : (
-          <ErrMsg>친구가 없습니다. 추가해주세요.</ErrMsg>
+          <ErrMsg>친구가 없습니다. 추가해주세요</ErrMsg>
         )}
       </InnerContainer>
       {newBlahCheck ? (
@@ -140,13 +142,13 @@ const Container = styled.div`
   gap: 1.5rem;
   flex: 0.3;
 
-  background-color: #ffffff;
+  background-color: rgba(255, 255, 255, 1);
 
   box-sizing: border-box;
   border: none;
-  border-radius: 8px;
+  border-radius: 4px;
 
-  padding: 1rem;
+  padding: 2rem 1.5rem 2rem 1.5rem;
 `;
 
 const TitleContainer = styled.div`
@@ -161,7 +163,7 @@ const InnerContainer = styled.div`
   align-items: center;
   flex-direction: column;
   gap: 1rem 0;
-  background-color: #ffffff;
+  background-color: rgba(255, 255, 255, 1);
 
   width: 100%;
   max-height: 300px;
@@ -172,18 +174,18 @@ const InnerContainer = styled.div`
   &::-webkit-scrollbar {
     width: 8px;
     height: 8px;
-    border-radius: 6px;
+    border-radius: 4px;
     background: rgba(255, 255, 255, 0.4);
   }
   &::-webkit-scrollbar-thumb {
     background-color: rgba(0, 0, 0, 0.3);
-    border-radius: 6px;
+    border-radius: 4px;
   }
 `;
 
 const CloseButton = styled.button`
   border: none;
-  background: #ffffff;
+  background: rgba(255, 255, 255, 1);
   cursor: pointer;
   svg {
     width: 30px;
@@ -192,21 +194,21 @@ const CloseButton = styled.button`
 `;
 
 const Title = styled.span`
-  font-size: 1.4rem;
+  font-size: 1.7rem;
 `;
 
 const AddButton = styled.button`
   border: none;
-  background: #8181f7;
+  background: rgba(112, 200, 255, 1);
   width: 50%;
-  height: 40px;
-  border-radius: 8px;
-  font-size: 1.3rem;
-  color: #ffffff;
+  border-radius: 4px;
+  font-size: 1.5rem;
+  padding: 0.5rem;
+  color: rgba(255, 255, 255, 1);
   cursor: pointer;
 `;
 
 const ErrMsg = styled.span`
-  color: #ff0000;
+  color: rgba(255, 0, 0, 1);
   font-size: 1.5rem;
 `;

@@ -143,15 +143,7 @@ export default function MailList(props: Props) {
 
   return (
     <ButtonContainer selected={check} onClick={clickHandle}>
-      {/* {notReadCounts !== 0 && <NotReadText>{notReadCounts}</NotReadText>} */}
       {profileImg !== "" ? (
-        // <Image
-        //   src={profileImg}
-        //   alt="프로필이미지"
-        //   width={65}
-        //   height={65}
-        //   style={{ borderRadius: "8px" }}
-        // ></Image>
         <ProfileImg profileImg={profileImg}>
           {notReadCounts !== 0 && <NotReadText>{notReadCounts}</NotReadText>}
         </ProfileImg>
@@ -176,15 +168,16 @@ type ButtonProps = {
 
 const ButtonContainer = styled.button<ButtonProps>`
   width: 100%;
-  height: 70px;
   display: flex;
   flex-direction: row;
   margin-top: 15px;
   border: none;
-  border-radius: 8px;
+  border-radius: 4px;
   align-items: center;
-  background: ${({ selected }) => (selected ? "#F2F2F2" : "#fff")};
-  /* position: sticky; */
+  border: 2px solid;
+  border-color: rgba(112, 200, 255, 1);
+  padding: 0.5rem;
+  background: ${({ selected }) => (selected ? "rgba(0, 0, 0, 0.1)" : "rgba(255, 255, 255, 1)")};
   cursor: pointer;
 `;
 
@@ -194,8 +187,7 @@ const ImgDiv = styled.div`
   min-width: 65px;
   width: 65px;
   height: 65px;
-  border: none;
-  border-radius: 8px;
+  border-radius: 4px;
 `;
 
 const SmallContainer = styled.div`
@@ -230,13 +222,10 @@ const NotReadText = styled.span`
   justify-content: center;
   width: 20px;
   height: 20px;
-  /* position: absolute;
-  left: 0;
-  top: 0; */
   border: none;
   border-radius: 50%;
-  background-color: #ff0000;
-  color: #ffffff;
+  background-color: rgba(231, 4, 30, 0.87);
+  color: rgba(255, 255, 255, 1);
   font-size: 1rem;
 `;
 
@@ -251,6 +240,5 @@ const ProfileImg = styled.div`
   min-width: 65px;
   width: 65px;
   height: 65px;
-  border: none;
-  border-radius: 8px;
+  border-radius: 4px;
 `;

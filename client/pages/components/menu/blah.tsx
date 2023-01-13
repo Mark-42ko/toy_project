@@ -208,7 +208,10 @@ const Container = styled.div`
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  gap: 16px;
+  padding: 0.5rem;
+  border: 2px solid;
+  border-radius: 4px;
+  gap: 1rem;
 `;
 
 const BlahContainer = styled.div`
@@ -216,20 +219,20 @@ const BlahContainer = styled.div`
   flex-direction: column;
   align-items: center;
   gap: 1rem;
-  background-color: #e6e0f8;
+  background-color: rgba(144, 204, 244, 1);
 
   width: calc(100% - 32px);
-  height: 80vh;
+  height: 79vh;
   overflow-y: scroll;
   padding: 1rem 1rem 0 1rem;
-  border-radius: 8px;
+  border-radius: 4px;
   scrollbar-width: none;
 
   &::-webkit-scrollbar {
     width: 8px;
     height: 8px;
-    border-radius: 8px;
-    background: #e6e0f8;
+    border-radius: 4px;
+    background: rgba(144, 204, 244, 1);
   }
   &::-webkit-scrollbar-thumb {
     background-color: rgba(0, 0, 0, 0.3);
@@ -238,24 +241,25 @@ const BlahContainer = styled.div`
 `;
 
 const InputBox = styled.input`
-  border-radius: 8px;
+  border-radius: 4px;
   padding: 0 1rem;
   word-break: break-all;
   box-sizing: border-box;
   height: 40px;
-  border: 1px solid black;
+  font-size: 1.5rem;
+  border: 2px solid black;
   flex: 1;
 `;
 
 const SendButton = styled.button`
   width: 40px;
   height: 40px;
-  border-radius: 50%;
+  border-radius: 4px;
   border: none;
   box-sizing: border-box;
   padding: 0.6rem;
-  background: #b8d60c;
-  color: #ffffff;
+  background: rgba(242, 248, 42, 1);
+  color: rgba(255, 255, 255, 1);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -276,9 +280,9 @@ const FileAddButton = styled.button`
   width: 40px;
   height: 40px;
   border: none;
-  border-radius: 50%;
+  border-radius: 4px;
   background: #3030b9;
-  color: #ffffff;
+  color: rgba(255, 255, 255, 1);
   display: flex;
   align-items: center;
   justify-content: center;

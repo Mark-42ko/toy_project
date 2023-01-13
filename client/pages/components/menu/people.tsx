@@ -15,7 +15,9 @@ export default function People() {
 
   return (
     <Container>
-      <AddButton onClick={() => setOpen(!open)}>친구추가</AddButton>
+      <AddButton onClick={() => setOpen(!open)}>
+        <b>친구추가</b>
+      </AddButton>
       {open ? (
         <ModalBackdrop>
           <AddPeople setOpen={setOpen} open={open} />
@@ -33,6 +35,9 @@ export default function People() {
 const Container = styled.div`
   width: 300px;
   padding: 1em;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 `;
 
 const InnerContainer = styled.div`
@@ -42,12 +47,16 @@ const InnerContainer = styled.div`
 const AddButton = styled.button`
   width: 100%;
   border: none;
-  background: #8181f7;
+  padding: 0.5rem;
+  background: rgba(112, 200, 255, 1);
   font-size: 2rem;
-  border-radius: 1rem;
-  margin-bottom: 1rem;
-  color: #ffffff;
+  border-radius: 4px;
+  color: rgba(255, 255, 255, 1);
   cursor: pointer;
+  &:active {
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 4px;
+  }
 `;
 
 const ModalBackdrop = styled.div`

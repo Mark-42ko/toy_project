@@ -300,7 +300,7 @@ const ProfileDiv = styled.div`
   width: 65px;
   height: 65px;
   border: none;
-  border-radius: 8px;
+  border-radius: 4px;
 `;
 
 const InnerContainer = styled.div`
@@ -318,9 +318,10 @@ const TextBox = styled.span`
   font-size: 1.4rem;
   display: flex;
   align-items: center;
-  background-color: ${(props: CheckProps) => (props.check === true ? "#F4FA58" : "#FFFFFF")};
+  background-color: ${(props: CheckProps) =>
+    props.check === true ? "rgba(244, 250, 88, 1)" : "#rgba(255, 255, 255, 1)"};
   border: none;
-  border-radius: 1rem;
+  border-radius: 4px;
   padding: 1rem;
   word-break: break-all;
   max-width: 450px;
@@ -334,7 +335,7 @@ const MinInfoContainer = styled.div`
 `;
 
 const CountCheck = styled.label`
-  color: #ffff00;
+  color: rgba(244, 250, 88, 1);
 `;
 
 const TimeLine = styled.label``;
@@ -343,8 +344,8 @@ const FileButton = styled.button`
   display: flex;
   flex-direction: column;
   border: none;
-  background: #ffffff;
-  border-radius: 1rem;
+  background: rgba(255, 255, 255, 1);
+  border-radius: 4px;
   align-items: center;
   padding: 1rem;
   gap: 1rem;
@@ -363,7 +364,7 @@ const FileInfoText = styled.span`
   font-size: 1.4rem;
   display: flex;
   align-items: center;
-  background-color: #ffffff;
+  background-color: rgba(255, 255, 255, 1);
   border: none;
   border-radius: 1rem;
   padding: 1rem;
@@ -373,16 +374,17 @@ const FileInfoText = styled.span`
 const ImgLoading = styled.div`
   width: 200px;
   height: 200px;
-  background-color: #ffffff;
+  background-color: rgba(255, 255, 255, 1);
 `;
 
 const LinkText = styled.button`
-  color: #0000ff;
+  color: rgba(19, 15, 255, 1);
   display: flex;
   font-size: 1.4rem;
   display: flex;
   align-items: center;
-  background-color: ${(props: CheckProps) => (props.check === true ? "#F4FA58" : "#FFFFFF")};
+  background-color: ${(props: CheckProps) =>
+    props.check === true ? "rgba(244, 250, 88, 1)" : "rgba(255, 255, 255, 1)"};
   border: none;
   border-radius: 1rem;
   padding: 1rem;

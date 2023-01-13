@@ -1,10 +1,7 @@
 import styled from "styled-components";
 import { People } from "@styled-icons/fluentui-system-filled/People";
-import { MailInbox } from "@styled-icons/fluentui-system-filled/MailInbox";
-import { ListUl } from "@styled-icons/bootstrap/ListUl";
-import { Award } from "@styled-icons/bootstrap/Award";
+import { ChatbubbleEllipses } from "@styled-icons/ionicons-sharp/ChatbubbleEllipses";
 import { Robot } from "@styled-icons/fa-solid/Robot";
-import { Send } from "@styled-icons/bootstrap/Send";
 import Button from "./Button";
 import { LogOut } from "@styled-icons/boxicons-regular/LogOut";
 import { useRouter } from "next/router";
@@ -13,18 +10,12 @@ type ButtonIcon = [
   { text: string; icon: JSX.Element },
   { text: string; icon: JSX.Element },
   { text: string; icon: JSX.Element },
-  { text: string; icon: JSX.Element },
-  { text: string; icon: JSX.Element },
-  { text: string; icon: JSX.Element },
 ];
 
 const buttonIcon: ButtonIcon = [
   { text: "people", icon: <People /> },
-  { text: "mail", icon: <MailInbox /> },
-  { text: "ListUl", icon: <ListUl /> },
-  { text: "Award", icon: <Award /> },
+  { text: "mail", icon: <ChatbubbleEllipses /> },
   { text: "Robot", icon: <Robot /> },
-  { text: "send", icon: <Send /> },
 ];
 
 type Props = {
@@ -43,7 +34,7 @@ export default function Nav(props: Props) {
 
   return (
     <SideMenu>
-      <div>
+      <ButtonDiv>
         {buttonIcon.map((one) => {
           return (
             <Button
@@ -54,31 +45,47 @@ export default function Nav(props: Props) {
             />
           );
         })}
-      </div>
-      <ButtonBox onClick={logOutHandle}>
-        <LogOut style={{ width: "40px", height: "40px" }} />
-      </ButtonBox>
+      </ButtonDiv>
+      <LogoutButtonBox onClick={logOutHandle}>
+        <LogOut />
+      </LogoutButtonBox>
     </SideMenu>
   );
 }
 
-const ButtonBox = styled.button`
-  width: 100%;
-  height: 50px;
-  border: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-`;
-
 const SideMenu = styled.div`
-  width: 50px;
-  background-color: #f2f2f2;
+  width: 60px;
+  background-color: rgba(112, 200, 255, 1);
   padding: 1rem;
   height: calc(100vh - (1rem * 2));
   display: flex;
   flex-direction: column;
   gap: 1rem 0;
   justify-content: space-between;
+`;
+
+const ButtonDiv = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+`;
+
+const LogoutButtonBox = styled.button`
+  width: 60px;
+  height: 60px;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(112, 200, 255, 1);
+  cursor: pointer;
+  svg {
+    width: 60px;
+    height: 60px;
+    color: rgba(255, 255, 255, 1);
+  }
+  &:active {
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 4px;
+  }
 `;

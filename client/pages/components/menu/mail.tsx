@@ -68,22 +68,24 @@ export default function People() {
           ) : null}
         </NameContainer>
         <TabBar tabHandle={tabHandle} setTabHandle={setTabHandle} />
-        {roomData &&
-          roomData.map((one: any) => {
-            if (tabHandle === one.status) {
-              return (
-                <MailList
-                  key={one._id}
-                  tabHandle={tabHandle}
-                  roomData={one}
-                  setChatRoom={setChatRoom}
-                  chatRoom={chatRoom}
-                  userDatas={userDatas}
-                  rerendering={rerendering}
-                />
-              );
-            }
-          })}
+        <MailListContainer>
+          {roomData &&
+            roomData.map((one: any) => {
+              if (tabHandle === one.status) {
+                return (
+                  <MailList
+                    key={one._id}
+                    tabHandle={tabHandle}
+                    roomData={one}
+                    setChatRoom={setChatRoom}
+                    chatRoom={chatRoom}
+                    userDatas={userDatas}
+                    rerendering={rerendering}
+                  />
+                );
+              }
+            })}
+        </MailListContainer>
       </ListContainer>
       {chatRoom && (
         <InfoContainer>
@@ -102,26 +104,49 @@ const Container = styled.div`
   display: flex;
   flex-direction: row;
   width: 100%;
-  gap: 1rem;
 `;
 
 const ListContainer = styled.div`
   display: flex;
   flex-direction: column;
-  width: 20%;
+  width: 300px;
   min-width: 300px;
+  gap: 1rem;
+  padding: 1rem;
 `;
 
 const NameContainer = styled.div`
-  height: 4rem;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
+  width: 280px;
+  height: 50px;
+  padding: 0.5rem;
+  border-radius: 4px;
+  background-color: rgba(112, 200, 255, 1);
+`;
+
+const MailListContainer = styled.div`
+  display: flex;
+  flex-direction: column;
 `;
 
 const NameTag = styled.h1`
-  font-size: 1.5em;
+  color: rgba(255, 255, 255, 1);
+  font-size: 2rem;
+`;
+
+const NewChatButton = styled.button`
+  border: none;
+  background: rgba(112, 200, 255, 1);
+  cursor: pointer;
+
+  svg {
+    color: rgba(255, 255, 255, 1);
+    width: 40px;
+    height: 40px;
+  }
 `;
 
 const InfoContainer = styled.div`
@@ -137,17 +162,6 @@ const InnerContainer = styled.div`
   flex-direction: row;
   margin-left: 20px;
   gap: 1rem;
-`;
-
-const NewChatButton = styled.button`
-  border: none;
-  background: #ffffff;
-  cursor: pointer;
-
-  svg {
-    width: 30px;
-    height: 30px;
-  }
 `;
 
 const ModalBackdrop = styled.div`

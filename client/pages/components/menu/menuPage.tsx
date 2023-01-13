@@ -12,17 +12,14 @@ export default function MenuPage(props: Props) {
       <MenuContainer>
         {props.navController === "people" && <People />}
         {props.navController === "mail" && <Mail />}
-        {props.navController === "ListUl" && null}
-        {props.navController === "Award" && null}
         {props.navController === "Robot" && null}
-        {props.navController === "send" && null}
       </MenuContainer>
     </>
   );
 }
 
 const MenuContainer = styled.div`
-  width: 92%;
+  width: 90vw;
   height: 100%;
-  padding: 0em 2em;
+  padding: 0em 1em;
 `;

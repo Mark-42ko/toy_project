@@ -26,11 +26,11 @@ export default function TabBar(props: Props) {
 }
 
 const TabContainer = styled.div`
-  background-color: #f2f2f2;
-  width: 100%;
+  background-color: rgba(112, 200, 255, 1);
+  width: 290px;
   height: 45px;
   border: none;
-  border-radius: 10px;
+  border-radius: 4px;
   display: flex;
   flex-direction: row;
   align-items: center;

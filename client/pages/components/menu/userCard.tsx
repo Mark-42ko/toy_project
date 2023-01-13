@@ -121,7 +121,7 @@ export default function UserCard(props: Props) {
             alt="프로필 이미지"
             width={65}
             height={65}
-            style={{ borderRadius: "8px" }}
+            style={{ borderRadius: "4px" }}
           />
         ) : (
           <ProfileImg />
@@ -156,7 +156,7 @@ const Container = styled.button`
   justify-content: center;
   flex-direction: column;
   border: 1px solid;
-  border-radius: 8px;
+  border-radius: 4px;
   border-color: #d8d8d8;
   background-color: #ffffff;
   cursor: pointer;
@@ -182,7 +182,7 @@ const ProfileImg = styled.div`
   width: 65px;
   height: 65px;
   border: none;
-  border-radius: 8px;
+  border-radius: 4px;
 `;
 
 const NameTag = styled.div`

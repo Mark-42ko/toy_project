@@ -42,19 +42,19 @@ export default function BlahBar(props: Props) {
       )}
       {props.roomData.status === "종료됨" && <div />}
       <Button onClick={menuHandle}>
-        <ThreeDotsVertical style={{ color: "#A4A4A4" }} />
+        <ThreeDotsVertical />
       </Button>
     </Container>
   );
 }
 
 const Container = styled.div`
-  width: 100%;
+  width: 98%;
   height: 7vh;
   display: flex;
   flex-direction: row;
   align-items: center;
-  padding-left: 1.1rem;
+  padding: 1rem 0rem 0.5rem 1rem;
   justify-content: space-between;
 `;
 
@@ -66,11 +66,12 @@ const ButtonContainer = styled.div`
 
 const Button = styled.button`
   border: none;
-  background: #ffffff;
+  background: rgba(0, 0, 0, 0);
   cursor: pointer;
 
   svg {
-    width: 30px;
-    height: 30px;
+    color: rgba(82, 163, 255, 1);
+    width: 40px;
+    height: 40px;
   }
 `;

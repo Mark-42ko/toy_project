@@ -53,8 +53,8 @@ const Container = styled.div`
   width: 25%;
   height: 78.5vh;
   gap: 1rem;
-  background-color: #575757;
-  border-radius: 8px;
+  background-color: rgba(0, 0, 0, 0.48);
+  border-radius: 4px;
 `;
 
 const InnerContainer = styled.div`
@@ -64,22 +64,22 @@ const InnerContainer = styled.div`
   width: 100%;
   max-height: 100%;
   scrollbar-width: none;
-  overflow-y: scroll;
+  overflow-y: auto;
 
   &::-webkit-scrollbar {
     width: 8px;
     height: 8px;
-    border-radius: 6px;
-    background: #575757;
+    border-radius: 4px;
+    background: rgba(0, 0, 0, 0.48);
   }
   &::-webkit-scrollbar-thumb {
     background-color: rgba(0, 0, 0, 0.3);
-    border-radius: 6px;
+    border-radius: 4px;
   }
 `;
 
 const TitleText = styled.span`
   font-size: 2rem;
   padding-left: 1rem;
-  color: #ffffff;
+  color: rgba(255, 255, 255, 1);
 `;

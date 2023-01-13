@@ -93,14 +93,15 @@ const ButtonContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #bcf5a9;
+  background-color: rgba(82, 163, 255, 1);
   border: none;
-  border-radius: 8px;
+  border-radius: 4px;
   cursor: pointer;
   padding: 0rem 1rem 0rem 1rem;
 `;
 
 const Text = styled.span`
+  color: rgba(255, 255, 255, 1);
   font-size: 1.3rem;
 `;
 

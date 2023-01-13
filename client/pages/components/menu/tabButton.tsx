@@ -32,11 +32,15 @@ type ButtonProps = {
 };
 
 const Button = styled.button`
-  padding: 1em 1em;
+  height: 100%;
   border: none;
-  border-radius: 10px;
+  border-radius: 4px;
   width: 32%;
+  font-size: 1.1rem;
   align-items: center;
   cursor: pointer;
-  background: ${(props: ButtonProps) => (props.choose === true ? "#FFFFFF" : "#F2F2F2")};
+  color: ${(props: ButtonProps) =>
+    props.choose === true ? "rgba(112, 200, 255, 1)" : "rgba(255, 255, 255, 1)"};
+  background: ${(props: ButtonProps) =>
+    props.choose === true ? "rgba(255, 255, 255, 1)" : "rgba(112, 200, 255, 1)"};
 `;

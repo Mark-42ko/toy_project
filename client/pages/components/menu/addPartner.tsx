@@ -15,8 +15,7 @@ type Props = {
 const SERVER_URI = process.env.NEXT_PUBLIC_SERVER_URI;
 const socket = io(`${SERVER_URI}/chat`);
 
-export default function addPartner(props: Props) {
-  const SERVER_URI = process.env.NEXT_PUBLIC_SERVER_URI;
+export default function AddPartner(props: Props) {
   const [friendData, setFriendData] = useState<any>([]);
   const [selectFriend, setSelectFriend] = useState<any>([]);
   const [errMsg, setErrMsg] = useState<string | undefined>();
@@ -43,7 +42,7 @@ export default function addPartner(props: Props) {
             data.push(one);
           }
         });
-        const result = [...new Set(data)];
+        const result = [...Array.from(new Set(data))];
         setFriendData(result);
       }
     })();
@@ -106,7 +105,9 @@ export default function addPartner(props: Props) {
         <CloseButton onClick={() => props.setOpen(!props.open)}>
           <Back />
         </CloseButton>
-        <Title>초대 할 상대를 선택해주세요.</Title>
+        <Title>
+          <b>초대 할 상대를 선택해주세요.</b>
+        </Title>
         <div style={{ width: "40px" }} />
       </TitleContainer>
       {errMsg && <ErrMsg>{errMsg}</ErrMsg>}
@@ -149,13 +150,13 @@ const Container = styled.div`
   gap: 1.5rem;
   flex: 0.3;
 
-  background-color: #ffffff;
+  background-color: rgba(255, 255, 255, 1);
 
   box-sizing: border-box;
   border: none;
-  border-radius: 8px;
+  border-radius: 4px;
 
-  padding: 1rem;
+  padding: 2rem 1rem 2rem 1rem;
 `;
 
 const TitleContainer = styled.div`
@@ -170,10 +171,10 @@ const InnerContainer = styled.div`
   align-items: center;
   flex-direction: column;
   gap: 1rem 0;
-  background-color: #ffffff;
+  background-color: rgba(255, 255, 255, 1);
 
-  width: 100%;
-  max-height: 300px;
+  width: 450px;
+  max-height: 350px;
   padding: 1rem;
 
   overflow-y: scroll;
@@ -181,18 +182,18 @@ const InnerContainer = styled.div`
   &::-webkit-scrollbar {
     width: 8px;
     height: 8px;
-    border-radius: 6px;
+    border-radius: 4px;
     background: rgba(255, 255, 255, 0.4);
   }
   &::-webkit-scrollbar-thumb {
     background-color: rgba(0, 0, 0, 0.3);
-    border-radius: 6px;
+    border-radius: 4px;
   }
 `;
 
 const CloseButton = styled.button`
   border: none;
-  background: #ffffff;
+  background: rgba(255, 255, 255, 1);
   cursor: pointer;
   svg {
     width: 30px;
@@ -201,21 +202,21 @@ const CloseButton = styled.button`
 `;
 
 const Title = styled.span`
-  font-size: 1.4rem;
+  font-size: 1.6rem;
 `;
 
 const AddButton = styled.button`
   border: none;
-  background: #8181f7;
+  background: rgba(112, 200, 255, 1);
   width: 50%;
   height: 40px;
-  border-radius: 8px;
+  border-radius: 4px;
   font-size: 1.3rem;
-  color: #ffffff;
+  color: rgba(255, 255, 255, 1);
   cursor: pointer;
 `;
 
 const ErrMsg = styled.span`
-  color: #ff0000;
+  color: rgba(255, 0, 0, 1);
   font-size: 1.5rem;
 `;

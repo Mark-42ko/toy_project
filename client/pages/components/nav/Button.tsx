@@ -32,18 +32,25 @@ type ButtonProps = {
 };
 
 const Buttons = styled.button`
-  border: none;
+  border: 2px solid;
   cursor: pointer;
-  width: 100%;
-  height: 50px;
+  width: 60px;
+  height: 60px;
   border-radius: 4px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: ${(props: ButtonProps) => (props.choose ? "#FFFFFF" : "#F2F2F2")};
+  background: rgba(112, 200, 255, 1);
+  border-color: ${(props: ButtonProps) =>
+    props.choose ? "rgba(255, 255, 255, 1)" : "rgba(112, 200, 255, 1)"};
 
   svg {
-    width: 40px;
-    height: 40px;
+    width: 50px;
+    height: 50px;
+    color: rgba(255, 255, 255, 1);
+  }
+  &:active {
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 4px;
   }
 `;

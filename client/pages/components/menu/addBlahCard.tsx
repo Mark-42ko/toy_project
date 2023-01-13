@@ -88,10 +88,15 @@ type ButtonProps = {
 const Container = styled.button`
   padding: 1rem;
   width: 100%;
-  border: 1px solid;
-  border-radius: 1rem;
-  border-color: #d8d8d8;
-  background: ${(props: ButtonProps) => (props.choose === true ? "#F2F2F2" : "#FFFFFF")};
+  border: 2px solid;
+  border-radius: 4px;
+  border-color: rgba(0, 0, 0, 0.3);
+  background: ${(props: ButtonProps) =>
+    props.choose === true ? "rgba(0, 0, 0, 0.3)" : "rgba(255, 255, 255, 1)"};
+  &:active {
+    background-color: rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+  }
 `;
 
 const ProfileContainer = styled.div`
@@ -108,7 +113,7 @@ const ProfileImg = styled.div`
   width: 65px;
   height: 65px;
   border: none;
-  border-radius: 8px;
+  border-radius: 4px;
 `;
 
 const NameTag = styled.div`

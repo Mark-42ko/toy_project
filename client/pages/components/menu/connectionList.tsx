@@ -1,6 +1,6 @@
 import styled from "styled-components";
-import { RightArrowAlt } from "@styled-icons/boxicons-regular/RightArrowAlt";
-import { DownArrowAlt } from "@styled-icons/boxicons-regular/DownArrowAlt";
+import { ChevronRight } from "@styled-icons/fa-solid/ChevronRight";
+import { ChevronDown } from "@styled-icons/fa-solid/ChevronDown";
 import { useState, useEffect } from "react";
 
 type Props = {
@@ -30,11 +30,11 @@ export default function ConnectionList(props: Props) {
   }, [props.open]);
 
   return (
-    <ListButton onClick={() => setCheck(!check)}>
+    <ListButton onClick={() => setCheck(!check)} check={check}>
       {check ? (
-        <DownArrowAlt style={{ width: 20, height: 20 }} />
+        <ChevronDown style={{ width: 20, height: 20 }} />
       ) : (
-        <RightArrowAlt style={{ width: 20, height: 20 }} />
+        <ChevronRight style={{ width: 20, height: 20 }} />
       )}
       {props.tag === "온라인" && (
         <ListTag>
@@ -52,15 +52,25 @@ export default function ConnectionList(props: Props) {
   );
 }
 
+type Button = {
+  check: boolean;
+};
+
 const ListButton = styled.button`
   width: 100%;
-  height: 2rem;
+  height: 3rem;
   display: flex;
   align-items: center;
   margin-bottom: 0.4rem;
+  border: 2px solid;
+  border-radius: 4px;
+  border-color: rgba(112, 200, 255, 1);
+  background: ${(props: Button) => (props.check ? "rgba(0, 0, 0, 0.1)" : "rgba(255, 255, 255, 1)")};
+  padding: 1rem;
+  gap: 1rem;
   cursor: pointer;
 `;
 
 const ListTag = styled.span`
-  font-size: 1rem;
+  font-size: 1.5rem;
 `;
