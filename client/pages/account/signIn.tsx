@@ -63,10 +63,8 @@ export default function SignInPage() {
     <BigContainer>
       <Container>
         <TitleText>
-          <b>
-            <ChatQuoteFill />
-            채널톡
-          </b>
+          <ChatQuoteFill style={{ marginBottom: 15 }} />
+          <b>채널톡</b>
         </TitleText>
         <div>
           <InnerContainer>
@@ -134,7 +132,14 @@ const InnerContainer = styled.div`
 `;
 
 const TitleText = styled.h1`
-  font-size: 2.5rem;
+  font-size: 46px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  svg {
+    width: 120px;
+    height: 120px;
+  }
 `;
 
 const TextArea = styled.span`
