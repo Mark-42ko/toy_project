@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { useState, useContext, useEffect } from "react";
 import SignUp from "./signUp";
 import { GlobalContext } from "pages/_app";
-// import { Google } from '@styled-icons/bootstrap/Google';
+import { ChatQuoteFill } from "@styled-icons/bootstrap/ChatQuoteFill";
 
 export default function SignInPage() {
   const router = useRouter();
@@ -60,26 +60,25 @@ export default function SignInPage() {
   };
 
   return (
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        width: "100%",
-        height: "90vh",
-      }}
-    >
+    <BigContainer>
       <Container>
         <TitleText>
-          <b>채널톡</b>
+          <b>
+            <ChatQuoteFill />
+            채널톡
+          </b>
         </TitleText>
         <div>
           <InnerContainer>
-            <TextArea>ID : </TextArea>
+            <TextArea>
+              <b>ID : </b>
+            </TextArea>
             <TextInput type={"email"} onChange={(evt) => setEmail(evt.currentTarget.value)} />
           </InnerContainer>
           <InnerContainer style={{ marginTop: 10 }}>
-            <TextArea>PW : </TextArea>
+            <TextArea>
+              <b>PW : </b>
+            </TextArea>
             <TextInput type={"password"} onChange={(evt) => setPassword(evt.currentTarget.value)} />
           </InnerContainer>
         </div>
@@ -101,19 +100,26 @@ export default function SignInPage() {
           ) : null}
         </InnerContainer>
       </Container>
-    </div>
+    </BigContainer>
   );
 }
 
+const BigContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+`;
+
 const Container = styled.div`
-  width: 30%;
-  hight: 50%;
+  width: 25%;
+  height: 45%;
   min-width: 300px;
-  min-height: 300px;
+  min-height: 440px;
   border: none;
-  background-color: #f0f0f0;
-  border-radius: 20px;
-  padding: 2em;
+  background-color: rgba(255, 255, 255, 1);
+  border-radius: 8px;
+  padding: 1.5em;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -122,40 +128,42 @@ const Container = styled.div`
 `;
 
 const InnerContainer = styled.div`
-  width: 230px;
+  width: 300px;
   display: flex;
   justify-content: space-between;
 `;
 
 const TitleText = styled.h1`
-  font-size: 2rem;
+  font-size: 2.5rem;
 `;
 
 const TextArea = styled.span`
   width: 200px;
-  hight: 50px;
+  font-size: 1.3rem;
 `;
 
 const TextInput = styled.input`
-  width: 170px;
+  width: 220px;
+  height: 30px;
+  font-size: 1.4rem;
 `;
 
 const SiginButton = styled.button`
-  width: 230px;
+  width: 300px;
   border: none;
-  font-size: 1.2rem;
-  background: #5858fa;
-  border-radius: 10px;
+  font-size: 1.5rem;
+  padding: 0.3rem;
+  background: rgba(82, 163, 255, 1);
+  border-radius: 4px;
   align-items: center;
   cursor: pointer;
 `;
 
 const SignUpButton = styled.button`
   border: none;
-  background: #f0f0f0;
-  color: #0000ff;
-  width: 100px;
-  font-size: 1rem;
+  background: rgba(255, 255, 255, 1);
+  color: rgba(19, 15, 255, 1);
+  font-size: 1.3rem;
   cursor: pointer;
 `;
 
@@ -166,7 +174,7 @@ const ModalBackdrop = styled.div`
   right: 0;
   top: 0;
   display: flex;
-  flex-flow: row wrep;
+  flex-flow: row wrap;
   justify-content: center;
   align-items: center;
   background: rgba(0, 0, 0, 0.5);
