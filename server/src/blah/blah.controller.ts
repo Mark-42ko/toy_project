@@ -31,6 +31,12 @@ export class BlahController {
     return this.blahService.create(addBlah);
   }
 
+  @Post("createAI")
+  @HttpCode(201)
+  async creatAI(@Body() addBlah: AddBlah) {
+    return this.blahService.create(addBlah);
+  }
+
   @UseGuards(JwtAuthGuard)
   @Post("findOne")
   async findOne(@Body() addBlahDto: AddBlah) {

@@ -118,7 +118,7 @@ export class BlahService {
     return counts;
   }
 
-  async statusChange(data: StatusBlah): Promise<Blah> {
+  async statusChange(data: StatusBlah): Promise<any> {
     const result = await this.BlahModel.findOneAndUpdate(
       { _id: data._id },
       { status: data.status },

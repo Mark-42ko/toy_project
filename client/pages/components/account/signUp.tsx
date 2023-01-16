@@ -99,6 +99,56 @@ export default function SignUp(props: Props) {
               "Access-Control-Allow-Origin": "http://localhost:3000",
             },
           });
+          const result = await fetch(`${SERVER_URI}/account/emailCheck?email=aibot@aibot.com`, {
+            method: "GET",
+            headers: {
+              "Access-Control-Allow-Origin": "http://localhost:3000",
+            },
+          });
+          const jsons = await result.json();
+          console.log(jsons.data);
+          await fetch(`${SERVER_URI}/people/addAI`, {
+            method: "POST",
+            body: JSON.stringify({
+              user: name,
+              friend: {
+                email: jsons.data.email,
+                name: jsons.data.name,
+                phoneNumber: jsons.data.phoneNumber,
+                filename: jsons.data.filename,
+              },
+            }),
+            headers: {
+              "Content-type": "application/json",
+              "Access-Control-Allow-Origin": "http://localhost:3000",
+            },
+          });
+          const user = [
+            {
+              email: email,
+              name: name,
+              phoneNumber: phoneNumber,
+              filename: json.filename ? json.filename : undefined,
+            },
+            {
+              email: jsons.data.email,
+              name: jsons.data.name,
+              phoneNumber: jsons.data.phoneNumber,
+              filename: jsons.data.filename,
+            },
+          ];
+          await fetch(`${SERVER_URI}/blah/createAI`, {
+            method: "POST",
+            body: JSON.stringify({
+              user: user,
+              blah: [],
+              status: "대화중",
+            }),
+            headers: {
+              "Content-type": "application/json",
+              "Access-Control-Allow-Origin": "http://localhost:3000",
+            },
+          });
         } catch (err) {
           console.log(err);
         }
@@ -320,3 +370,4 @@ const FileAddButton = styled.div`
 `;
 
 const FileInput = styled.input``;
+

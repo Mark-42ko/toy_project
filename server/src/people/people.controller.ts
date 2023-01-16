@@ -16,6 +16,12 @@ export class PeopleController {
     return this.peopleService.add(addPeopleDto);
   }
 
+  @Post("addAI")
+  @HttpCode(201)
+  async addAI(@Body() addPeopleDto: AddPeople): Promise<any> {
+    return this.peopleService.add(addPeopleDto);
+  }
+
   @UseGuards(JwtAuthGuard)
   @Get()
   async findAll(): Promise<People[]> {
