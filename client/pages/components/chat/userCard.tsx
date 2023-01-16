@@ -130,14 +130,18 @@ export default function UserCard(props: Props) {
           <b>{props.userData.name === userData.username ? "나" : props.userData.name}</b>
         </NameTag>
       </ProfileContainer>
-      <InfoContainer>
-        <PhoneIphone style={{ width: "30px", height: "30px" }} />
-        <InfoText>{props.userData.phoneNumber}</InfoText>
-      </InfoContainer>
-      <InfoContainer>
-        <EmailOutline style={{ width: "30px", height: "30px" }} />
-        <InfoText>{props.userData.email}</InfoText>
-      </InfoContainer>
+      {props.userData.name !== "챗봇" && (
+        <InfoContainer>
+          <PhoneIphone style={{ width: "30px", height: "30px" }} />
+          <InfoText>{props.userData.phoneNumber}</InfoText>
+        </InfoContainer>
+      )}
+      {props.userData.name !== "챗봇" && (
+        <InfoContainer>
+          <EmailOutline style={{ width: "30px", height: "30px" }} />
+          <InfoText>{props.userData.email}</InfoText>
+        </InfoContainer>
+      )}
       {!check && (
         <NoticeText>
           <b>친구추가를 하려면 클릭해주세요.</b>
