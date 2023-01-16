@@ -91,7 +91,7 @@ export default function People() {
         <InfoContainer>
           <ChatBar roomData={chatRoom} setRerendering={setRerendering} />
           <InnerContainer>
-            <Blah roomData={chatRoom} setRerendering={setRerendering} />
+            <Blah roomData={chatRoom} setRerendering={setRerendering} rerendering={rerendering} />
             <UserInfo roomData={chatRoom} rerendering={rerendering} />
           </InnerContainer>
         </InfoContainer>

@@ -2,17 +2,17 @@
 const nextConfig = {
   reactStrictMode: process.env.NODE_ENV !== "production",
   images: {
-    unoptimized: true
+    unoptimized: true,
   },
   compiler: {
-    styledComponents: true
+    styledComponents: true,
   },
   typescript: {
-    ignoreBuildErrors: true
+    ignoreBuildErrors: true,
   },
   eslint: {
-    ignoreDuringBuilds: true
+    ignoreDuringBuilds: true,
   },
-}
+};
 
-module.exports = nextConfig
+module.exports = nextConfig;

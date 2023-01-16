@@ -9,9 +9,9 @@ type Props = {
   _id: string;
   idx: number;
   check: number;
-  chats: any;
   roomData: any;
   setRerendering: Function;
+  rerendering: number;
 };
 
 const SERVER_URI = process.env.NEXT_PUBLIC_SERVER_URI;
@@ -45,68 +45,18 @@ export default function ChatBox(props: Props) {
 
   useEffect(() => {
     !(async function () {
-      if (props.chatData.profile) {
-        const extension =
-          props.chatData.profile.split(".")[props.chatData.profile.split(".").length - 1];
-        if (
-          extension === "jpg" ||
-          extension === "jpeg" ||
-          extension === "png" ||
-          extension === "gif"
-        ) {
-          const result = await fetch(
-            `${SERVER_URI}/blah/download?filename=${props.chatData.profile}`,
-            {
-              method: "GET",
-              headers: {
-                Authorization: `bearer ${accessToken}`,
-                "Content-type": "application/json",
-                "Access-Control-Allow-Origin": "http://localhost:3000",
-              },
-            },
-          );
-          const file = await result.blob();
-          const downloadUrl = window.URL.createObjectURL(file);
-          setProfile(downloadUrl);
-        }
-      }
-    })();
-  }, []);
-
-  useEffect(() => {
-    const messageHandler = (chat: any) => {
-      return setChats(Math.random());
-    };
-    socket.on("chat", messageHandler);
-    return () => {
-      socket.off("chat", messageHandler);
-    };
-  }, [props.roomData]);
-
-  useEffect(() => {
-    socket.emit("chat", data, (chat: any) => {
-      setChats(Math.random());
-    });
-  }, [props.roomData]);
-
-  useEffect(() => {
-    !(async function () {
-      await fetch(`${SERVER_URI}/blah/updateCount`, {
-        method: "POST",
-        body: JSON.stringify({
-          _id: props._id,
-          idx: props.idx,
-          email: userData.userId,
-        }),
+      const result = await fetch(`${SERVER_URI}/blah/room?id=${props._id}`, {
+        method: "GET",
         headers: {
           Authorization: `bearer ${accessToken}`,
           "Content-type": "application/json",
           "Access-Control-Allow-Origin": "http://localhost:3000",
         },
       });
-      props.setRerendering(Math.random());
+      const json = await result.json();
+      json.data.blah[props.idx] && setCounting(await json.data.blah[props.idx].counts.length);
     })();
-  }, []);
+  }, [chats]);
 
   useEffect(() => {
     !(async function () {
@@ -146,7 +96,71 @@ export default function ChatBox(props: Props) {
         }
       }
     })();
-  }, [chats, props.roomData]);
+  }, []);
+
+  useEffect(() => {
+    !(async function () {
+      if (props.chatData.profile) {
+        const extension =
+          props.chatData.profile.split(".")[props.chatData.profile.split(".").length - 1];
+        if (
+          extension === "jpg" ||
+          extension === "jpeg" ||
+          extension === "png" ||
+          extension === "gif"
+        ) {
+          const result = await fetch(
+            `${SERVER_URI}/blah/download?filename=${props.chatData.profile}`,
+            {
+              method: "GET",
+              headers: {
+                Authorization: `bearer ${accessToken}`,
+                "Content-type": "application/json",
+                "Access-Control-Allow-Origin": "http://localhost:3000",
+              },
+            },
+          );
+          const file = await result.blob();
+          const downloadUrl = window.URL.createObjectURL(file);
+          setProfile(downloadUrl);
+        }
+      }
+    })();
+  }, []);
+
+  useEffect(() => {
+    const messageHandler = (chat: any) => {
+      return setChats(Math.random());
+    };
+    socket.on("chat", messageHandler);
+    return () => {
+      socket.off("chat", messageHandler);
+    };
+  }, []);
+
+  useEffect(() => {
+    const data = props._id;
+    socket.emit("chat", data, (chat: any) => null);
+  }, []);
+
+  useEffect(() => {
+    !(async function () {
+      await fetch(`${SERVER_URI}/blah/updateCount`, {
+        method: "POST",
+        body: JSON.stringify({
+          _id: props._id,
+          idx: props.idx,
+          email: userData.userId,
+        }),
+        headers: {
+          Authorization: `bearer ${accessToken}`,
+          "Content-type": "application/json",
+          "Access-Control-Allow-Origin": "http://localhost:3000",
+        },
+      });
+      props.setRerendering(Math.random());
+    })();
+  }, []);
 
   const downloadHandle = async () => {
     const result = await fetch(`${SERVER_URI}/blah/download?filename=${props.chatData.filename}`, {
@@ -319,7 +333,7 @@ const TextBox = styled.span`
   display: flex;
   align-items: center;
   background-color: ${(props: CheckProps) =>
-    props.check === true ? "rgba(244, 250, 88, 1)" : "#rgba(255, 255, 255, 1)"};
+    props.check === true ? "rgba(244, 250, 88, 1)" : "rgba(255, 255, 255, 1)"};
   border: none;
   border-radius: 4px;
   padding: 1rem;

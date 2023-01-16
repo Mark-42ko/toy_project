@@ -6,7 +6,7 @@ import { Blah, BlahSchema } from "./schemas/blah.schema";
 import { JwtModule } from "@nestjs/jwt";
 import { JwtStrategy } from "src/auth/jwt.strategy";
 import { jwtConstants } from "src/auth/constants";
-import { BlahGateway } from "./blah.gateway";
+import { EventsGateway } from "./blah.gateway";
 import { MulterModule } from "@nestjs/platform-express";
 import { multerOptionsFactory } from "src/common/utils/multer.options.factory";
 
@@ -22,7 +22,7 @@ import { multerOptionsFactory } from "src/common/utils/multer.options.factory";
       useFactory: multerOptionsFactory,
     }),
   ],
-  providers: [BlahService, JwtStrategy, BlahGateway],
+  providers: [BlahService, JwtStrategy, EventsGateway],
   controllers: [BlahController],
 })
 export class BlahModule {}

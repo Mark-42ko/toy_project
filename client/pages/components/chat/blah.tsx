@@ -8,6 +8,7 @@ import { PlusCircle } from "@styled-icons/bootstrap/PlusCircle";
 type Props = {
   roomData: any;
   setRerendering: Function;
+  rerendering: number;
 };
 
 interface IChat {
@@ -21,7 +22,6 @@ const socket = io(`${SERVER_URI}/chat`);
 export default function Blah(props: Props) {
   const [inputData, setInputData] = useState<string>("");
   const [updateData, setUpdateData] = useState<any>();
-  const [chats, setChats] = useState<IChat>();
   const [check, setCheck] = useState<number>(0);
   const [files, setFiles] = useState<File[]>([]);
   const ref = useRef<HTMLInputElement>(null);
@@ -37,7 +37,10 @@ export default function Blah(props: Props) {
   }
 
   useEffect(() => {
-    const messageHandler = (chat: IChat) => setChats(chat);
+    const messageHandler = (chat: IChat) => {
+      props.setRerendering(Math.random());
+    };
+    socket.emit("join-room", props.roomData._id, () => {});
     socket.on("message", messageHandler);
     return () => {
       socket.off("message", messageHandler);
@@ -62,13 +65,41 @@ export default function Blah(props: Props) {
       const json = await result.json();
       setUpdateData(json.data);
     })();
-    props.setRerendering(Math.random());
-  }, [chats, props.roomData]);
+  }, [props.rerendering, props.roomData]);
 
   const inputButtonHandle = async () => {
     if (inputData === "") {
       alert("메시지를 입력해주세요.");
     } else {
+      // if (props.roomData.user.find((one:any) => one.name === '챗봇')) {
+      //   if(props.roomData.user.length === 2) {
+      //     await fetch(`AI-URL주소`, {
+      //       method: "POST",
+      //       body: JSON.stringify({
+      //         roomName: props.roomData._id,
+      //         socketUrl: `${SERVER_URI}/chat`
+      //       }),
+      //       headers: {
+      //         "Content-type": "application/json",
+      //         "Access-Control-Allow-Origin": "http://localhost:3000",
+      //       },
+      //     });
+      //   } else {
+      //     if(inputData.startsWith("챗봇")) {
+      //       await fetch(`AI-URL주소`, {
+      //         method: "POST",
+      //         body: JSON.stringify({
+      //           roomName: props.roomData._id,
+      //           socketUrl: `${SERVER_URI}/chat`
+      //         }),
+      //         headers: {
+      //           "Content-type": "application/json",
+      //           "Access-Control-Allow-Origin": "http://localhost:3000",
+      //         },
+      //       });
+      //     }
+      //   }
+      // }
       if (files.length !== 0) {
         const formData = new FormData();
         files.forEach((one) => {
@@ -105,8 +136,8 @@ export default function Blah(props: Props) {
           },
         });
         const data = {
-          _id: props.roomData._id,
-          username: userData.username,
+          roomName: props.roomData._id,
+          message: inputData,
         };
         socket.emit("message", data, (chat: any) => {
           props.setRerendering(Math.random());
@@ -135,11 +166,10 @@ export default function Blah(props: Props) {
           },
         });
         const data = {
-          _id: props.roomData._id,
-          username: userData.username,
+          roomName: props.roomData._id,
+          message: inputData,
         };
         socket.emit("message", data, (chat: any) => {
-          props.setRerendering(Math.random());
           setUpdateData(chat);
           setInputData("");
           setCheck(chat.blah.length);
@@ -169,9 +199,9 @@ export default function Blah(props: Props) {
               _id={props.roomData._id}
               idx={idx}
               check={check}
-              chats={chats}
               roomData={props.roomData}
               setRerendering={props.setRerendering}
+              rerendering={props.rerendering}
             />
           ))}
         <div id="blah"></div>
