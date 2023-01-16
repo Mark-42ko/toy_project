@@ -106,7 +106,6 @@ export default function SignUp(props: Props) {
             },
           });
           const jsons = await result.json();
-          console.log(jsons.data);
           await fetch(`${SERVER_URI}/people/addAI`, {
             method: "POST",
             body: JSON.stringify({
@@ -116,6 +115,7 @@ export default function SignUp(props: Props) {
                 name: jsons.data.name,
                 phoneNumber: jsons.data.phoneNumber,
                 filename: jsons.data.filename,
+                date: new Date(),
               },
             }),
             headers: {

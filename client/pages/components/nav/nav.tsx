@@ -6,16 +6,11 @@ import Button from "./Button";
 import { LogOut } from "@styled-icons/boxicons-regular/LogOut";
 import { useRouter } from "next/router";
 
-type ButtonIcon = [
-  { text: string; icon: JSX.Element },
-  { text: string; icon: JSX.Element },
-  { text: string; icon: JSX.Element },
-];
+type ButtonIcon = [{ text: string; icon: JSX.Element }, { text: string; icon: JSX.Element }];
 
 const buttonIcon: ButtonIcon = [
   { text: "people", icon: <People /> },
   { text: "mail", icon: <ChatbubbleEllipses /> },
-  { text: "Robot", icon: <Robot /> },
 ];
 
 type Props = {
@@ -89,3 +84,4 @@ const LogoutButtonBox = styled.button`
     border-radius: 4px;
   }
 `;
+
