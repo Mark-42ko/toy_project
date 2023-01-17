@@ -1,17 +1,12 @@
 import styled from "styled-components";
-import { People } from "@styled-icons/fluentui-system-filled/People";
-import { ChatbubbleEllipses } from "@styled-icons/ionicons-sharp/ChatbubbleEllipses";
-import { Robot } from "@styled-icons/fa-solid/Robot";
 import Button from "./Button";
 import { LogOut } from "@styled-icons/boxicons-regular/LogOut";
 import { useRouter } from "next/router";
+import Image from "next/image";
 
-type ButtonIcon = [{ text: string; icon: JSX.Element }, { text: string; icon: JSX.Element }];
+type ButtonIcon = [text: string, text: string];
 
-const buttonIcon: ButtonIcon = [
-  { text: "people", icon: <People /> },
-  { text: "mail", icon: <ChatbubbleEllipses /> },
-];
+const buttonIcon: ButtonIcon = ["people", "mail"];
 
 type Props = {
   navController: string;
@@ -34,7 +29,7 @@ export default function Nav(props: Props) {
           return (
             <Button
               data={one}
-              key={one.text}
+              key={one}
               navController={props.navController}
               setNavController={props.setNavController}
             />
@@ -42,20 +37,20 @@ export default function Nav(props: Props) {
         })}
       </ButtonDiv>
       <LogoutButtonBox onClick={logOutHandle}>
-        <LogOut />
+        <Image src={"/images/logOut.svg"} alt="로그아웃" width={24} height={24} />
       </LogoutButtonBox>
     </SideMenu>
   );
 }
 
 const SideMenu = styled.div`
-  width: 60px;
-  background-color: rgba(112, 200, 255, 1);
-  padding: 1rem;
-  height: calc(100vh - (1rem * 2));
+  width: 88px;
+  background-color: rgba(52, 51, 67, 1);
+  height: calc(100vh - 32px);
   display: flex;
   flex-direction: column;
-  gap: 1rem 0;
+  padding: 16px 0px 16px 0px;
+  align-items: center;
   justify-content: space-between;
 `;
 
@@ -72,16 +67,11 @@ const LogoutButtonBox = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(112, 200, 255, 1);
+  background: rgba(52, 51, 67, 1);
+
   cursor: pointer;
-  svg {
-    width: 60px;
-    height: 60px;
-    color: rgba(255, 255, 255, 1);
-  }
   &:active {
     background-color: rgba(0, 0, 0, 0.5);
     border-radius: 4px;
   }
 `;
-

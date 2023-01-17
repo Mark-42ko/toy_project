@@ -19,7 +19,6 @@ export default function MenuPage(props: Props) {
 }
 
 const MenuContainer = styled.div`
-  width: 90vw;
+  width: calc(100vw - 88px);
   height: 100%;
-  padding: 0em 1em;
 `;

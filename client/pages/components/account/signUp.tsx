@@ -174,109 +174,110 @@ export default function SignUp(props: Props) {
   return (
     <Container>
       <TitleContainer>
+        <TitleText>회원가입</TitleText>
         <CloseButton onClick={props.signUpModalHandle}>
           <Back />
         </CloseButton>
-        <TitleText>회원가입</TitleText>
-        <div style={{ width: "40px" }} />
       </TitleContainer>
-      <BodyContainer>
-        <MidleContainer>
-          <TextArea>
-            <b>프로필 이미지</b>
-          </TextArea>
-          {imgFile ? (
-            <>
-              <Image
-                src={imgFile}
-                alt={"프로필 이미지"}
-                style={{ cursor: "pointer", borderRadius: "8px" }}
-                width={150}
-                height={150}
-                onClick={() => ref.current?.click()}
-              />
-              <FileInput
-                type="file"
-                ref={ref}
-                style={{ display: "none" }}
-                onChange={(e) => {
-                  fileAddButtonHandle(e);
-                  e.target.value = "";
-                }}
-              />
-            </>
-          ) : (
-            <>
-              <FileAddButton onClick={() => ref.current?.click()}>
-                <b>업로드</b>
-              </FileAddButton>
-              <FileInput
-                type="file"
-                ref={ref}
-                style={{ display: "none" }}
-                onChange={(e) => {
-                  fileAddButtonHandle(e);
-                  e.target.value = "";
-                }}
-              />
-            </>
-          )}
-        </MidleContainer>
-        <MidleContainer>
-          <InnerContainer>
-            <TextArea>아이디 : </TextArea>
-            <TextInput
-              placeholder="example@google.com"
-              type={"email"}
-              onChange={(evt) => setEmail(evt.currentTarget.value)}
-            />
-          </InnerContainer>
-          <ErrMsgArea>{emailErr}</ErrMsgArea>
-          <InnerContainer>
-            <TextArea>비밀번호 : </TextArea>
-            <TextInput
-              placeholder="특수문자 포함 8자 이상"
-              type={"password"}
-              onChange={(evt) => setPassword(evt.currentTarget.value)}
-            />
-          </InnerContainer>
-          <ErrMsgArea>{passwordErr}</ErrMsgArea>
-          <InnerContainer>
-            <TextArea>비밀번호 확인 : </TextArea>
-            <TextInput
-              type={"password"}
-              onChange={(evt) => setRePassword(evt.currentTarget.value)}
-            />
-          </InnerContainer>
-          <ErrMsgArea>{rePasswordErr}</ErrMsgArea>
-          <InnerContainer>
-            <TextArea>이름 : </TextArea>
-            <TextInput type={"text"} onChange={(evt) => setName(evt.currentTarget.value)} />
-          </InnerContainer>
-          <ErrMsgArea>{nameErr}</ErrMsgArea>
-          <InnerContainer>
-            <TextArea>연락처 : </TextArea>
-            <NumberInput type={"text"} value={phoneNumber} onChange={handleInput} maxLength={13} />
-          </InnerContainer>
-        </MidleContainer>
-      </BodyContainer>
-      <SiginButton onClick={signUpHandle}>
-        <b>회원가입</b>
-      </SiginButton>
+      <MiddleContainer>
+        <div>
+          <TextArea>이미지</TextArea>
+          <ImageContainer>
+            {imgFile ? (
+              <>
+                <Image
+                  src={imgFile}
+                  alt={"프로필 이미지"}
+                  style={{ cursor: "pointer", borderRadius: "8px" }}
+                  width={150}
+                  height={150}
+                  onClick={() => ref.current?.click()}
+                />
+                <FileInput
+                  type="file"
+                  ref={ref}
+                  style={{ display: "none" }}
+                  onChange={(e) => {
+                    fileAddButtonHandle(e);
+                    e.target.value = "";
+                  }}
+                />
+              </>
+            ) : (
+              <>
+                <FileAddButton onClick={() => ref.current?.click()}>
+                  이미지를 등록해주세요.
+                </FileAddButton>
+                <FileInput
+                  type="file"
+                  ref={ref}
+                  style={{ display: "none" }}
+                  onChange={(e) => {
+                    fileAddButtonHandle(e);
+                    e.target.value = "";
+                  }}
+                />
+              </>
+            )}
+            <TextArea>*png, jpg ...</TextArea>
+          </ImageContainer>
+        </div>
+        <InnerContainer>
+          <InputContainer>
+            <TextArea>이름</TextArea>
+            <ErrMsgArea>{nameErr}</ErrMsgArea>
+          </InputContainer>
+          <TextInput type={"text"} onChange={(evt) => setName(evt.currentTarget.value)} />
+        </InnerContainer>
+        <InnerContainer>
+          <TextArea>연락처</TextArea>
+          <NumberInput type={"text"} value={phoneNumber} onChange={handleInput} maxLength={13} />
+        </InnerContainer>
+        <InnerContainer>
+          <InputContainer>
+            <TextArea>이메일</TextArea>
+            <ErrMsgArea>{emailErr}</ErrMsgArea>
+          </InputContainer>
+          <TextInput
+            placeholder="example@google.com"
+            type={"email"}
+            onChange={(evt) => setEmail(evt.currentTarget.value)}
+          />
+        </InnerContainer>
+        <InnerContainer>
+          <InputContainer>
+            <TextArea>비밀번호</TextArea>
+            <ErrMsgArea>{passwordErr}</ErrMsgArea>
+          </InputContainer>
+          <TextInput
+            placeholder="특수문자 포함 8자 이상"
+            type={"password"}
+            onChange={(evt) => setPassword(evt.currentTarget.value)}
+          />
+        </InnerContainer>
+        <InnerContainer>
+          <InputContainer>
+            <TextArea>비밀번호 확인</TextArea>
+            <ErrMsgArea>{rePasswordErr}</ErrMsgArea>
+          </InputContainer>
+          <TextInput type={"password"} onChange={(evt) => setRePassword(evt.currentTarget.value)} />
+        </InnerContainer>
+      </MiddleContainer>
+      <SiginButton onClick={signUpHandle}>회원가입</SiginButton>
     </Container>
   );
 }
 
 const Container = styled.div`
+  width: 325px;
+  height: 700px;
   border: none;
   border-radius: 8px;
   padding: 1em;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  background-color: #ffffff;
-  gap: 1rem;
+  justify-content: space-between;
+  background-color: rgba(255, 255, 255, 1);
 `;
 
 const TitleContainer = styled.div`
@@ -286,25 +287,21 @@ const TitleContainer = styled.div`
   justify-content: space-between;
 `;
 
-const BodyContainer = styled.div`
-  display: flex;
+const ImageContainer = styled.div`
   width: 100%;
-  align-items: center;
-  flex-direction: row;
-  gap: 1.4rem;
+  display: flex;
+  align-items: flex-start;
 `;
 
-const MidleContainer = styled.div`
+const InputContainer = styled.div`
   display: flex;
-  width: 100%;
+  flex-direction: row;
   align-items: center;
-  flex-direction: column;
-  gap: 0.6rem;
 `;
 
 const CloseButton = styled.button`
   border: none;
-  background: #ffffff;
+  background: rgba(255, 255, 255, 1);
   cursor: pointer;
   svg {
     width: 30px;
@@ -313,38 +310,97 @@ const CloseButton = styled.button`
 `;
 
 const TitleText = styled.h1`
-  font-size: 2rem;
+  width: 83px;
+  height: 29px;
+  color: rgba(52, 51, 67, 1);
+
+  font-family: "Pretendard";
+  font-style: normal;
+  font-weight: 800;
+  font-size: 24px;
+  line-height: 29px;
 `;
 
-const InnerContainer = styled.div`
-  width: 300px;
+const MiddleContainer = styled.div`
+  height: 520px;
   display: flex;
+  flex-direction: column;
   justify-content: space-between;
 `;
 
-const TextArea = styled.span``;
+const InnerContainer = styled.div`
+  height: 69px;
+  display: flex;
+  flex-direction: column;
+`;
+
+const TextArea = styled.span`
+  color: rgba(144, 143, 159, 1);
+
+  font-family: "Pretendard";
+  font-style: normal;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 17px;
+`;
 
 const ErrMsgArea = styled.span`
-  color: red;
+  color: rgba(255, 0, 0, 1);
+  margin-left: 8px;
   font-size: 0.7rem;
 `;
 
-const TextInput = styled.input``;
+const TextInput = styled.input`
+  width: 305px;
+  height: 48px;
+
+  background: rgba(255, 255, 255, 1);
+  border: 1px solid rgba(223, 222, 236, 1);
+  border-radius: 8px;
+  color: rgba(52, 51, 67, 1);
+  padding-left: 12px;
+
+  font-family: "Pretendard";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 17px;
+`;
 
 const SiginButton = styled.button`
-  width: 230px;
-  border: none;
-  font-size: 1.2rem;
-  background: #5858fa;
-  color: #ffffff;
-  border: none;
+  width: 320px;
+  height: 64px;
+
+  background: rgba(255, 81, 0, 1);
+  border: 1px solid rgba(223, 222, 236, 1);
   border-radius: 8px;
-  margin-top: 20px;
+
+  color: rgba(255, 255, 255, 1);
+  font-family: "Pretendard";
+  font-style: normal;
+  font-weight: 800;
+  font-size: 24px;
+  line-height: 29px;
+
   cursor: pointer;
 `;
 
 const NumberInput = styled.input`
-  width: 170px;
+  width: 305px;
+  height: 48px;
+
+  background: rgba(255, 255, 255, 1);
+  border: 1px solid rgba(223, 222, 236, 1);
+  border-radius: 8px;
+  color: rgba(52, 51, 67, 1);
+  padding-left: 12px;
+
+  font-family: "Pretendard";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 17px;
+
   ::-webkit-inner-spin-button {
     -webkit-appearance: none;
     margin: 0;
@@ -356,18 +412,25 @@ const NumberInput = styled.input`
 `;
 
 const FileAddButton = styled.div`
-  width: 150px;
-  height: 150px;
-  border: none;
-  border-radius: 8px;
-  background-image: url("/images/defaultGuest.jpg");
-  background-size: cover;
+  width: 96px;
+  height: 96px;
+  background: rgba(255, 255, 255, 1);
+  border: 1px solid rgba(223, 222, 236, 1);
+  border-radius: 13px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.4rem;
+  margin-right: 9px;
+
+  color: rgba(223, 222, 236, 1);
+  font-family: "Pretendard";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 14px;
+  text-align: center;
+
   cursor: pointer;
 `;
 
 const FileInput = styled.input``;
-

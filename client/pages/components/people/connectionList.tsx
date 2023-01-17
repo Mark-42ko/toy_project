@@ -30,47 +30,35 @@ export default function ConnectionList(props: Props) {
   }, [props.open]);
 
   return (
-    <ListButton onClick={() => setCheck(!check)} check={check}>
+    <ListButton onClick={() => setCheck(!check)}>
       {check ? (
-        <ChevronDown style={{ width: 20, height: 20 }} />
+        <ChevronDown style={{ width: 10, height: 10 }} />
       ) : (
-        <ChevronRight style={{ width: 20, height: 20 }} />
+        <ChevronRight style={{ width: 10, height: 10 }} />
       )}
-      {props.tag === "온라인" && (
-        <ListTag>
-          {props.tag} (0/{peopleData ? peopleData.friend.length : 0})
-        </ListTag>
-      )}
-      {props.tag === "오프라인" && (
-        <ListTag>
-          {props.tag} (0/{peopleData ? peopleData.friend.length : 0})
-        </ListTag>
-      )}
-      {props.tag === "보낸요청" && <ListTag>{props.tag} (0/0)</ListTag>}
-      {props.tag === "받은요청" && <ListTag>{props.tag} (0/0)</ListTag>}
+      {props.tag === "온라인" && <ListTag>{props.tag} (0)</ListTag>}
+      {props.tag === "오프라인" && <ListTag>{props.tag} (0)</ListTag>}
+      {props.tag === "보낸요청" && <ListTag>{props.tag} (0)</ListTag>}
+      {props.tag === "받은요청" && <ListTag>{props.tag} (0)</ListTag>}
     </ListButton>
   );
 }
 
-type Button = {
-  check: boolean;
-};
-
 const ListButton = styled.button`
-  width: 100%;
-  height: 3rem;
+  width: 150px;
+  height: 17px;
   display: flex;
   align-items: center;
-  margin-bottom: 0.4rem;
-  border: 2px solid;
-  border-radius: 4px;
-  border-color: rgba(112, 200, 255, 1);
-  background: ${(props: Button) => (props.check ? "rgba(0, 0, 0, 0.1)" : "rgba(255, 255, 255, 1)")};
-  padding: 1rem;
-  gap: 1rem;
+  border: none;
+  background: rgba(255, 255, 255, 1);
+  gap: 10px;
   cursor: pointer;
 `;
 
 const ListTag = styled.span`
-  font-size: 1.5rem;
+  font-family: "Pretendard";
+  font-style: normal;
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 17px;
 `;
