@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useEffect } from "react";
+import { io } from "socket.io-client";
 import styled from "styled-components";
 
 type Props = {
@@ -12,14 +13,15 @@ type Props = {
 };
 
 const SERVER_URI = process.env.NEXT_PUBLIC_SERVER_URI;
+const socket = io(`${SERVER_URI}/chat`);
 
 export default function ChatRoomsList(props: Props) {
   const [check, setCheck] = useState<boolean>(false);
   const [profileImg, setProfileImg] = useState<string>("");
   const [notReadCounts, setNotReadCounts] = useState<number>(0);
-
+  const [rendering, setRendering] = useState<number>();
+  const [lastOder, setLastOder] = useState<string>();
   let nameTag;
-  let lastOder;
 
   if (props.roomData.user.length === 2) {
     for (let a = 0; a < 2; a++) {
@@ -31,19 +33,30 @@ export default function ChatRoomsList(props: Props) {
     nameTag = props.roomData.user[1].name + " 외" + (props.roomData.user.length - 1) + " 명";
   }
 
-  if (props.roomData.blah[0]) {
-    if (props.roomData.blah[props.roomData.blah.length - 1].comments) {
-      lastOder = props.roomData.blah[props.roomData.blah.length - 1].comments;
-    } else {
-      lastOder = "";
-    }
-  }
+  useEffect(() => {
+    socket.emit("join-room", props.roomData._id, () => {});
+    const messageHandler = (chat: any) => {
+      setRendering(Math.random());
+    };
+    const messageHandlers = (chat: any) => null;
+    socket.on("message", messageHandler);
+    return () => {
+      socket.off("message", messageHandlers);
+    };
+  }, []);
 
   useEffect(() => {
     setProfileImg("");
     const userData = JSON.parse(localStorage.getItem("userData") as string);
     const accessToken = JSON.parse(localStorage.getItem("userToken") as string);
     !(async function () {
+      if (props.roomData.blah[0]) {
+        if (props.roomData.blah[props.roomData.blah.length - 1].comments) {
+          setLastOder(props.roomData.blah[props.roomData.blah.length - 1].comments);
+        } else {
+          setLastOder("");
+        }
+      }
       if (props.roomData.user.length === 2) {
         for (let i = 0; i < 2; i++) {
           if (props.roomData.user[i].name !== userData.username) {
@@ -108,13 +121,14 @@ export default function ChatRoomsList(props: Props) {
         }
       }
     })();
-  }, [props.chatRoom, lastOder, props.rerendering, check]);
+  }, [props.rerendering]);
 
   useEffect(() => {
     props.roomData !== props.chatRoom && setCheck(false);
   }, [props.chatRoom]);
 
   useEffect(() => {
+    console.log("asdf");
     const userData = JSON.parse(localStorage.getItem("userData") as string);
     const accessToken = JSON.parse(localStorage.getItem("userToken") as string);
     !(async function () {

@@ -7,10 +7,8 @@ import Blah from "./blah";
 import UserInfo from "./userInfo";
 import { ChatNew } from "@styled-icons/remix-line/ChatNew";
 import AddChat from "./addChat";
-import { io } from "socket.io-client";
 
 const SERVER_URI = process.env.NEXT_PUBLIC_SERVER_URI;
-const socket = io(`${SERVER_URI}/chat`);
 
 export default function People() {
   const [tabHandle, setTabHandle] = useState<string>("대화중");
@@ -22,14 +20,7 @@ export default function People() {
   const [rerendering, setRerendering] = useState<number>(0);
 
   useEffect(() => {
-    const messageHandler = (chat: any) => setRerendering(Math.random());
-    socket.on("message", messageHandler);
-    return () => {
-      socket.off("message", messageHandler);
-    };
-  }, []);
-
-  useEffect(() => {
+    console.log("rererere");
     const userData = JSON.parse(localStorage.getItem("userData") as string);
     setUserDatas(userData);
     const accessToken = JSON.parse(localStorage.getItem("userToken") as string);

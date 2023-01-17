@@ -17,7 +17,7 @@ let createdRooms: string[] = [];
 @WebSocketGateway({
   namespace: "chat",
   cors: {
-    origin: ["http://localhost:3000"],
+    origin: ["http://localhost:3000", "http://192.168.100.64:3000"],
   },
 })
 export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
@@ -78,6 +78,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 
   @SubscribeMessage("chat")
   async handleChat(@ConnectedSocket() socket: Socket, @MessageBody() data: any) {
+    await this.blahService.countUpdate(data);
     socket.broadcast.to(data._id).emit("chat", { username: data.email });
     return null;
   }
@@ -103,6 +104,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 
   @SubscribeMessage("join-room")
   handleJoinRoom(@ConnectedSocket() socket: Socket, @MessageBody() roomName: string) {
+    console.log("들어옴");
     socket.join(roomName); // join room
     socket.broadcast.to(roomName).emit("message", { message: `${socket.id}가 들어왔습니다.` });
 

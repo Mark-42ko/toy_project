@@ -44,19 +44,20 @@ export default function ChatBox(props: Props) {
   };
 
   useEffect(() => {
-    !(async function () {
-      const result = await fetch(`${SERVER_URI}/blah/room?id=${props._id}`, {
-        method: "GET",
-        headers: {
-          Authorization: `bearer ${accessToken}`,
-          "Content-type": "application/json",
-          "Access-Control-Allow-Origin": "http://localhost:3000",
-        },
-      });
-      const json = await result.json();
-      json.data.blah[props.idx] && setCounting(await json.data.blah[props.idx].counts.length);
-    })();
-  }, [chats]);
+    socket.emit("join-room", props.roomData._id, () => {});
+    const messageHandler = (chat: any) => {
+      setChats(Math.random());
+      props.setRerendering(Math.random());
+    };
+    socket.on("chat", messageHandler);
+    return () => {
+      socket.off("chat", messageHandler);
+    };
+  }, []);
+
+  useEffect(() => {
+    socket.emit("chat", data, (chat: any) => null);
+  }, []);
 
   useEffect(() => {
     !(async function () {
@@ -70,33 +71,8 @@ export default function ChatBox(props: Props) {
       });
       const json = await result.json();
       json.data.blah[props.idx] && setCounting(await json.data.blah[props.idx].counts.length);
-      if (props.chatData.filename) {
-        const extension =
-          props.chatData.filename.split(".")[props.chatData.filename.split(".").length - 1];
-        if (
-          extension === "jpg" ||
-          extension === "jpeg" ||
-          extension === "png" ||
-          extension === "gif"
-        ) {
-          const result = await fetch(
-            `${SERVER_URI}/blah/download?filename=${props.chatData.filename}`,
-            {
-              method: "GET",
-              headers: {
-                Authorization: `bearer ${accessToken}`,
-                "Content-type": "application/json",
-                "Access-Control-Allow-Origin": "http://localhost:3000",
-              },
-            },
-          );
-          const file = await result.blob();
-          const downloadUrl = window.URL.createObjectURL(file);
-          setImageFileUrl(downloadUrl);
-        }
-      }
     })();
-  }, []);
+  }, [chats, props.rerendering]);
 
   useEffect(() => {
     !(async function () {
@@ -125,40 +101,6 @@ export default function ChatBox(props: Props) {
           setProfile(downloadUrl);
         }
       }
-    })();
-  }, []);
-
-  useEffect(() => {
-    const messageHandler = (chat: any) => {
-      return setChats(Math.random());
-    };
-    socket.on("chat", messageHandler);
-    return () => {
-      socket.off("chat", messageHandler);
-    };
-  }, []);
-
-  useEffect(() => {
-    const data = props._id;
-    socket.emit("chat", data, (chat: any) => null);
-  }, []);
-
-  useEffect(() => {
-    !(async function () {
-      await fetch(`${SERVER_URI}/blah/updateCount`, {
-        method: "POST",
-        body: JSON.stringify({
-          _id: props._id,
-          idx: props.idx,
-          email: userData.userId,
-        }),
-        headers: {
-          Authorization: `bearer ${accessToken}`,
-          "Content-type": "application/json",
-          "Access-Control-Allow-Origin": "http://localhost:3000",
-        },
-      });
-      props.setRerendering(Math.random());
     })();
   }, []);
 

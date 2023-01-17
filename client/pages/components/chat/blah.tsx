@@ -17,6 +17,7 @@ interface IChat {
 }
 
 const SERVER_URI = process.env.NEXT_PUBLIC_SERVER_URI;
+const AI_URI = process.env.NEXT_PUBLIC_AI_URI;
 const socket = io(`${SERVER_URI}/chat`);
 
 export default function Blah(props: Props) {
@@ -29,9 +30,11 @@ export default function Blah(props: Props) {
   const accessToken = JSON.parse(localStorage.getItem("userToken") as string);
 
   const chatUser: string[] = [];
-
   for (let i = 0; i < props.roomData.user.length; i++) {
-    if (props.roomData.user[i] !== userData.username) {
+    if (
+      props.roomData.user[i].name !== userData.username &&
+      props.roomData.user[i].name !== "챗봇"
+    ) {
       chatUser.push(props.roomData.user[i].email);
     }
   }
@@ -71,35 +74,6 @@ export default function Blah(props: Props) {
     if (inputData === "") {
       alert("메시지를 입력해주세요.");
     } else {
-      // if (props.roomData.user.find((one:any) => one.name === '챗봇')) {
-      //   if(props.roomData.user.length === 2) {
-      //     await fetch(`AI-URL주소`, {
-      //       method: "POST",
-      //       body: JSON.stringify({
-      //         roomName: props.roomData._id,
-      //         socketUrl: `${SERVER_URI}/chat`
-      //       }),
-      //       headers: {
-      //         "Content-type": "application/json",
-      //         "Access-Control-Allow-Origin": "http://localhost:3000",
-      //       },
-      //     });
-      //   } else {
-      //     if(inputData.startsWith("챗봇")) {
-      //       await fetch(`AI-URL주소`, {
-      //         method: "POST",
-      //         body: JSON.stringify({
-      //           roomName: props.roomData._id,
-      //           socketUrl: `${SERVER_URI}/chat`
-      //         }),
-      //         headers: {
-      //           "Content-type": "application/json",
-      //           "Access-Control-Allow-Origin": "http://localhost:3000",
-      //         },
-      //       });
-      //     }
-      //   }
-      // }
       if (files.length !== 0) {
         const formData = new FormData();
         files.forEach((one) => {
@@ -165,13 +139,46 @@ export default function Blah(props: Props) {
             "Access-Control-Allow-Origin": "http://localhost:3000",
           },
         });
+        setInputData("");
+        if (props.roomData.user.find((one: any) => one.name === "챗봇")) {
+          if (props.roomData.user.length === 2) {
+            await fetch(`${AI_URI}`, {
+              method: "POST",
+              body: JSON.stringify({
+                roomName: props.roomData._id,
+                userName: userData.name,
+                message: inputData,
+                counts: [userData.userId],
+                socketUrl: `${SERVER_URI}/chat`,
+              }),
+              headers: {
+                "Content-type": "application/json",
+              },
+            });
+          } else {
+            if (inputData.startsWith("챗봇")) {
+              await fetch(`${AI_URI}`, {
+                method: "POST",
+                body: JSON.stringify({
+                  roomName: props.roomData._id,
+                  userName: userData.name,
+                  counts: chatUser,
+                  message: inputData,
+                  socketUrl: `${SERVER_URI}/chat`,
+                }),
+                headers: {
+                  "Content-type": "application/json",
+                },
+              });
+            }
+          }
+        }
         const data = {
           roomName: props.roomData._id,
           message: inputData,
         };
         socket.emit("message", data, (chat: any) => {
           setUpdateData(chat);
-          setInputData("");
           setCheck(chat.blah.length);
         });
       }
