@@ -8,8 +8,6 @@ import UserInfo from "./userInfo";
 import { ChatNew } from "@styled-icons/remix-line/ChatNew";
 import AddChat from "./addChat";
 
-const SERVER_URI = process.env.NEXT_PUBLIC_SERVER_URI;
-
 export default function People() {
   const [tabHandle, setTabHandle] = useState<string>("대화중");
   const [open, setOpen] = useState<boolean>(false);
@@ -38,7 +36,10 @@ export default function People() {
         setRoomData(json.data);
       })();
     }
-  }, [open, rerendering, tabHandle]);
+    if (chatRoom) {
+      console.log(chatRoom._id);
+    }
+  }, [open, tabHandle]);
 
   const newChatButtonHandle = () => {
     setOpen(!open);

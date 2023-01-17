@@ -40,8 +40,10 @@ export default function Blah(props: Props) {
   }
 
   useEffect(() => {
-    const messageHandler = (chat: IChat) => {
-      props.setRerendering(Math.random());
+    const messageHandler = (chat: any) => {
+      if (chat.roomName) {
+        props.setRerendering(Math.random());
+      }
     };
     socket.emit("join-room", props.roomData._id, () => {});
     socket.on("message", messageHandler);
@@ -56,7 +58,9 @@ export default function Blah(props: Props) {
   }, [updateData]);
 
   useEffect(() => {
+    console.log("rendering");
     !(async function () {
+      console.log(props.roomData._id);
       const result = await fetch(`${SERVER_URI}/blah/room?id=${props.roomData._id}`, {
         method: "GET",
         headers: {
@@ -66,9 +70,17 @@ export default function Blah(props: Props) {
         },
       });
       const json = await result.json();
-      setUpdateData(json.data);
+      console.log(json.data);
+      if (json.data._id === props.roomData._id) {
+        setUpdateData(json.data);
+      }
     })();
-  }, [props.rerendering, props.roomData]);
+  }, [props.roomData, props.rerendering]);
+
+  // useEffect(() => {
+  //   console.log(props.roomData.blah.length);
+  //   setUpdateData(props.roomData);
+  // }, [props.roomData]);
 
   const inputButtonHandle = async () => {
     if (inputData === "") {
@@ -140,6 +152,14 @@ export default function Blah(props: Props) {
           },
         });
         setInputData("");
+        const data = {
+          roomName: props.roomData._id,
+          message: inputData,
+        };
+        socket.emit("message", data, (chat: any) => {
+          setUpdateData(chat);
+          setCheck(chat.blah.length);
+        });
         if (props.roomData.user.find((one: any) => one.name === "챗봇")) {
           if (props.roomData.user.length === 2) {
             await fetch(`${AI_URI}`, {
@@ -173,14 +193,6 @@ export default function Blah(props: Props) {
             }
           }
         }
-        const data = {
-          roomName: props.roomData._id,
-          message: inputData,
-        };
-        socket.emit("message", data, (chat: any) => {
-          setUpdateData(chat);
-          setCheck(chat.blah.length);
-        });
       }
     }
   };

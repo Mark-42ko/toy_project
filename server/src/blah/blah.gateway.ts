@@ -48,6 +48,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 
   @SubscribeMessage("message")
   async handleMessage(@ConnectedSocket() socket: Socket, @MessageBody() data: any) {
+    console.log(data);
     if (data.name) {
       const datas = {
         _id: data.roomName,
@@ -71,7 +72,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
       const result = await this.blahService.findById(data.roomName);
       socket.broadcast
         .to(data.roomName)
-        .emit("message", { username: socket.id, message: data.message });
+        .emit("message", { roomName: data.roomName, message: data.message });
       return result;
     }
   }

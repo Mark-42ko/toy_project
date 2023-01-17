@@ -19,24 +19,18 @@ export default function ChatRoomsList(props: Props) {
   const [check, setCheck] = useState<boolean>(false);
   const [profileImg, setProfileImg] = useState<string>("");
   const [notReadCounts, setNotReadCounts] = useState<number>(0);
-  const [rendering, setRendering] = useState<number>();
   const [lastOder, setLastOder] = useState<string>();
-  let nameTag;
-
-  if (props.roomData.user.length === 2) {
-    for (let a = 0; a < 2; a++) {
-      if (props.roomData.user[a].name !== props.userDatas.username) {
-        nameTag = props.roomData.user[a].name;
-      }
-    }
-  } else {
-    nameTag = props.roomData.user[1].name + " 외" + (props.roomData.user.length - 1) + " 명";
-  }
+  const [nameTag, setNameTag] = useState<string>();
+  const [rendering, setRendering] = useState<number>(0);
+  const [connection, setConnection] = useState<any>();
 
   useEffect(() => {
     socket.emit("join-room", props.roomData._id, () => {});
     const messageHandler = (chat: any) => {
-      setRendering(Math.random());
+      if (chat.roomName) {
+        setRendering(Math.random());
+        console.log("여기");
+      }
     };
     const messageHandlers = (chat: any) => null;
     socket.on("message", messageHandler);
@@ -50,13 +44,6 @@ export default function ChatRoomsList(props: Props) {
     const userData = JSON.parse(localStorage.getItem("userData") as string);
     const accessToken = JSON.parse(localStorage.getItem("userToken") as string);
     !(async function () {
-      if (props.roomData.blah[0]) {
-        if (props.roomData.blah[props.roomData.blah.length - 1].comments) {
-          setLastOder(props.roomData.blah[props.roomData.blah.length - 1].comments);
-        } else {
-          setLastOder("");
-        }
-      }
       if (props.roomData.user.length === 2) {
         for (let i = 0; i < 2; i++) {
           if (props.roomData.user[i].name !== userData.username) {
@@ -121,14 +108,9 @@ export default function ChatRoomsList(props: Props) {
         }
       }
     })();
-  }, [props.rerendering]);
+  }, []);
 
   useEffect(() => {
-    props.roomData !== props.chatRoom && setCheck(false);
-  }, [props.chatRoom]);
-
-  useEffect(() => {
-    console.log("asdf");
     const userData = JSON.parse(localStorage.getItem("userData") as string);
     const accessToken = JSON.parse(localStorage.getItem("userToken") as string);
     !(async function () {
@@ -146,12 +128,43 @@ export default function ChatRoomsList(props: Props) {
       });
       const json = await result.json();
       setNotReadCounts(json);
+      const response = await fetch(`${SERVER_URI}/blah/room?id=${props.roomData._id}`, {
+        method: "GET",
+        headers: {
+          Authorization: `bearer ${accessToken}`,
+          "Content-type": "application/json",
+          "Access-Control-Allow-Origin": "http://localhost:3000",
+        },
+      });
+      const jsons = await response.json();
+      setConnection(jsons.data);
+      if (jsons.data.blah[0]) {
+        if (jsons.data.blah[jsons.data.blah.length - 1].comments) {
+          setLastOder(jsons.data.blah[jsons.data.blah.length - 1].comments);
+        } else {
+          setLastOder("");
+        }
+      }
+      if (jsons.data.user.length === 2) {
+        for (let a = 0; a < 2; a++) {
+          if (jsons.data.user[a].name !== jsons.data.username) {
+            setNameTag(jsons.data.user[a].name);
+          }
+        }
+      } else {
+        setNameTag(jsons.data.user[1].name + " 외" + (jsons.data.user.length - 1) + " 명");
+      }
     })();
-  }, [props.chatRoom, lastOder, props.rerendering, check]);
+  }, [rendering, props.roomData]);
+
+  useEffect(() => {
+    if (props.chatRoom) {
+      props.roomData._id === props.chatRoom._id ? setCheck(true) : setCheck(false);
+    }
+  }, [props.chatRoom]);
 
   const clickHandle = () => {
-    setCheck(true);
-    props.setChatRoom(props.roomData);
+    props.setChatRoom(connection);
   };
 
   return (

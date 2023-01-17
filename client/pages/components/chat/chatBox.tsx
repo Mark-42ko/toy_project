@@ -104,6 +104,36 @@ export default function ChatBox(props: Props) {
     })();
   }, []);
 
+  useEffect(() => {
+    !(async function () {
+      if (props.chatData.filename) {
+        const extension =
+          props.chatData.filename.split(".")[props.chatData.filename.split(".").length - 1];
+        if (
+          extension === "jpg" ||
+          extension === "jpeg" ||
+          extension === "png" ||
+          extension === "gif"
+        ) {
+          const result = await fetch(
+            `${SERVER_URI}/blah/download?filename=${props.chatData.filename}`,
+            {
+              method: "GET",
+              headers: {
+                Authorization: `bearer ${accessToken}`,
+                "Content-type": "application/json",
+                "Access-Control-Allow-Origin": "http://localhost:3000",
+              },
+            },
+          );
+          const file = await result.blob();
+          const downloadUrl = window.URL.createObjectURL(file);
+          setImageFileUrl(downloadUrl);
+        }
+      }
+    })();
+  }, []);
+
   const downloadHandle = async () => {
     const result = await fetch(`${SERVER_URI}/blah/download?filename=${props.chatData.filename}`, {
       method: "GET",
