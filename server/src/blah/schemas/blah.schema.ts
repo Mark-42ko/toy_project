@@ -27,6 +27,7 @@ export class Blah {
       filesize: number;
     },
   ];
+
   @Prop({ required: true })
   status: string;
 }

@@ -68,14 +68,12 @@ export default function AddChatCard(props: Props) {
             alt="프로필 이미지"
             width={65}
             height={65}
-            style={{ borderRadius: "8px" }}
+            style={{ borderRadius: "50%" }}
           />
         ) : (
           <ProfileImg />
         )}
-        <NameTag>
-          <b>{props.friendData.name}</b>
-        </NameTag>
+        <NameTag>{props.friendData.name}</NameTag>
       </ProfileContainer>
     </Container>
   );
@@ -86,16 +84,15 @@ type ButtonProps = {
 };
 
 const Container = styled.button`
-  padding: 1rem;
+  padding: 12px;
   width: 100%;
-  border: 2px solid;
-  border-radius: 4px;
-  border-color: rgba(0, 0, 0, 0.3);
+  border: 2px solid rgba(223, 222, 236, 1);
+  border-radius: 20px;
   background: ${(props: ButtonProps) =>
     props.choose === true ? "rgba(0, 0, 0, 0.3)" : "rgba(255, 255, 255, 1)"};
   &:active {
     background-color: rgba(0, 0, 0, 0.1);
-    border-radius: 4px;
+    border-radius: 20px;
   }
 `;
 
@@ -103,7 +100,7 @@ const ProfileContainer = styled.div`
   display: flex;
   align-items: center;
   flex-direction: row;
-  gap: 1.5rem;
+  gap: 20px;
   width: 100%;
 `;
 
@@ -113,9 +110,13 @@ const ProfileImg = styled.div`
   width: 65px;
   height: 65px;
   border: none;
-  border-radius: 4px;
+  border-radius: 50%;
 `;
 
 const NameTag = styled.div`
-  font-size: 1.4rem;
+  font-family: "Pretendard";
+  font-style: normal;
+  font-weight: 600;
+  font-size: 18px;
+  line-height: 26px;
 `;

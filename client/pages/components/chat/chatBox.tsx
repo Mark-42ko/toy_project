@@ -56,7 +56,9 @@ export default function ChatBox(props: Props) {
   }, []);
 
   useEffect(() => {
-    socket.emit("chat", data, (chat: any) => null);
+    socket.emit("chat", data, (chat: any) => {
+      setChats(Math.random());
+    });
   }, []);
 
   useEffect(() => {
@@ -188,7 +190,12 @@ export default function ChatBox(props: Props) {
             <TimeLine>{timeStamp}</TimeLine>
           </MinInfoContainer>
           {props.chatData.filename ? (
-            <FileButton onClick={downloadHandle} type={"submit"} title="이미지 다운로드하기">
+            <FileButton
+              onClick={downloadHandle}
+              type={"submit"}
+              title="이미지 다운로드하기"
+              check={check}
+            >
               {(extension === "jpg" ||
                 extension === "jpeg" ||
                 extension === "png" ||
@@ -199,7 +206,11 @@ export default function ChatBox(props: Props) {
                   <ImgLoading></ImgLoading>
                 ))}
               <ImgInfoDiv>
-                <FileEarmarkArrowDown height={50} width={40} />
+                <FileEarmarkArrowDown
+                  height={35}
+                  width={25}
+                  style={{ color: "rgba(255, 255, 255, 1)" }}
+                />
                 <FileInfoText>{props.chatData.comments}</FileInfoText>
               </ImgInfoDiv>
             </FileButton>
@@ -223,17 +234,20 @@ export default function ChatBox(props: Props) {
               alt="프로필이미지"
               width={65}
               height={65}
-              style={{ borderRadius: "8px" }}
+              style={{ borderRadius: "50%" }}
             />
           ) : (
             <ProfileDiv />
           )}
           <InnerContainer>
-            <NameTag>
-              <b>{props.chatData.name}</b>
-            </NameTag>
+            <NameTag>{props.chatData.name}</NameTag>
             {props.chatData.filename ? (
-              <FileButton onClick={downloadHandle} type={"submit"} title="이미지 다운로드하기">
+              <FileButton
+                onClick={downloadHandle}
+                type={"submit"}
+                title="이미지 다운로드하기"
+                check={check}
+              >
                 {(extension === "jpg" ||
                   extension === "jpeg" ||
                   extension === "png" ||
@@ -244,13 +258,23 @@ export default function ChatBox(props: Props) {
                     <ImgLoading></ImgLoading>
                   ))}
                 <ImgInfoDiv>
-                  <FileEarmarkArrowDown height={50} width={40} />
+                  <FileEarmarkArrowDown
+                    height={35}
+                    width={25}
+                    style={{ color: "rgba(255, 255, 255, 1)" }}
+                  />
                   <FileInfoText>{props.chatData.comments}</FileInfoText>
                 </ImgInfoDiv>
               </FileButton>
             ) : (
               <InnerContainer>
-                <TextBox check={check}>{props.chatData.comments}</TextBox>
+                {urlRegex.test(props.chatData.comments) ? (
+                  <LinkText check={check} onClick={linkClickHandle}>
+                    <u>{props.chatData.comments}</u>
+                  </LinkText>
+                ) : (
+                  <TextBox check={check}>{props.chatData.comments}</TextBox>
+                )}
               </InnerContainer>
             )}
           </InnerContainer>
@@ -286,7 +310,7 @@ const ProfileDiv = styled.div`
   width: 65px;
   height: 65px;
   border: none;
-  border-radius: 4px;
+  border-radius: 50%;
 `;
 
 const InnerContainer = styled.div`
@@ -296,21 +320,31 @@ const InnerContainer = styled.div`
 `;
 
 const NameTag = styled.span`
-  font-size: 1.3rem;
+  font-family: "Pretendard";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 21px;
 `;
 
 const TextBox = styled.span`
   display: flex;
-  font-size: 1.4rem;
-  display: flex;
   align-items: center;
+  border-radius: ${(props: CheckProps) =>
+    props.check === true ? "10px 0px 10px 10px" : "0px 10px 10px 10px"};
   background-color: ${(props: CheckProps) =>
-    props.check === true ? "rgba(244, 250, 88, 1)" : "rgba(255, 255, 255, 1)"};
+    props.check === true ? "rgba(255, 81, 0, 1)" : "rgba(52, 51, 67, 1)"};
   border: none;
-  border-radius: 4px;
   padding: 1rem;
   word-break: break-all;
   max-width: 450px;
+  color: rgba(255, 255, 255, 1);
+
+  font-family: "Pretendard";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 19px;
 `;
 
 const MinInfoContainer = styled.div`
@@ -321,17 +355,33 @@ const MinInfoContainer = styled.div`
 `;
 
 const CountCheck = styled.label`
-  color: rgba(244, 250, 88, 1);
+  color: rgba(153, 151, 172, 1);
+
+  font-family: "Pretendard";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 17px;
 `;
 
-const TimeLine = styled.label``;
+const TimeLine = styled.label`
+  color: rgba(153, 151, 172, 1);
+
+  font-family: "Pretendard";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 17px;
+`;
 
 const FileButton = styled.button`
   display: flex;
   flex-direction: column;
   border: none;
-  background: rgba(255, 255, 255, 1);
-  border-radius: 4px;
+  background-color: ${(props: CheckProps) =>
+    props.check === true ? "rgba(255, 81, 0, 1)" : "rgba(52, 51, 67, 1)"};
+  border-radius: ${(props: CheckProps) =>
+    props.check === true ? "10px 0px 10px 10px" : "0px 10px 10px 10px"};
   align-items: center;
   padding: 1rem;
   gap: 1rem;
@@ -347,14 +397,18 @@ const ImgInfoDiv = styled.div`
 `;
 
 const FileInfoText = styled.span`
-  font-size: 1.4rem;
   display: flex;
   align-items: center;
-  background-color: rgba(255, 255, 255, 1);
   border: none;
-  border-radius: 1rem;
   padding: 1rem;
   word-break: break-all;
+  color: rgba(255, 255, 255, 1);
+
+  font-family: "Pretendard";
+  font-style: normal;
+  font-weight: 600;
+  font-size: 18px;
+  line-height: 19px;
 `;
 
 const ImgLoading = styled.div`
@@ -366,15 +420,21 @@ const ImgLoading = styled.div`
 const LinkText = styled.button`
   color: rgba(19, 15, 255, 1);
   display: flex;
-  font-size: 1.4rem;
   display: flex;
   align-items: center;
   background-color: ${(props: CheckProps) =>
-    props.check === true ? "rgba(244, 250, 88, 1)" : "rgba(255, 255, 255, 1)"};
+    props.check === true ? "rgba(255, 81, 0, 1)" : "rgba(52, 51, 67, 1)"};
   border: none;
-  border-radius: 1rem;
+  border-radius: ${(props: CheckProps) =>
+    props.check === true ? "10px 0px 10px 10px" : "0px 10px 10px 10px"};
   padding: 1rem;
   word-break: break-all;
+
+  font-family: "Pretendard";
+  font-style: normal;
+  font-weight: 600;
+  font-size: 18px;
+  line-height: 19px;
 `;
 
 const SystemMsg = styled.span`

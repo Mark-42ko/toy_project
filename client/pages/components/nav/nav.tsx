@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import Button from "./Button";
-import { LogOut } from "@styled-icons/boxicons-regular/LogOut";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Image from "next/image";
 
@@ -13,7 +13,11 @@ type Props = {
   setNavController: Function;
 };
 
+const SERVER_URI = process.env.NEXT_PUBLIC_SERVER_URI;
+
 export default function Nav(props: Props) {
+  const [profileImg, setProfileImg] = useState<string>();
+
   const router = useRouter();
 
   const logOutHandle = () => {
@@ -22,9 +26,48 @@ export default function Nav(props: Props) {
     router.push("/account/signIn");
   };
 
+  useEffect(() => {
+    const userData = JSON.parse(localStorage.getItem("userData") as string);
+    const accessToken = JSON.parse(localStorage.getItem("userToken") as string);
+    if (userData && accessToken) {
+      const extension = userData.filename.split(".")[userData.filename.split(".").length - 1];
+      if (
+        extension === "jpg" ||
+        extension === "jpeg" ||
+        extension === "png" ||
+        extension === "gif"
+      ) {
+        !(async function () {
+          const result = await fetch(`${SERVER_URI}/blah/download?filename=${userData.filename}`, {
+            method: "GET",
+            headers: {
+              Authorization: `bearer ${accessToken}`,
+              "Content-type": "application/json",
+              "Access-Control-Allow-Origin": "http://localhost:3000",
+            },
+          });
+          const file = await result.blob();
+          const downloadUrl = window.URL.createObjectURL(file);
+          setProfileImg(downloadUrl);
+        })();
+      }
+    }
+  }, []);
+
   return (
     <SideMenu>
       <ButtonDiv>
+        {profileImg ? (
+          <Image
+            src={profileImg}
+            alt="프로필 이미지"
+            width={56}
+            height={56}
+            style={{ border: "2px solid rgba(153, 151, 172, 1)", borderRadius: "50%" }}
+          />
+        ) : (
+          <ImgDiv />
+        )}
         {buttonIcon.map((one) => {
           return (
             <Button
@@ -57,7 +100,19 @@ const SideMenu = styled.div`
 const ButtonDiv = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 0.7rem;
+  gap: 22px;
+`;
+
+const ImgDiv = styled.div`
+  background-image: url("/images/defaultGuest.jpg");
+  background-size: cover;
+  min-width: 56px;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-end;
 `;
 
 const LogoutButtonBox = styled.button`

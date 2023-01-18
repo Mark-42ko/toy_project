@@ -9,9 +9,6 @@ export default function HomePage() {
   useEffect(() => {
     if (!localStorage.getItem("userData") || !localStorage.getItem("userToken")) {
       router.push("/account/signIn");
-    } else {
-      const userData = JSON.parse(localStorage.getItem("userData") as string);
-      const accessToken = JSON.parse(localStorage.getItem("userToken") as string);
     }
   }, []);
 

@@ -11,7 +11,7 @@ export default function TabButton(props: Props) {
   const [choose, setChoose] = useState<boolean>(false);
 
   useEffect(() => {
-    props.title === "대화중" && setChoose(true);
+    props.title === "진행중" && setChoose(true);
     props.tabHandle !== props.title && setChoose(false);
   }, [props.tabHandle]);
 
@@ -32,15 +32,21 @@ type ButtonProps = {
 };
 
 const Button = styled.button`
-  height: 100%;
+  width: 69px;
+  height: 33px;
   border: none;
-  border-radius: 4px;
-  width: 49%;
-  font-size: 1.1rem;
+  border-radius: 10px;
   align-items: center;
-  cursor: pointer;
   color: ${(props: ButtonProps) =>
-    props.choose === true ? "rgba(112, 200, 255, 1)" : "rgba(255, 255, 255, 1)"};
+    props.choose === true ? "rgba(255, 255, 255, 1)" : "rgba(153, 151, 172, 1)"};
   background: ${(props: ButtonProps) =>
-    props.choose === true ? "rgba(255, 255, 255, 1)" : "rgba(112, 200, 255, 1)"};
+    props.choose === true ? "rgba(255, 81, 0, 1)" : "rgba(244, 243, 251, 1)"};
+
+  font-family: "Pretendard";
+  font-style: normal;
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 17px;
+
+  cursor: pointer;
 `;

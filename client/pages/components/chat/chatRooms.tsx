@@ -10,6 +10,7 @@ type Props = {
   chatRoom: any;
   userDatas: any;
   rerendering: number;
+  chatRoomsRender: number;
 };
 
 const SERVER_URI = process.env.NEXT_PUBLIC_SERVER_URI;
@@ -29,7 +30,6 @@ export default function ChatRoomsList(props: Props) {
     const messageHandler = (chat: any) => {
       if (chat.roomName) {
         setRendering(Math.random());
-        console.log("여기");
       }
     };
     const messageHandlers = (chat: any) => null;
@@ -147,15 +147,15 @@ export default function ChatRoomsList(props: Props) {
       }
       if (jsons.data.user.length === 2) {
         for (let a = 0; a < 2; a++) {
-          if (jsons.data.user[a].name !== jsons.data.username) {
+          if (jsons.data.user[a].name !== userData.username) {
             setNameTag(jsons.data.user[a].name);
           }
         }
       } else {
-        setNameTag(jsons.data.user[1].name + " 외" + (jsons.data.user.length - 1) + " 명");
+        setNameTag(jsons.data.user[0].name + " 외" + (jsons.data.user.length - 1) + " 명");
       }
     })();
-  }, [rendering, props.roomData]);
+  }, [rendering, props.roomData, props.chatRoomsRender]);
 
   useEffect(() => {
     if (props.chatRoom) {
@@ -177,11 +177,7 @@ export default function ChatRoomsList(props: Props) {
         <ImgDiv>{notReadCounts !== 0 && <NotReadText>{notReadCounts}</NotReadText>}</ImgDiv>
       )}
       <SmallContainer>
-        <div>
-          <NameTag>
-            <b>{nameTag}</b>
-          </NameTag>
-        </div>
+        <NameTag>{nameTag}</NameTag>
         <LastOrder>{lastOder}</LastOrder>
       </SmallContainer>
     </ButtonContainer>
@@ -193,32 +189,33 @@ type ButtonProps = {
 };
 
 const ButtonContainer = styled.button<ButtonProps>`
-  width: 100%;
+  width: 365px;
   display: flex;
   flex-direction: row;
   margin-top: 15px;
-  border: none;
-  border-radius: 4px;
+  border: ${({ selected }) => (selected ? "1px solid rgba(223, 222, 236, 1)" : "none")};
+  border-radius: 10px;
   align-items: center;
-  border: 2px solid;
-  border-color: rgba(112, 200, 255, 1);
   padding: 0.5rem;
-  background: ${({ selected }) => (selected ? "rgba(0, 0, 0, 0.1)" : "rgba(255, 255, 255, 1)")};
+  background: ${({ selected }) => (selected ? "rgba(244, 243, 251, 1)" : "rgba(255, 255, 255, 1)")};
   cursor: pointer;
 `;
 
 const ImgDiv = styled.div`
   background-image: url("/images/defaultGuest.jpg");
   background-size: cover;
-  min-width: 65px;
-  width: 65px;
-  height: 65px;
-  border-radius: 4px;
+  min-width: 56px;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-end;
 `;
 
 const SmallContainer = styled.div`
   width: 80%;
-  height: 50px;
+
   display: flex;
   flex-direction: column;
   justify-content: space-around;
@@ -227,7 +224,11 @@ const SmallContainer = styled.div`
 `;
 
 const NameTag = styled.a`
-  font-size: 1rem;
+  font-family: "Pretendard";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 19px;
 `;
 
 const LastOrder = styled.span`
@@ -235,24 +236,34 @@ const LastOrder = styled.span`
   overflow: hidden;
   text-overflow: ellipsis;
   width: 90%;
-  font-size: 1rem;
   text-align: left;
   text-overflow: ellipsis;
   overflow: hidden;
   word-break: break-all;
+
+  font-family: "Pretendard";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 17px;
 `;
 
 const NotReadText = styled.span`
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 20px;
-  height: 20px;
+  width: 17px;
+  height: 17px;
   border: none;
   border-radius: 50%;
-  background-color: rgba(231, 4, 30, 0.87);
+  background-color: rgba(255, 61, 0, 1);
   color: rgba(255, 255, 255, 1);
-  font-size: 1rem;
+
+  font-family: "Pretendard";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 14px;
 `;
 
 type Profile = {
@@ -263,8 +274,12 @@ const ProfileImg = styled.div`
   background-image: ${(props: Profile) => "url(" + props.profileImg + ")"};
   background-size: cover;
   background-size: 100% 100%;
-  min-width: 65px;
-  width: 65px;
-  height: 65px;
-  border-radius: 4px;
+  min-width: 56px;
+  width: 56px;
+  height: 56px;
+  border-radius: 28px;
+
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-end;
 `;

@@ -18,6 +18,7 @@ export default function NewChatCheck(props: Props) {
       body: JSON.stringify({
         user: props.selectFriend,
         blah: [],
+        status: "진행중",
       }),
       headers: {
         Authorization: `bearer ${accessToken}`,

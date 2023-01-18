@@ -114,97 +114,87 @@ export default function UserCard(props: Props) {
 
   return (
     <Container onClick={clickHandle}>
+      {profileImg ? (
+        <Image
+          src={profileImg}
+          alt="프로필 이미지"
+          width={56}
+          height={56}
+          style={{ borderRadius: "50%" }}
+        />
+      ) : (
+        <ProfileImg />
+      )}
       <ProfileContainer>
-        {profileImg ? (
-          <Image
-            src={profileImg}
-            alt="프로필 이미지"
-            width={65}
-            height={65}
-            style={{ borderRadius: "4px" }}
-          />
-        ) : (
-          <ProfileImg />
-        )}
         <NameTag>
           <b>{props.userData.name === userData.username ? "나" : props.userData.name}</b>
         </NameTag>
+        {props.userData.name !== "챗봇" && <InfoText>{props.userData.phoneNumber}</InfoText>}
+        {props.userData.name !== "챗봇" && <InfoText>{props.userData.email}</InfoText>}
+        {!check && <NoticeText>클릭 시 친구추가</NoticeText>}
       </ProfileContainer>
-      {props.userData.name !== "챗봇" && (
-        <InfoContainer>
-          <PhoneIphone style={{ width: "30px", height: "30px" }} />
-          <InfoText>{props.userData.phoneNumber}</InfoText>
-        </InfoContainer>
-      )}
-      {props.userData.name !== "챗봇" && (
-        <InfoContainer>
-          <EmailOutline style={{ width: "30px", height: "30px" }} />
-          <InfoText>{props.userData.email}</InfoText>
-        </InfoContainer>
-      )}
-      {!check && (
-        <NoticeText>
-          <b>친구추가를 하려면 클릭해주세요.</b>
-        </NoticeText>
-      )}
     </Container>
   );
 }
 
 const Container = styled.button`
-  width: 90%;
-  margin-top: 1rem;
-  padding: 1rem;
+  width: calc(100% - 48px);
+  height: 70px;
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-direction: column;
-  border: 1px solid;
-  border-radius: 4px;
-  border-color: #d8d8d8;
-  background-color: #ffffff;
-  cursor: pointer;
+  flex-direction: row;
+  border: none;
+  gap: 10px;
+  background-color: rgba(255, 255, 255, 1);
 
+  cursor: pointer;
   &:active {
     background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 20px;
   }
 `;
 
 const ProfileContainer = styled.div`
-  display: flex;
-  align-items: center;
-  flex-direction: row;
-  gap: 1.5rem;
   width: 100%;
-  margin-bottom: 1.5rem;
+  height: 80px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  flex-direction: column;
 `;
 
 const ProfileImg = styled.div`
   background-image: url("/images/defaultGuest.jpg");
   background-size: cover;
-  min-width: 65px;
-  width: 65px;
-  height: 65px;
+  width: 56px;
+  height: 56px;
+  min-width: 56px;
   border: none;
-  border-radius: 4px;
+  border-radius: 50%;
 `;
 
 const NameTag = styled.div`
-  font-size: 1.4rem;
-`;
-
-const InfoContainer = styled.div`
-  display: flex;
-  align-items: center;
-  width: 100%;
-  gap: 1rem;
+  font-family: "Pretendard";
+  font-style: normal;
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 19px;
 `;
 
 const InfoText = styled.span`
-  font-size: 1rem;
+  font-family: "Pretendard";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 14px;
 `;
 
 const NoticeText = styled.span`
-  font-size: 1rem;
-  color: #ff0000;
+  font-family: "Pretendard";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 14px;
+  color: rgba(255, 0, 0, 1);
 `;

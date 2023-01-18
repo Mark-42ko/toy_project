@@ -37,7 +37,6 @@ export default function AddPartner(props: Props) {
       const data: any = [];
       if (json.data) {
         await json.data.friend.map((one: any) => {
-          // console.log(one);
           if (!JSON.stringify(props.roomData.user).includes(JSON.stringify(one.name))) {
             data.push(one);
           }
@@ -91,11 +90,15 @@ export default function AddPartner(props: Props) {
           "Access-Control-Allow-Origin": "http://localhost:3000",
         },
       });
-      alert("초대완료");
-      props.setOpen(!props.open);
-      socket.emit("message", "aaaa", (chat: any) => {
+      const data = {
+        roomName: props.roomData._id,
+        message: "초대함",
+      };
+      socket.emit("message", data, (chat: any) => {
         props.setRerendering(Math.random());
       });
+      alert("초대완료");
+      props.setOpen(!props.open);
     }
   };
 
@@ -105,9 +108,7 @@ export default function AddPartner(props: Props) {
         <CloseButton onClick={() => props.setOpen(!props.open)}>
           <Back />
         </CloseButton>
-        <Title>
-          <b>초대 할 상대를 선택해주세요.</b>
-        </Title>
+        <Title>초대 할 상대를 선택해주세요.</Title>
         <div style={{ width: "40px" }} />
       </TitleContainer>
       {errMsg && <ErrMsg>{errMsg}</ErrMsg>}
@@ -134,9 +135,7 @@ export default function AddPartner(props: Props) {
           open={props.open}
         />
       ) : (
-        <AddButton onClick={addHandle}>
-          <b>추가하기</b>
-        </AddButton>
+        <AddButton onClick={addHandle}>추가하기</AddButton>
       )}
     </Container>
   );
@@ -147,14 +146,14 @@ const Container = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 1.5rem;
-  flex: 0.3;
+  gap: 18px;
+  width: 480px;
 
   background-color: rgba(255, 255, 255, 1);
 
   box-sizing: border-box;
   border: none;
-  border-radius: 4px;
+  border-radius: 20px;
 
   padding: 2rem 1rem 2rem 1rem;
 `;
@@ -173,8 +172,8 @@ const InnerContainer = styled.div`
   gap: 1rem 0;
   background-color: rgba(255, 255, 255, 1);
 
-  width: 450px;
-  max-height: 350px;
+  width: 100%;
+  max-height: 320px;
   padding: 1rem;
 
   overflow-y: scroll;
@@ -202,17 +201,28 @@ const CloseButton = styled.button`
 `;
 
 const Title = styled.span`
-  font-size: 1.6rem;
+  color: rgba(52, 51, 67, 1);
+
+  font-family: "Pretendard";
+  font-style: normal;
+  font-weight: 800;
+  font-size: 24px;
+  line-height: 29px;
 `;
 
 const AddButton = styled.button`
   border: none;
-  background: rgba(112, 200, 255, 1);
-  width: 50%;
-  height: 40px;
-  border-radius: 4px;
-  font-size: 1.3rem;
+  background: rgba(255, 81, 0, 1);
+  width: 98%;
+  height: 60px;
+  border-radius: 10px;
   color: rgba(255, 255, 255, 1);
+
+  font-family: "Pretendard";
+  font-style: normal;
+  font-weight: 800;
+  font-size: 24px;
+  line-height: 29px;
   cursor: pointer;
 `;
 

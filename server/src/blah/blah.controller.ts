@@ -28,7 +28,11 @@ export class BlahController {
   @Post("create")
   @HttpCode(201)
   async create(@Body() addBlah: AddBlah) {
-    return this.blahService.create(addBlah);
+    const data = await this.blahService.create(addBlah);
+    return Object.assign({
+      data: data,
+      statusCode: 200,
+    });
   }
 
   @Post("createAI")

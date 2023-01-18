@@ -36,6 +36,7 @@ export default function UserInfo(props: Props) {
   return (
     <Container>
       <TitleText>참여자({userDatas.length})</TitleText>
+      <Line />
       <InnerContainer>
         {userDatas &&
           userDatas.map((one: any) => (
@@ -47,24 +48,30 @@ export default function UserInfo(props: Props) {
 }
 
 const Container = styled.div`
+  width: 25%;
+  min-width: 230px;
+  height: calc(100vh - 48px);
   display: flex;
   flex-direction: column;
-  padding: 1rem;
-  width: 25%;
-  height: 78.5vh;
-  gap: 1rem;
-  background-color: rgba(0, 0, 0, 0.48);
-  border-radius: 4px;
+  margin: 24px 24px 24px 0px;
+  background-color: rgba(255, 255, 255, 1);
+  border-radius: 20px;
+`;
+
+const Line = styled.div`
+  width: 100%;
+  height: 4px;
+  background-color: rgba(233, 232, 240, 1);
 `;
 
 const InnerContainer = styled.div`
   display: flex;
   flex-direction: column;
-  padding-left: 1rem;
   width: 100%;
   max-height: 100%;
   scrollbar-width: none;
   overflow-y: auto;
+  padding: 24px 24px 24px 24px;
 
   &::-webkit-scrollbar {
     width: 8px;
@@ -79,7 +86,11 @@ const InnerContainer = styled.div`
 `;
 
 const TitleText = styled.span`
-  font-size: 2rem;
-  padding-left: 1rem;
-  color: rgba(255, 255, 255, 1);
+  padding: 24px 24px 22px 24px;
+
+  font-family: "Pretendard";
+  font-style: normal;
+  font-weight: 700;
+  font-size: 22px;
+  line-height: 26px;
 `;

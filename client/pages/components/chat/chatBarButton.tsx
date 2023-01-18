@@ -7,6 +7,7 @@ type Props = {
   data: string | undefined;
   roomData: any;
   setRerendering: Function;
+  setChatRoom: Function;
 };
 const SERVER_URI = process.env.NEXT_PUBLIC_SERVER_URI;
 const socket = io(`${SERVER_URI}/chat`);
@@ -24,7 +25,6 @@ export default function ChatBarButton(props: Props) {
       let systemComments;
       status = props.data!.slice(0, 2) + "됨";
       systemComments = `${userData.username}님이 ${props.data!.slice(0, 2)}하였습니다.`;
-
       await fetch(`${SERVER_URI}/blah/chatAdd`, {
         method: "Post",
         body: JSON.stringify({
@@ -56,7 +56,13 @@ export default function ChatBarButton(props: Props) {
           "Access-Control-Allow-Origin": "http://localhost:3000",
         },
       });
-      socket.emit("message", "zvxdv", (chat: any) => {
+      props.setChatRoom(null);
+      props.setRerendering(Math.random());
+      const data = {
+        roomName: props.roomData._id,
+        message: "종료됨",
+      };
+      socket.emit("message", data, (chat: any) => {
         props.setRerendering(Math.random());
       });
     }
@@ -84,20 +90,24 @@ export default function ChatBarButton(props: Props) {
 }
 
 const ButtonContainer = styled.div`
-  height: 50px;
+  width: 80px;
+  height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: rgba(82, 163, 255, 1);
+  background-color: rgba(255, 81, 0, 1);
   border: none;
-  border-radius: 4px;
+  border-radius: 10px;
   cursor: pointer;
-  padding: 0rem 1rem 0rem 1rem;
 `;
 
 const Text = styled.span`
   color: rgba(255, 255, 255, 1);
-  font-size: 1.3rem;
+  font-family: "Pretendard";
+  font-style: normal;
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 17px;
 `;
 
 const ModalBackdrop = styled.div`

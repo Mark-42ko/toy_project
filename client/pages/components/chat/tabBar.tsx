@@ -3,7 +3,7 @@ import TabButton from "./tabButton";
 
 type TabList = [{ title: string }, { title: string }];
 
-const tabList: TabList = [{ title: "대화중" }, { title: "완료된 대화" }];
+const tabList: TabList = [{ title: "진행중" }, { title: "종료됨" }];
 
 type Props = {
   tabHandle: string;
@@ -26,14 +26,13 @@ export default function TabBar(props: Props) {
 }
 
 const TabContainer = styled.div`
-  background-color: rgba(112, 200, 255, 1);
-  width: 290px;
-  height: 45px;
-  border: none;
-  border-radius: 4px;
+  background-color: rgba(244, 243, 251, 1);
+  border: 1px solid rgba(223, 222, 236, 1);
+  border-radius: 10px;
+  width: 148px;
+  height: 40px;
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: space-around;
-  padding: 0.2em;
 `;

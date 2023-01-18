@@ -64,6 +64,7 @@ export class BlahService {
         user: {
           $elemMatch: { email: addBlahDto.user[i].email },
         },
+        status: "진행중",
       }).exec();
       data.push(result);
     }

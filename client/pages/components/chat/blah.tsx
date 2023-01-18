@@ -1,20 +1,18 @@
 import styled from "styled-components";
-import { Send } from "@styled-icons/ionicons-sharp/Send";
 import { useEffect, useState, useRef } from "react";
 import ChatBox from "./chatBox";
 import { io } from "socket.io-client";
 import { PlusCircle } from "@styled-icons/bootstrap/PlusCircle";
+import ChatBar from "./chatBar";
+import Spinner from "./spinner";
 
 type Props = {
   roomData: any;
   setRerendering: Function;
   rerendering: number;
+  setChatRoom: Function;
+  setChatRoomsRender: Function;
 };
-
-interface IChat {
-  username: string;
-  message: string;
-}
 
 const SERVER_URI = process.env.NEXT_PUBLIC_SERVER_URI;
 const AI_URI = process.env.NEXT_PUBLIC_AI_URI;
@@ -25,6 +23,7 @@ export default function Blah(props: Props) {
   const [updateData, setUpdateData] = useState<any>();
   const [check, setCheck] = useState<number>(0);
   const [files, setFiles] = useState<File[]>([]);
+  const [spinner, setSpinner] = useState<boolean>(false);
   const ref = useRef<HTMLInputElement>(null);
   const userData = JSON.parse(localStorage.getItem("userData") as string);
   const accessToken = JSON.parse(localStorage.getItem("userToken") as string);
@@ -40,27 +39,30 @@ export default function Blah(props: Props) {
   }
 
   useEffect(() => {
+    socket.emit("join-room", props.roomData._id, () => {});
     const messageHandler = (chat: any) => {
+      console.log(chat);
       if (chat.roomName) {
+        console.log(chat.roomName);
+        setSpinner(false);
         props.setRerendering(Math.random());
+        // 여기서 로봇이 줄때만 스피너 아웃 같은룸에 보낸사람 챗봇이어야함
       }
     };
-    socket.emit("join-room", props.roomData._id, () => {});
     socket.on("message", messageHandler);
     return () => {
       socket.off("message", messageHandler);
     };
-  }, []);
+  }, [props.roomData._id]);
 
   useEffect(() => {
     const blah = document.getElementById("blah");
     blah?.scrollIntoView({ behavior: "auto", block: "end", inline: "end" });
-  }, [updateData]);
+    props.setChatRoomsRender(Math.random());
+  }, [updateData, props.rerendering]);
 
   useEffect(() => {
-    console.log("rendering");
     !(async function () {
-      console.log(props.roomData._id);
       const result = await fetch(`${SERVER_URI}/blah/room?id=${props.roomData._id}`, {
         method: "GET",
         headers: {
@@ -70,17 +72,11 @@ export default function Blah(props: Props) {
         },
       });
       const json = await result.json();
-      console.log(json.data);
       if (json.data._id === props.roomData._id) {
         setUpdateData(json.data);
       }
     })();
   }, [props.roomData, props.rerendering]);
-
-  // useEffect(() => {
-  //   console.log(props.roomData.blah.length);
-  //   setUpdateData(props.roomData);
-  // }, [props.roomData]);
 
   const inputButtonHandle = async () => {
     if (inputData === "") {
@@ -162,11 +158,12 @@ export default function Blah(props: Props) {
         });
         if (props.roomData.user.find((one: any) => one.name === "챗봇")) {
           if (props.roomData.user.length === 2) {
+            setSpinner(true);
             await fetch(`${AI_URI}`, {
               method: "POST",
               body: JSON.stringify({
                 roomName: props.roomData._id,
-                userName: userData.name,
+                userName: userData.username,
                 message: inputData,
                 counts: [userData.userId],
                 socketUrl: `${SERVER_URI}/chat`,
@@ -181,7 +178,7 @@ export default function Blah(props: Props) {
                 method: "POST",
                 body: JSON.stringify({
                   roomName: props.roomData._id,
-                  userName: userData.name,
+                  userName: userData.username,
                   counts: chatUser,
                   message: inputData,
                   socketUrl: `${SERVER_URI}/chat`,
@@ -209,6 +206,14 @@ export default function Blah(props: Props) {
 
   return (
     <Container>
+      <ChatBarContainer>
+        <ChatBar
+          roomData={props.roomData}
+          setRerendering={props.setRerendering}
+          setChatRoom={props.setChatRoom}
+        />
+        <Line />
+      </ChatBarContainer>
       <BlahContainer>
         {updateData &&
           updateData.blah.map((one: any, idx: number) => (
@@ -223,6 +228,7 @@ export default function Blah(props: Props) {
               rerendering={props.rerendering}
             />
           ))}
+        {spinner && <Spinner />}
         <div id="blah"></div>
       </BlahContainer>
       <InputContainer>
@@ -244,7 +250,7 @@ export default function Blah(props: Props) {
           }}
         />
         <SendButton type="button" onClick={inputButtonHandle}>
-          <Send />
+          보내기
         </SendButton>
       </InputContainer>
     </Container>
@@ -253,14 +259,27 @@ export default function Blah(props: Props) {
 
 const Container = styled.div`
   display: flex;
-  width: 65%;
+  width: 70%;
+  height: calc(100vh - 48px);
+  margin: 24px 24px 24px 0px;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
   flex-direction: column;
-  padding: 0.5rem;
-  border: 2px solid;
-  border-radius: 4px;
-  gap: 1rem;
+  border-radius: 20px;
+  background-color: rgba(255, 255, 255, 1);
+`;
+
+const ChatBarContainer = styled.div`
+  height: 76px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+`;
+
+const Line = styled.div`
+  width: 100%;
+  height: 4px;
+  background-color: rgba(233, 232, 240, 1);
 `;
 
 const BlahContainer = styled.div`
@@ -268,12 +287,12 @@ const BlahContainer = styled.div`
   flex-direction: column;
   align-items: center;
   gap: 1rem;
-  background-color: rgba(144, 204, 244, 1);
+  background-color: rgba(255, 255, 255, 1);
 
-  width: calc(100% - 32px);
-  height: 79vh;
+  width: calc(100% - 48px);
+  height: calc(100vh - 300px);
   overflow-y: scroll;
-  padding: 1rem 1rem 0 1rem;
+  padding: 24px 24px 24px 24px;
   border-radius: 4px;
   scrollbar-width: none;
 
@@ -281,48 +300,60 @@ const BlahContainer = styled.div`
     width: 8px;
     height: 8px;
     border-radius: 4px;
-    background: rgba(144, 204, 244, 1);
+    background: rgba(255, 255, 255, 1);
   }
   &::-webkit-scrollbar-thumb {
-    background-color: rgba(0, 0, 0, 0.3);
+    background-color: rgba(255, 255, 255, 1);
     border-radius: 4px;
   }
 `;
 
-const InputBox = styled.input`
-  border-radius: 4px;
-  padding: 0 1rem;
-  word-break: break-all;
-  box-sizing: border-box;
-  height: 40px;
-  font-size: 1.5rem;
-  border: 2px solid black;
-  flex: 1;
-`;
-
-const SendButton = styled.button`
-  width: 40px;
-  height: 40px;
-  border-radius: 4px;
-  border: none;
-  box-sizing: border-box;
-  padding: 0.6rem;
-  background: rgba(242, 248, 42, 1);
-  color: rgba(255, 255, 255, 1);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-`;
-
 const InputContainer = styled.div`
-  width: 100%;
+  width: calc(100% - 48px);
   display: flex;
   align-items: center;
   flex-direction: row;
   justify-content: center;
-  gap: 0.5rem;
+  height: 72px;
+  margin-bottom: 24px;
+  background-color: rgba(244, 243, 251, 1);
+  border-radius: 10px;
+`;
+
+const InputBox = styled.input`
+  width: calc(100% - 48px);
   height: 40px;
+  border-radius: 4px;
+  word-break: break-all;
+  border: none;
+  background-color: rgba(244, 243, 251, 1);
+  padding-left: 24px;
+  font-family: "Pretendard";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 21px;
+  :focus {
+    outline: none;
+  }
+`;
+
+const SendButton = styled.button`
+  width: 80px;
+  height: 40px;
+  border-radius: 10px;
+  border: none;
+  background: rgba(255, 81, 0, 1);
+  color: rgba(255, 255, 255, 1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 16px;
+  cursor: pointer;
+  &:active {
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 10px;
+  }
 `;
 
 const FileAddButton = styled.button`
@@ -330,8 +361,8 @@ const FileAddButton = styled.button`
   height: 40px;
   border: none;
   border-radius: 4px;
-  background: #3030b9;
-  color: rgba(255, 255, 255, 1);
+  background: rgba(244, 243, 251, 1);
+  color: rgba(255, 81, 0, 0.5);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -341,7 +372,6 @@ const FileAddButton = styled.button`
 const FileInput = styled.input``;
 
 export const hexToRGBA = (hex: string): string => {
-  // #e6e0f8
   if (!hex.startsWith("#") || hex.length !== 7) {
     return hex;
   }
@@ -351,11 +381,9 @@ export const hexToRGBA = (hex: string): string => {
 
   const tempHex = hex.slice(1);
 
-  // e6 e0 f8
   const r = parsing(tempHex, 0, 2);
   const g = parsing(tempHex, 2, 4);
   const b = parsing(tempHex, 4, 6);
 
-  // alpha = 투명도 opacity의 반대 의미
   return `rgba(${r}, ${g}, ${b}, 1)`;
 };

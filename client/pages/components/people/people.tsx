@@ -93,7 +93,7 @@ export default function People() {
 }
 
 const Container = styled.div`
-  width: 408px;
+  width: 380px;
   height: calc(100vh - 76px);
   margin: 24px 24px 24px 24px;
   padding: 14px 14px 14px 14px;
@@ -122,7 +122,7 @@ const InputContainer = styled.div`
 `;
 
 const AddFriendButton = styled.button`
-  width: 65px;
+  width: 68px;
   height: 22px;
   border: none;
   background: rgba(255, 255, 255, 1);

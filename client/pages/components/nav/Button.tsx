@@ -1,6 +1,8 @@
 import styled from "styled-components";
 import { useState, useEffect } from "react";
 import Image from "next/image";
+import { ChatLeftFill } from "@styled-icons/bootstrap/ChatLeftFill";
+import { PeopleFill } from "@styled-icons/bootstrap/PeopleFill";
 
 type Props = {
   data: string;
@@ -24,25 +26,9 @@ export default function Button(props: Props) {
   return (
     <Buttons choose={choose} onClick={chooseHandler}>
       {props.data === "people" ? (
-        <Image
-          src={"/images/ion_people-sharp.svg"}
-          alt="친구 목록"
-          width={32}
-          height={32}
-          style={{
-            color: choose ? "rgba(255, 81, 0, 1)" : "rgba(153, 151, 172, 1)",
-          }}
-        />
+        <PeopleFill width={32} height={32} />
       ) : (
-        <Image
-          src={"/images/chat.svg"}
-          alt="채팅방 목록"
-          width={26}
-          height={24}
-          style={{
-            color: choose ? "rgba(255, 81, 0, 1)" : "rgba(153, 151, 172, 1)",
-          }}
-        />
+        <ChatLeftFill width={26} height={24} />
       )}
     </Buttons>
   );
@@ -64,7 +50,7 @@ const Buttons = styled.button`
     props.choose ? "rgba(41, 40, 51, 1)" : "rgba(52, 51, 67, 1)"};
   cursor: pointer;
   svg {
-    color: ${(props: ButtonProps) =>
+    fill: ${(props: ButtonProps) =>
       props.choose ? "rgba(255, 81, 0, 1)" : "rgba(153, 151, 172, 1)"};
   }
   &:active {

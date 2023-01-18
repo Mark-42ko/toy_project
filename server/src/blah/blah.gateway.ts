@@ -50,6 +50,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
   async handleMessage(@ConnectedSocket() socket: Socket, @MessageBody() data: any) {
     console.log(data);
     if (data.name) {
+      console.log(data);
       const datas = {
         _id: data.roomName,
         blah: {
@@ -64,16 +65,27 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
         },
       };
       const result = await this.blahService.add(datas);
-      socket.broadcast
-        .to(data.roomName)
-        .emit("message", { username: socket.id, message: data.message });
+      socket.broadcast.to(data.roomName).emit("message", {
+        roomName: data.roomName,
+        message: data.message,
+        name: data.name,
+      });
       return result;
     } else {
-      const result = await this.blahService.findById(data.roomName);
-      socket.broadcast
-        .to(data.roomName)
-        .emit("message", { roomName: data.roomName, message: data.message });
-      return result;
+      if (data.selectFriend) {
+        socket.broadcast.to(data.roomName).emit("message", {
+          roomName: data.roomName,
+          message: data.message,
+          selectFriend: data.selectFriend,
+        });
+        return null;
+      } else {
+        const result = await this.blahService.findById(data.roomName);
+        socket.broadcast
+          .to(data.roomName)
+          .emit("message", { roomName: data.roomName, message: data.message });
+        return result;
+      }
     }
   }
 
@@ -105,7 +117,6 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 
   @SubscribeMessage("join-room")
   handleJoinRoom(@ConnectedSocket() socket: Socket, @MessageBody() roomName: string) {
-    console.log("들어옴");
     socket.join(roomName); // join room
     socket.broadcast.to(roomName).emit("message", { message: `${socket.id}가 들어왔습니다.` });
 

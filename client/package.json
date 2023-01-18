@@ -35,5 +35,10 @@
     "styled-components": "^5.3.6",
     "styled-icons": "^10.47.0",
     "typescript": "4.9.4"
+  },
+  "devDependencies": {
+    "-": "^0.0.1",
+    "@svgr/webpack": "^6.5.1",
+    "g": "^2.0.1"
   }
 }
