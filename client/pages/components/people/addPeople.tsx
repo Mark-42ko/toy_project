@@ -10,8 +10,8 @@ type Props = {
 export default function AddPeople(props: Props) {
   const [email, setEmail] = useState<string>("");
   const [emailErrMsg, setEmailErrMsg] = useState<string>();
-  const userData = JSON.parse(localStorage.getItem("userData") as string);
-  const accessToken = JSON.parse(localStorage.getItem("userToken") as string);
+  const userData = JSON.parse(sessionStorage.getItem("userData") as string);
+  const accessToken = JSON.parse(sessionStorage.getItem("userToken") as string);
   const emailRegex =
     /([\w-.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/;
   const SERVER_URI = process.env.NEXT_PUBLIC_SERVER_URI;

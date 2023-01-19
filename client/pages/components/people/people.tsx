@@ -1,20 +1,19 @@
 import styled from "styled-components";
 import ConnectionList from "./connectionList";
 import { useState } from "react";
-import AddPeople from "./addPeople";
 
 const connection = [
   { status: "온라인" },
   { status: "오프라인" },
-  { status: "보낸요청" },
-  { status: "받은요청" },
+  // { status: "보낸요청" },
+  // { status: "받은요청" },
 ];
 
 export default function People() {
   const [open, setOpen] = useState<boolean>(false);
   const [email, setEmail] = useState<string>("");
-  const userData = JSON.parse(localStorage.getItem("userData") as string);
-  const accessToken = JSON.parse(localStorage.getItem("userToken") as string);
+  const userData = JSON.parse(sessionStorage.getItem("userData") as string);
+  const accessToken = JSON.parse(sessionStorage.getItem("userToken") as string);
   const emailRegex =
     /([\w-.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/;
   const SERVER_URI = process.env.NEXT_PUBLIC_SERVER_URI;
@@ -77,12 +76,6 @@ export default function People() {
         />
         <AddFriendButton onClick={addHandle}>친구추가</AddFriendButton>
       </InputContainer>
-      {/* <AddButton onClick={() => setOpen(!open)}>친구추가</AddButton>
-      {open ? (
-        <ModalBackdrop>
-          <AddPeople setOpen={setOpen} open={open} />
-        </ModalBackdrop>
-      ) : null} */}
       <InnerContainer>
         {connection.map((one) => (
           <ConnectionList key={one.status} tag={one.status} open={open} />
@@ -116,6 +109,7 @@ const TitleText = styled.div`
 `;
 
 const InputContainer = styled.div`
+  width: 400px;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -144,7 +138,7 @@ const AddFriendButton = styled.button`
 `;
 
 const EmailInput = styled.input`
-  width: 312px;
+  width: 270px;
   height: 32px;
   padding-left: 12px;
   background: rgba(255, 255, 255, 1);
@@ -167,31 +161,3 @@ const InnerContainer = styled.div`
   flex-direction: column;
   gap: 31px;
 `;
-
-// const AddButton = styled.button`
-//   width: 100%;
-//   border: none;
-//   padding: 0.5rem;
-//   background: rgba(112, 200, 255, 1);
-//   font-size: 2rem;
-//   border-radius: 4px;
-//   color: rgba(255, 255, 255, 1);
-//   cursor: pointer;
-//   &:active {
-//     background-color: rgba(0, 0, 0, 0.5);
-//     border-radius: 4px;
-//   }
-// `;
-
-// const ModalBackdrop = styled.div`
-//   width: 100%;
-//   height: 100%;
-//   position: fixed;
-//   right: 0;
-//   top: 0;
-//   display: flex;
-//   flex-flow: row wrep;
-//   justify-content: center;
-//   align-items: center;
-//   background: rgba(0, 0, 0, 0.5);
-// `;

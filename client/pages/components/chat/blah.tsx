@@ -25,8 +25,8 @@ export default function Blah(props: Props) {
   const [files, setFiles] = useState<File[]>([]);
   const [spinner, setSpinner] = useState<boolean>(false);
   const ref = useRef<HTMLInputElement>(null);
-  const userData = JSON.parse(localStorage.getItem("userData") as string);
-  const accessToken = JSON.parse(localStorage.getItem("userToken") as string);
+  const userData = JSON.parse(sessionStorage.getItem("userData") as string);
+  const accessToken = JSON.parse(sessionStorage.getItem("userToken") as string);
 
   const chatUser: string[] = [];
   for (let i = 0; i < props.roomData.user.length; i++) {
@@ -39,14 +39,18 @@ export default function Blah(props: Props) {
   }
 
   useEffect(() => {
+    setSpinner(false);
     socket.emit("join-room", props.roomData._id, () => {});
     const messageHandler = (chat: any) => {
-      console.log(chat);
       if (chat.roomName) {
-        console.log(chat.roomName);
-        setSpinner(false);
-        props.setRerendering(Math.random());
-        // 여기서 로봇이 줄때만 스피너 아웃 같은룸에 보낸사람 챗봇이어야함
+        if (chat.name === "챗봇") {
+          props.setRerendering(Math.random());
+          setTimeout(() => {
+            setSpinner(false);
+          }, 2000);
+        } else {
+          props.setRerendering(Math.random());
+        }
       }
     };
     socket.on("message", messageHandler);
@@ -235,7 +239,11 @@ export default function Blah(props: Props) {
         {props.roomData.status === "종료됨" ? (
           <InputBox disabled />
         ) : (
-          <InputBox onChange={(evt) => setInputData(evt.currentTarget.value)} value={inputData} />
+          <InputBox
+            onChange={(evt) => setInputData(evt.currentTarget.value)}
+            value={inputData}
+            onKeyPress={(e) => e.key === "Enter" && inputButtonHandle()}
+          />
         )}
         <FileAddButton onClick={() => ref.current?.click()}>
           <PlusCircle />

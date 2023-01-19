@@ -6,8 +6,10 @@ import { useEffect, useState } from "react";
 export default function HomePage() {
   const [navController, setNavController] = useState<string>("mail");
   const router = useRouter();
-  useEffect(() => {
-    if (!localStorage.getItem("userData") || !localStorage.getItem("userToken")) {
+
+  // sessionstorage 에 값이 없으면 localstorage 값 삭제 시키고
+  useEffect((): any => {
+    if (!sessionStorage.getItem("userData") || !sessionStorage.getItem("userToken")) {
       router.push("/account/signIn");
     }
   }, []);

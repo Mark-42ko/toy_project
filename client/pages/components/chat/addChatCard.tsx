@@ -17,7 +17,7 @@ export default function AddChatCard(props: Props) {
   const [select, setSelect] = useState<boolean>(false);
   const [profileImg, setProfileImg] = useState<string>();
   const SERVER_URI = process.env.NEXT_PUBLIC_SERVER_URI;
-  const accessToken = JSON.parse(localStorage.getItem("userToken") as string);
+  const accessToken = JSON.parse(sessionStorage.getItem("userToken") as string);
 
   useEffect(() => {
     !(async function () {
@@ -28,7 +28,8 @@ export default function AddChatCard(props: Props) {
           extension === "jpg" ||
           extension === "jpeg" ||
           extension === "png" ||
-          extension === "gif"
+          extension === "gif" ||
+          extension === "webp"
         ) {
           const result = await fetch(
             `${SERVER_URI}/blah/download?filename=${props.friendData.filename}`,

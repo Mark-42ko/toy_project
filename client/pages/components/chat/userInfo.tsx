@@ -13,8 +13,8 @@ export default function UserInfo(props: Props) {
   const [userDatas, setUserDatas] = useState<any>([]);
 
   useEffect(() => {
-    const userData = JSON.parse(localStorage.getItem("userData") as string);
-    const accessToken = JSON.parse(localStorage.getItem("userToken") as string);
+    const userData = JSON.parse(sessionStorage.getItem("userData") as string);
+    const accessToken = JSON.parse(sessionStorage.getItem("userToken") as string);
     !(async function () {
       const result = await fetch(`${SERVER_URI}/blah?email=${userData.userId}`, {
         method: "GET",

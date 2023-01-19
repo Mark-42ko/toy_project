@@ -18,7 +18,7 @@ const socket = io(`${SERVER_URI}/chat`);
 
 export default function ChatRoomsList(props: Props) {
   const [check, setCheck] = useState<boolean>(false);
-  const [profileImg, setProfileImg] = useState<string>("");
+  const [profileImg, setProfileImg] = useState<string[]>([]);
   const [notReadCounts, setNotReadCounts] = useState<number>(0);
   const [lastOder, setLastOder] = useState<string>();
   const [nameTag, setNameTag] = useState<string>();
@@ -40,9 +40,9 @@ export default function ChatRoomsList(props: Props) {
   }, []);
 
   useEffect(() => {
-    setProfileImg("");
-    const userData = JSON.parse(localStorage.getItem("userData") as string);
-    const accessToken = JSON.parse(localStorage.getItem("userToken") as string);
+    setProfileImg([]);
+    const userData = JSON.parse(sessionStorage.getItem("userData") as string);
+    const accessToken = JSON.parse(sessionStorage.getItem("userToken") as string);
     !(async function () {
       if (props.roomData.user.length === 2) {
         for (let i = 0; i < 2; i++) {
@@ -70,49 +70,36 @@ export default function ChatRoomsList(props: Props) {
               );
               const file = await result.blob();
               const downloadUrl = window.URL.createObjectURL(file);
-              setProfileImg(downloadUrl);
+              setProfileImg([downloadUrl]);
             }
           }
         }
       } else {
-        if (props.roomData.blah[0]) {
-          if (props.roomData.blah[props.roomData.blah.length - 1].profile) {
-            const extension =
-              props.roomData.blah[props.roomData.blah.length - 1].profile.split(".")[
-                props.roomData.blah[props.roomData.blah.length - 1].profile.split(".").length - 1
-              ];
-            if (
-              extension === "jpg" ||
-              extension === "jpeg" ||
-              extension === "png" ||
-              extension === "gif"
-            ) {
-              const result = await fetch(
-                `${SERVER_URI}/blah/download?filename=${
-                  props.roomData.blah[props.roomData.blah.length - 1].profile
-                }`,
-                {
-                  method: "GET",
-                  headers: {
-                    Authorization: `bearer ${accessToken}`,
-                    "Content-type": "application/json",
-                    "Access-Control-Allow-Origin": "http://localhost:3000",
-                  },
-                },
-              );
-              const file = await result.blob();
-              const downloadUrl = window.URL.createObjectURL(file);
-              setProfileImg(downloadUrl);
-            }
-          }
+        const data = [];
+        for (let a = 0; a < props.roomData.user.length; a++) {
+          const result = await fetch(
+            `${SERVER_URI}/blah/download?filename=${props.roomData.user[a].filename}`,
+            {
+              method: "GET",
+              headers: {
+                Authorization: `bearer ${accessToken}`,
+                "Content-type": "application/json",
+                "Access-Control-Allow-Origin": "http://localhost:3000",
+              },
+            },
+          );
+          const file = await result.blob();
+          const downloadUrl = window.URL.createObjectURL(file);
+          data.push(downloadUrl);
         }
+        setProfileImg(data);
       }
     })();
   }, []);
 
   useEffect(() => {
-    const userData = JSON.parse(localStorage.getItem("userData") as string);
-    const accessToken = JSON.parse(localStorage.getItem("userToken") as string);
+    const userData = JSON.parse(sessionStorage.getItem("userData") as string);
+    const accessToken = JSON.parse(sessionStorage.getItem("userToken") as string);
     !(async function () {
       const result = await fetch(`${SERVER_URI}/blah/notRead`, {
         method: "POST",
@@ -169,10 +156,16 @@ export default function ChatRoomsList(props: Props) {
 
   return (
     <ButtonContainer selected={check} onClick={clickHandle}>
-      {profileImg !== "" ? (
-        <ProfileImg profileImg={profileImg}>
-          {notReadCounts !== 0 && <NotReadText>{notReadCounts}</NotReadText>}
-        </ProfileImg>
+      {profileImg[0] ? (
+        profileImg.length === 1 ? (
+          <ProfileImg profileImg={profileImg}>
+            {notReadCounts !== 0 && <NotReadText>{notReadCounts}</NotReadText>}
+          </ProfileImg>
+        ) : (
+          <ProfilesImg profileImg={profileImg}>
+            {notReadCounts !== 0 && <NotReadText>{notReadCounts}</NotReadText>}
+          </ProfilesImg>
+        )
       ) : (
         <ImgDiv>{notReadCounts !== 0 && <NotReadText>{notReadCounts}</NotReadText>}</ImgDiv>
       )}
@@ -271,13 +264,64 @@ type Profile = {
 };
 
 const ProfileImg = styled.div`
-  background-image: ${(props: Profile) => "url(" + props.profileImg + ")"};
+  background-image: ${(props: Profile) => "url(" + props.profileImg[0] + ")"};
   background-size: cover;
   background-size: 100% 100%;
   min-width: 56px;
   width: 56px;
   height: 56px;
   border-radius: 28px;
+
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-end;
+`;
+
+const ProfilesImg = styled.div`
+  background-image: ${(props: Profile) => {
+    if (props.profileImg.length === 3) {
+      return (
+        "url(" +
+        props.profileImg[0] +
+        "), url(" +
+        props.profileImg[1] +
+        "), url(" +
+        props.profileImg[2] +
+        ")"
+      );
+    } else {
+      return (
+        "url(" +
+        props.profileImg[0] +
+        "), url(" +
+        props.profileImg[1] +
+        "), url(" +
+        props.profileImg[2] +
+        "), url(" +
+        props.profileImg[3] +
+        ")"
+      );
+    }
+  }};
+  background-size: ${(props: Profile) => {
+    if (props.profileImg.length === 3) {
+      return "28px 28px, 28px 28px, 56px 28px";
+    } else {
+      return "28px 28px, 28px 28px, 28px 28px, 28px 28px";
+    }
+  }};
+  background-position: ${(props: Profile) => {
+    if (props.profileImg.length === 3) {
+      return "0px 0px, 28px 0px, 0px 28px";
+    } else {
+      return "0px 0px, 28px 0px, 0px 28px, 28px 28px";
+    }
+  }};
+  background-repeat: no-repeat;
+  min-width: 57px;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
 
   display: flex;
   align-items: flex-start;

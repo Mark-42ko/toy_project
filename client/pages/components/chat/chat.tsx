@@ -22,42 +22,49 @@ export default function People() {
   const [chatRoomsRender, setChatRoomsRender] = useState<number>(0);
 
   useEffect(() => {
-    socket.emit("join-room", "대기방", () => {});
-    const userData = JSON.parse(localStorage.getItem("userData") as string);
-    setUserDatas(userData);
-    const accessToken = JSON.parse(localStorage.getItem("userToken") as string);
+    const userData = JSON.parse(sessionStorage.getItem("userData") as string);
+    const accessToken = JSON.parse(sessionStorage.getItem("userToken") as string);
     if (userData && accessToken) {
-      !(async function () {
-        const result = await fetch(`${SERVER_URI}/blah?email=${userData.userId}`, {
-          method: "GET",
-          headers: {
-            Authorization: `bearer ${accessToken}`,
-            "Content-type": "application/json",
-            "Access-Control-Allow-Origin": "http://localhost:3000",
-          },
-        });
-        const json = await result.json();
-        setRoomData(json.data);
-        for (let a = 0; a < json.data.length; a++) {
-          if (json.data[a].status === "진행중") {
-            socket.emit("join-room", json.data[a]._id, () => {});
-          }
-        }
-        const messageHandler = (chat: any) => {
-          if (chat.roomName && chat.message === "종료됨") {
-            setRerendering(Math.random());
-          }
-          if (chat.selectFriend) {
-            if (chat.selectFriend.find((one: any) => one.email === userData.userId)) {
-              setRerendering(Math.random());
+      const data = {
+        roomName: "온라인",
+        name: userData.username,
+      };
+      socket.emit("online", data, () => {});
+      socket.emit("join-room", "대기방", () => {});
+      setUserDatas(userData);
+      if (userData && accessToken) {
+        !(async function () {
+          const result = await fetch(`${SERVER_URI}/blah?email=${userData.userId}`, {
+            method: "GET",
+            headers: {
+              Authorization: `bearer ${accessToken}`,
+              "Content-type": "application/json",
+              "Access-Control-Allow-Origin": "http://localhost:3000",
+            },
+          });
+          const json = await result.json();
+          setRoomData(json.data);
+          for (let a = 0; a < json.data.length; a++) {
+            if (json.data[a].status === "진행중") {
+              socket.emit("join-room", json.data[a]._id, () => {});
             }
           }
-        };
-        socket.on("message", messageHandler);
-        return () => {
-          socket.off("message", messageHandler);
-        };
-      })();
+          const messageHandler = (chat: any) => {
+            if (chat.roomName && chat.message === "종료됨") {
+              setRerendering(Math.random());
+            }
+            if (chat.selectFriend) {
+              if (chat.selectFriend.find((one: any) => one.email === userData.userId)) {
+                setRerendering(Math.random());
+              }
+            }
+          };
+          socket.on("message", messageHandler);
+          return () => {
+            socket.off("message", messageHandler);
+          };
+        })();
+      }
     }
   }, [open, tabHandle, rerendering]);
 

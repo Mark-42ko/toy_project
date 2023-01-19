@@ -7,6 +7,7 @@ import { ConfigModule } from "@nestjs/config";
 import { AuthModule } from "./auth/auth.module";
 import { PeopleModule } from "./people/people.module";
 import { BlahModule } from "./blah/blah.module";
+import { OnlineModule } from './online/online.module';
 // const MONGO_URI = process.env.MONGO_URI;
 
 @Module({
@@ -24,6 +25,7 @@ import { BlahModule } from "./blah/blah.module";
     AuthModule,
     PeopleModule,
     BlahModule,
+    OnlineModule,
   ],
   controllers: [AppController],
   providers: [AppService],

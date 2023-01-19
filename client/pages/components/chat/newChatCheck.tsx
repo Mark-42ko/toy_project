@@ -10,7 +10,7 @@ type Props = {
 
 export default function NewChatCheck(props: Props) {
   const SERVER_URI = process.env.NEXT_PUBLIC_SERVER_URI;
-  const accessToken = JSON.parse(localStorage.getItem("userToken") as string);
+  const accessToken = JSON.parse(sessionStorage.getItem("userToken") as string);
 
   const yesButtonHandle = async () => {
     await fetch(`${SERVER_URI}/blah/create`, {

@@ -24,8 +24,9 @@ export default function ChatBox(props: Props) {
   const [chats, setChats] = useState<any>();
   const [imageFileUrl, setImageFileUrl] = useState<string>();
   const [profile, setProfile] = useState<string>();
-  const userData = JSON.parse(localStorage.getItem("userData") as string);
-  const accessToken = JSON.parse(localStorage.getItem("userToken") as string);
+
+  const userData = JSON.parse(sessionStorage.getItem("userData") as string);
+  const accessToken = JSON.parse(sessionStorage.getItem("userToken") as string);
 
   const urlRegex =
     /(((http(s)?:\/\/)\S+(\.[^(\n|\t|\s,)]+)+)|((http(s)?:\/\/)?(([a-zA-z\-_]+[0-9]*)|([0-9]*[a-zA-z\-_]+)){2,}(\.[^(\n|\t|\s,)]+)+))+/gi;
@@ -85,7 +86,8 @@ export default function ChatBox(props: Props) {
           extension === "jpg" ||
           extension === "jpeg" ||
           extension === "png" ||
-          extension === "gif"
+          extension === "gif" ||
+          extension === "webp"
         ) {
           const result = await fetch(
             `${SERVER_URI}/blah/download?filename=${props.chatData.profile}`,
@@ -229,13 +231,23 @@ export default function ChatBox(props: Props) {
       ) : (
         <ProfileContainer>
           {profile ? (
-            <Image
-              src={profile}
-              alt="프로필이미지"
-              width={65}
-              height={65}
-              style={{ borderRadius: "50%" }}
-            />
+            props.chatData.name === "챗봇" ? (
+              <Image
+                src={profile}
+                alt="프로필이미지"
+                width={65}
+                height={65}
+                style={{ borderRadius: "50%", border: "3px solid rgba(0,0,255,1)" }}
+              />
+            ) : (
+              <Image
+                src={profile}
+                alt="프로필이미지"
+                width={65}
+                height={65}
+                style={{ borderRadius: "50%" }}
+              />
+            )
           ) : (
             <ProfileDiv />
           )}
@@ -272,6 +284,10 @@ export default function ChatBox(props: Props) {
                   <LinkText check={check} onClick={linkClickHandle}>
                     <u>{props.chatData.comments}</u>
                   </LinkText>
+                ) : props.chatData.name === "챗봇" ? (
+                  <TextBox check={check} style={{ border: "3px solid rgba(0,0,255,1)" }}>
+                    {props.chatData.comments}
+                  </TextBox>
                 ) : (
                   <TextBox check={check}>{props.chatData.comments}</TextBox>
                 )}
@@ -418,7 +434,7 @@ const ImgLoading = styled.div`
 `;
 
 const LinkText = styled.button`
-  color: rgba(19, 15, 255, 1);
+  color: rgba(46, 100, 254, 1);
   display: flex;
   display: flex;
   align-items: center;

@@ -13,8 +13,8 @@ const SERVER_URI = process.env.NEXT_PUBLIC_SERVER_URI;
 const socket = io(`${SERVER_URI}/chat`);
 
 export default function ChatBarButton(props: Props) {
-  const userData = JSON.parse(localStorage.getItem("userData") as string);
-  const accessToken = JSON.parse(localStorage.getItem("userToken") as string);
+  const userData = JSON.parse(sessionStorage.getItem("userData") as string);
+  const accessToken = JSON.parse(sessionStorage.getItem("userToken") as string);
   const [open, setOpen] = useState<boolean>(false);
 
   const buttonHandle = async () => {

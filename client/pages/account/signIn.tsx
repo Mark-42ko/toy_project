@@ -15,8 +15,8 @@ export default function SignInPage() {
   const ctx = useContext(GlobalContext);
 
   useEffect(() => {
-    const userData = JSON.parse(localStorage.getItem("userData") as string);
-    const accessToken = JSON.parse(localStorage.getItem("userToken") as string);
+    const userData = JSON.parse(sessionStorage.getItem("userData") as string);
+    const accessToken = JSON.parse(sessionStorage.getItem("userToken") as string);
     if (userData && accessToken) {
       alert("이미 로그인 되어있습니다. 로그아웃 후 진행해주세요.");
       router.push("/");
@@ -48,8 +48,22 @@ export default function SignInPage() {
       });
       const jsons = await responses.json();
       ctx!.setUserData!(jsons);
-      localStorage.setItem("userToken", JSON.stringify(json.access_token));
-      localStorage.setItem("userData", JSON.stringify(jsons));
+      await fetch(`${SERVER_URI}/online/create`, {
+        method: "POST",
+        body: JSON.stringify({
+          email: jsons.userId,
+          name: jsons.username,
+          phoneNumber: jsons.userPhoneNumber,
+          filename: jsons.filename,
+        }),
+        headers: {
+          Authorization: `bearer ${json.access_token}`,
+          "Content-type": "application/json",
+          "Access-Control-Allow-Origin": "http://localhost:3000",
+        },
+      });
+      sessionStorage.setItem("userToken", JSON.stringify(json.access_token));
+      sessionStorage.setItem("userData", JSON.stringify(jsons));
       router.push("/");
     } else {
       alert("아이디 및 비밀번호를 확인해주세요.");

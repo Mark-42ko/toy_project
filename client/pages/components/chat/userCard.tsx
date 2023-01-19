@@ -17,8 +17,8 @@ export default function UserCard(props: Props) {
   const SERVER_URI = process.env.NEXT_PUBLIC_SERVER_URI;
   const [check, setCheck] = useState<boolean>(false);
   const [reRender, setReRender] = useState<number>(0);
-  const userData = JSON.parse(localStorage.getItem("userData") as string);
-  const accessToken = JSON.parse(localStorage.getItem("userToken") as string);
+  const userData = JSON.parse(sessionStorage.getItem("userData") as string);
+  const accessToken = JSON.parse(sessionStorage.getItem("userToken") as string);
   const [profileImg, setProfileImg] = useState<string>();
 
   useEffect(() => {
@@ -38,7 +38,8 @@ export default function UserCard(props: Props) {
           extension === "jpg" ||
           extension === "jpeg" ||
           extension === "png" ||
-          extension === "gif"
+          extension === "gif" ||
+          extension === "webp"
         ) {
           const result = await fetch(
             `${SERVER_URI}/blah/download?filename=${props.userData.filename}`,

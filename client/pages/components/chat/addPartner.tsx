@@ -20,8 +20,8 @@ export default function AddPartner(props: Props) {
   const [selectFriend, setSelectFriend] = useState<any>([]);
   const [errMsg, setErrMsg] = useState<string | undefined>();
   const [newBlahCheck, setNewBlahCheck] = useState<boolean>(false);
-  const userData = JSON.parse(localStorage.getItem("userData") as string);
-  const accessToken = JSON.parse(localStorage.getItem("userToken") as string);
+  const userData = JSON.parse(sessionStorage.getItem("userData") as string);
+  const accessToken = JSON.parse(sessionStorage.getItem("userToken") as string);
 
   useEffect(() => {
     !(async function () {

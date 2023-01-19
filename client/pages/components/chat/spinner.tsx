@@ -9,7 +9,7 @@ export default function Spinner() {
         alt="프로필이미지"
         width={65}
         height={65}
-        style={{ borderRadius: "50%" }}
+        style={{ borderRadius: "50%", border: "3px solid rgba(0,0,255,1)" }}
       />
       <InnerContainer>
         <NameTag>챗봇</NameTag>
@@ -69,15 +69,8 @@ const TextBox = styled.span`
   align-items: center;
   border-radius: 0px 10px 10px 10px;
   background-color: rgba(52, 51, 67, 1);
-  border: none;
+  border: 3px solid rgba(0, 0, 255, 1);
   padding: 1rem;
   word-break: break-all;
   max-width: 450px;
-  color: rgba(255, 255, 255, 1);
-
-  font-family: "Pretendard";
-  font-style: normal;
-  font-weight: 400;
-  font-size: 16px;
-  line-height: 19px;
 `;

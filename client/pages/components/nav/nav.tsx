@@ -20,22 +20,17 @@ export default function Nav(props: Props) {
 
   const router = useRouter();
 
-  const logOutHandle = () => {
-    localStorage.removeItem("userData");
-    localStorage.removeItem("userToken");
-    router.push("/account/signIn");
-  };
-
   useEffect(() => {
-    const userData = JSON.parse(localStorage.getItem("userData") as string);
-    const accessToken = JSON.parse(localStorage.getItem("userToken") as string);
+    const userData = JSON.parse(sessionStorage.getItem("userData") as string);
+    const accessToken = JSON.parse(sessionStorage.getItem("userToken") as string);
     if (userData && accessToken) {
       const extension = userData.filename.split(".")[userData.filename.split(".").length - 1];
       if (
         extension === "jpg" ||
         extension === "jpeg" ||
         extension === "png" ||
-        extension === "gif"
+        extension === "gif" ||
+        extension === "webp"
       ) {
         !(async function () {
           const result = await fetch(`${SERVER_URI}/blah/download?filename=${userData.filename}`, {
@@ -53,6 +48,28 @@ export default function Nav(props: Props) {
       }
     }
   }, []);
+
+  const logOutHandle = async () => {
+    const userData = JSON.parse(sessionStorage.getItem("userData") as string);
+    const accessToken = JSON.parse(sessionStorage.getItem("userToken") as string);
+    console.log(userData);
+    await fetch(`${SERVER_URI}/online/delete`, {
+      method: "POST",
+      body: JSON.stringify({
+        email: userData.userId,
+        name: userData.username,
+        phoneNumber: userData.userPhoneNumber,
+        filename: userData.filename,
+      }),
+      headers: {
+        "Content-type": "application/json",
+        "Access-Control-Allow-Origin": "http://localhost:3000",
+      },
+    });
+    sessionStorage.removeItem("userData");
+    sessionStorage.removeItem("userToken");
+    router.push("/account/signIn");
+  };
 
   return (
     <SideMenu>

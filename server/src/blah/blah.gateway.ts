@@ -14,6 +14,8 @@ import { BlahService } from "./blah.service";
 
 let createdRooms: string[] = [];
 
+const onlinePeople: string[] = [];
+
 @WebSocketGateway({
   namespace: "chat",
   cors: {
@@ -32,7 +34,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
       if (!deletedRoom) return;
 
       this.nsp.emit("delete-room", deletedRoom);
-      createdRooms = createdRooms.filter((createdRoom) => createdRoom !== deletedRoom); // 유저가 생성한 room 목록 중에 삭제되는 room 있으면 제거
+      createdRooms = createdRooms.filter((createdRoom) => createdRoom !== deletedRoom);
     });
 
     this.logger.log("웹소켓 서버 초기화 ✅");
@@ -96,6 +98,14 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     return null;
   }
 
+  @SubscribeMessage("online")
+  async handleOnline(@ConnectedSocket() socket: Socket, @MessageBody() data: any) {
+    console.log(data);
+    onlinePeople.push(data.name);
+    socket.broadcast.to(data.roomName).emit("online", { username: onlinePeople });
+    return null;
+  }
+
   @SubscribeMessage("room-list")
   handleRoomList() {
     return createdRooms;
@@ -108,16 +118,16 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
       return { success: false, payload: `${roomName} 방이 이미 존재합니다.` };
     }
 
-    socket.join(roomName); // 기존에 없던 room으로 join하면 room이 생성됨
-    createdRooms.push(roomName); // 유저가 생성한 room 목록에 추가
-    this.nsp.emit("create-room", roomName); // 대기실 방 생성
+    socket.join(roomName);
+    createdRooms.push(roomName);
+    this.nsp.emit("create-room", roomName);
 
     return { success: true, payload: roomName };
   }
 
   @SubscribeMessage("join-room")
   handleJoinRoom(@ConnectedSocket() socket: Socket, @MessageBody() roomName: string) {
-    socket.join(roomName); // join room
+    socket.join(roomName);
     socket.broadcast.to(roomName).emit("message", { message: `${socket.id}가 들어왔습니다.` });
 
     return { success: true };
@@ -125,7 +135,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 
   @SubscribeMessage("leave-room")
   handleLeaveRoom(@ConnectedSocket() socket: Socket, @MessageBody() roomName: string) {
-    socket.leave(roomName); // leave room
+    socket.leave(roomName);
     socket.broadcast.to(roomName).emit("message", { message: `${socket.id}가 나갔습니다.` });
 
     return { success: true };
