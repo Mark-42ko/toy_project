@@ -50,9 +50,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 
   @SubscribeMessage("message")
   async handleMessage(@ConnectedSocket() socket: Socket, @MessageBody() data: any) {
-    console.log(data);
     if (data.name) {
-      console.log(data);
       const datas = {
         _id: data.roomName,
         blah: {
@@ -100,7 +98,6 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 
   @SubscribeMessage("online")
   async handleOnline(@ConnectedSocket() socket: Socket, @MessageBody() data: any) {
-    console.log(data);
     onlinePeople.push(data.name);
     socket.broadcast.to(data.roomName).emit("online", { username: onlinePeople });
     return null;

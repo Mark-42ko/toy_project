@@ -25,11 +25,11 @@ export default function People() {
     const userData = JSON.parse(sessionStorage.getItem("userData") as string);
     const accessToken = JSON.parse(sessionStorage.getItem("userToken") as string);
     if (userData && accessToken) {
-      const data = {
-        roomName: "온라인",
-        name: userData.username,
-      };
-      socket.emit("online", data, () => {});
+      // const data = {
+      //   roomName: "온라인",
+      //   name: userData.username,
+      // };
+      // socket.emit("online", data, () => {});
       socket.emit("join-room", "대기방", () => {});
       setUserDatas(userData);
       if (userData && accessToken) {

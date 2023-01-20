@@ -78,7 +78,7 @@ export default function SignInPage() {
     <BigContainer>
       <LogoBar />
       <Image
-        src={"/images/Vector.png"}
+        src={"/images/Vector.svg"}
         alt={"로고 이미지"}
         width={17}
         height={20}

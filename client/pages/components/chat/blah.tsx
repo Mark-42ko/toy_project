@@ -47,7 +47,7 @@ export default function Blah(props: Props) {
           props.setRerendering(Math.random());
           setTimeout(() => {
             setSpinner(false);
-          }, 2000);
+          }, 100);
         } else {
           props.setRerendering(Math.random());
         }
