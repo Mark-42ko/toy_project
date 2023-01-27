@@ -14,7 +14,6 @@ export class OnlineService {
   }
 
   async delete(data: CreateOnlineDto): Promise<Online> {
-    console.log(data);
     const result = await this.OnlineModel.findOneAndDelete({ email: data.email }).exec();
     return null;
   }

@@ -16,10 +16,8 @@ export default function ListCard(props: Props) {
 
   useEffect(() => {
     if (props.friend !== undefined) {
-      console.log(props.friend);
       for (let a = 0; a < props.friend.length; a++) {
         if (props.friend[a].name === props.peopleData.name || props.peopleData.name === "챗봇") {
-          console.log(props.friend[a].name);
           setRender(false);
         }
       }

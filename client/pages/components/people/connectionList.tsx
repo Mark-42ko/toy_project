@@ -23,22 +23,6 @@ export default function ConnectionList(props: Props) {
   const userData = JSON.parse(sessionStorage.getItem("userData") as string);
   const accessToken = JSON.parse(sessionStorage.getItem("userToken") as string);
 
-  // useEffect(() => {
-  //   const data = {
-  //     roomName: "온라인",
-  //     name: userData.username,
-  //   };
-  //   socket.emit("online", data, () => {});
-  //   const messageHandler = (chat: any) => {
-  //     console.log(chat, "들어옴");
-  //     setOnlineCheck(Math.random());
-  //   };
-  //   socket.on("online", messageHandler);
-  //   return () => {
-  //     socket.off("online", messageHandler);
-  //   };
-  // }, []);
-
   useEffect(() => {
     !(async function () {
       const reponse = await fetch(`${SERVER_URI}/people/readPeople?user=${userData.username}`, {

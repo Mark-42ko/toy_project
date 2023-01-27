@@ -52,7 +52,6 @@ export default function Nav(props: Props) {
   const logOutHandle = async () => {
     const userData = JSON.parse(sessionStorage.getItem("userData") as string);
     const accessToken = JSON.parse(sessionStorage.getItem("userToken") as string);
-    console.log(userData);
     await fetch(`${SERVER_URI}/online/delete`, {
       method: "POST",
       body: JSON.stringify({

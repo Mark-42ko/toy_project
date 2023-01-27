@@ -32,7 +32,6 @@ export class OnlineController {
 
   @Post("delete")
   async delete(@Body() online: CreateOnlineDto): Promise<CreateOnlineDto[]> {
-    console.log(online);
     const data = await this.onlineService.delete(online);
     return Object.assign({
       data: data,
