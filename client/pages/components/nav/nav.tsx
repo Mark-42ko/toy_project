@@ -24,34 +24,38 @@ export default function Nav(props: Props) {
     const userData = JSON.parse(sessionStorage.getItem("userData") as string);
     const accessToken = JSON.parse(sessionStorage.getItem("userToken") as string);
     if (userData && accessToken) {
-      const extension = userData.filename.split(".")[userData.filename.split(".").length - 1];
-      if (
-        extension === "jpg" ||
-        extension === "jpeg" ||
-        extension === "png" ||
-        extension === "gif" ||
-        extension === "webp"
-      ) {
-        !(async function () {
-          const result = await fetch(`${SERVER_URI}/blah/download?filename=${userData.filename}`, {
-            method: "GET",
-            headers: {
-              Authorization: `bearer ${accessToken}`,
-              "Content-type": "application/json",
-              "Access-Control-Allow-Origin": "http://localhost:3000",
-            },
-          });
-          const file = await result.blob();
-          const downloadUrl = window.URL.createObjectURL(file);
-          setProfileImg(downloadUrl);
-        })();
+      if (userData.filename) {
+        const extension = userData.filename.split(".")[userData.filename.split(".").length - 1];
+        if (
+          extension === "jpg" ||
+          extension === "jpeg" ||
+          extension === "png" ||
+          extension === "gif" ||
+          extension === "webp"
+        ) {
+          !(async function () {
+            const result = await fetch(
+              `${SERVER_URI}/blah/download?filename=${userData.filename}`,
+              {
+                method: "GET",
+                headers: {
+                  Authorization: `bearer ${accessToken}`,
+                  "Content-type": "application/json",
+                  "Access-Control-Allow-Origin": "http://localhost:3000",
+                },
+              },
+            );
+            const file = await result.blob();
+            const downloadUrl = window.URL.createObjectURL(file);
+            setProfileImg(downloadUrl);
+          })();
+        }
       }
     }
   }, []);
 
   const logOutHandle = async () => {
     const userData = JSON.parse(sessionStorage.getItem("userData") as string);
-    const accessToken = JSON.parse(sessionStorage.getItem("userToken") as string);
     await fetch(`${SERVER_URI}/online/delete`, {
       method: "POST",
       body: JSON.stringify({

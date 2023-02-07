@@ -80,7 +80,7 @@ export default function Blah(props: Props) {
         setUpdateData(json.data);
       }
     })();
-  }, [props.roomData, props.rerendering]);
+  }, [props.roomData, props.rerendering, spinner]);
 
   const inputButtonHandle = async () => {
     if (inputData === "") {
@@ -163,32 +163,91 @@ export default function Blah(props: Props) {
         if (props.roomData.user.find((one: any) => one.name === "챗봇")) {
           if (props.roomData.user.length === 2) {
             setSpinner(true);
-            await fetch(`${AI_URI}`, {
+            // local ai chatbot code.
+            // await fetch(`${AI_URI}`, {
+            //   method: "POST",
+            //   body: JSON.stringify({
+            //     roomName: props.roomData._id,
+            //     userName: userData.username,
+            //     message: inputData,
+            //     counts: [userData.userId],
+            //     socketUrl: `${SERVER_URI}/chat`,
+            //   }),
+            //   headers: {
+            //     "Content-type": "application/json",
+            //   },
+            // });
+            const result = await fetch("/api/openAI/generate", {
               method: "POST",
               body: JSON.stringify({
-                roomName: props.roomData._id,
-                userName: userData.username,
                 message: inputData,
-                counts: [userData.userId],
-                socketUrl: `${SERVER_URI}/chat`,
               }),
               headers: {
                 "Content-type": "application/json",
               },
             });
+            const json = await result.json();
+            await fetch(`${SERVER_URI}/blah/chatAdd`, {
+              method: "Post",
+              body: JSON.stringify({
+                _id: props.roomData._id,
+                blah: {
+                  name: "챗봇",
+                  profile: "aibot_1673837319708.jpeg",
+                  comments: json.result,
+                  date: new Date(),
+                  counts: chatUser,
+                },
+              }),
+              headers: {
+                Authorization: `bearer ${accessToken}`,
+                "Content-type": "application/json",
+                "Access-Control-Allow-Origin": "http://localhost:3000",
+              },
+            });
+            setSpinner(false);
           } else {
             if (inputData.startsWith("챗봇")) {
-              await fetch(`${AI_URI}`, {
+              // local ai chatbot code.
+              // await fetch(`${AI_URI}`, {
+              //   method: "POST",
+              //   body: JSON.stringify({
+              //     roomName: props.roomData._id,
+              //     userName: userData.username,
+              //     counts: chatUser,
+              //     message: inputData,
+              //     socketUrl: `${SERVER_URI}/chat`,
+              //   }),
+              //   headers: {
+              //     "Content-type": "application/json",
+              //   },
+              // });
+              const result = await fetch("/api/openAI/generate", {
                 method: "POST",
                 body: JSON.stringify({
-                  roomName: props.roomData._id,
-                  userName: userData.username,
-                  counts: chatUser,
                   message: inputData,
-                  socketUrl: `${SERVER_URI}/chat`,
                 }),
                 headers: {
                   "Content-type": "application/json",
+                },
+              });
+              const json = await result.json();
+              await fetch(`${SERVER_URI}/blah/chatAdd`, {
+                method: "Post",
+                body: JSON.stringify({
+                  _id: props.roomData._id,
+                  blah: {
+                    name: "챗봇",
+                    profile: "aibot_1673837319708.jpeg",
+                    comments: json.result,
+                    date: new Date(),
+                    counts: chatUser,
+                  },
+                }),
+                headers: {
+                  Authorization: `bearer ${accessToken}`,
+                  "Content-type": "application/json",
+                  "Access-Control-Allow-Origin": "http://localhost:3000",
                 },
               });
             }
